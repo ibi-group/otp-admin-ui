@@ -5,7 +5,7 @@ import NavBar from './Navbar';
 export default ({ children }) => (
   <div>
     <Head>
-      <title>Next.js with Auth0</title>
+      <title>OTP Admin Dashboard</title>
     </Head>
     <NavBar />
     <main>
