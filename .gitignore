@@ -6,3 +6,4 @@ next.config.js
 /npm-debug.log
 .DS_Store
 /.env.production
+now.json
