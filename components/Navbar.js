@@ -1,12 +1,15 @@
-import React from 'react';
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { useAuth } from 'use-auth0-hooks';
+import { useAuth } from 'use-auth0-hooks'
 
-export default function NavBar() {
-  const { pathname, query } = useRouter();
-  const { isAuthenticated, isLoading, login, logout } = useAuth();
+export default function NavBar (props) {
+  const { pathname, query } = useRouter()
+  const { isAuthenticated, isLoading, login, logout } = useAuth()
+
+  const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
+  const handleLogout = () => logout({ returnTo: process.env.POST_LOGOUT_REDIRECT_URI })
 
   return (
     <header>
@@ -18,13 +21,13 @@ export default function NavBar() {
             </Link>
           </li>
           <li>
-            <Link href='/subscription'>
-              <a>TV Subscription</a>
+            <Link href='/faq'>
+              <a>FAQ</a>
             </Link>
           </li>
           <li>
-            <Link href='/shows'>
-              <a>TV Shows</a>
+            <Link href='/about'>
+              <a>About</a>
             </Link>
           </li>
           {!isLoading && (
@@ -36,12 +39,14 @@ export default function NavBar() {
                   </Link>
                 </li>
                 <li>
-                  <button onClick={() => logout({ returnTo: process.env.POST_LOGOUT_REDIRECT_URI })}>Log out</button>
+                  <button onClick={handleLogout}>
+                    Log out
+                  </button>
                 </li>
               </>
             ) : (
               <li>
-                <button onClick={() => login({ appState: { returnTo: { pathname, query } } })}>
+                <button onClick={handleLogin}>
                   Log in
                 </button>
               </li>
@@ -83,7 +88,8 @@ export default function NavBar() {
           border: none;
           background: none;
         }
-      `}</style>
+      `}
+      </style>
     </header>
-  );
-};
+  )
+}

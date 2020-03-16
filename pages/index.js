@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import fetch from 'isomorphic-unfetch'
+import { useAuth } from 'use-auth0-hooks'
 
 function getPosts () {
   return [
@@ -33,41 +34,52 @@ const PostLink = ({ post }) => (
   </li>
 );
 
-const Index = props => (
-  <div>
-    <h1>Batman TV Shows</h1>
-    <ul>
-    {getPosts().map(post => (
-        <PostLink key={post.id} post={post} />
-      ))}
-    </ul>
-    <style jsx>{`
-        h1,
-        a {
-          font-family: 'Arial';
-        }
+export default function Index () {
+  const { isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return 'Loading'
+  if (!isLoading && !isAuthenticated) {
+    return (
+      <div>
+        Please log in to view the Admin Dashboard.
+      </div>
+    )
+  }
+  return (
+    <div>
+      <h1>Batman TV Shows {isAuthenticated ? 'logged in' : 'logged out'}</h1>
+      <ul>
+      {getPosts().map(post => (
+          <PostLink key={post.id} post={post} />
+        ))}
+      </ul>
+      <style jsx>{`
+          h1,
+          a {
+            font-family: 'Arial';
+          }
 
-        ul {
-          padding: 0;
-        }
+          ul {
+            padding: 0;
+          }
 
-        li {
-          list-style: none;
-          margin: 5px 0;
-        }
+          li {
+            list-style: none;
+            margin: 5px 0;
+          }
 
-        a {
-          text-decoration: none;
-          color: blue;
-        }
+          a {
+            text-decoration: none;
+            color: blue;
+          }
 
-        a:hover {
-          opacity: 0.6;
-        }
-      `}
-    </style>
-  </div>
-)
+          a:hover {
+            opacity: 0.6;
+          }
+        `}
+      </style>
+    </div>
+  )
+}
 
 Index.getInitialProps = async function () {
   const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
@@ -79,5 +91,3 @@ Index.getInitialProps = async function () {
     shows: data.map(entry => entry.show)
   }
 }
-
-export default Index
