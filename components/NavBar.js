@@ -59,6 +59,7 @@ export default function NavBar (props) {
           padding: 0.2rem;
           color: #fff;
           background-color: #333;
+          font-family: sans-serif;
         }
         nav {
           max-width: 42rem;

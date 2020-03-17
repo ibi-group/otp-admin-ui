@@ -4,6 +4,23 @@ import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
 
+async function secureFetch (url, accessToken, method = 'get', options = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    },
+    ...options
+  })
+  if (res.status >= 400) {
+    const result = await res.json()
+    let message = `Error ${method}-ing user: ${result.message}`
+    if (result.detail) message += `  (${result.detail})`
+    return window.alert(message)
+  }
+  return res.json()
+}
+
 class UserList extends Component {
   constructor (props) {
     super(props)
@@ -12,6 +29,7 @@ class UserList extends Component {
       usersError: null
     }
     this.handleCreateUser = this.handleCreateUser.bind(this)
+    this.fetchUserData = this.fetchUserData.bind(this)
     this.handleDeleteUser = this.handleDeleteUser.bind(this)
   }
 
@@ -25,42 +43,22 @@ class UserList extends Component {
     if (!accessToken) {
       return
     }
-    console.log('fetching users')
-
-    const res = await fetch(`${process.env.API_BASE_URL}/api/secure/user`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-
-    if (res.status >= 400) {
-      if (res.statusText) this.setState({ usersError: res.statusText })
-      else {
-        const { detail, message } = res.json()
-        this.setState({ usersError: `${message}: ${detail}` })
-      }
-    } else {
-      const users = await res.json()
-      this.setState({
-        users: users
-      })
+    const fetchedUsers = await secureFetch(`${process.env.API_BASE_URL}/api/secure/user`, accessToken)
+    if (fetchedUsers) {
+      this.setState({ users: fetchedUsers })
     }
   }
 
   async handleDeleteUser (user) {
+    const { accessToken } = this.props.auth
     if (!window.confirm(`Are you sure you want to delete user ${user.email}?`)) {
       return
     }
-    const res = await fetch(`${process.env.API_BASE_URL}/api/secure/user/${user.id}`, {
-      method: 'delete',
-      headers: {
-        Authorization: `Bearer ${this.props.auth.accessToken}`
-      }
-    })
-    if (res.status >= 400) {
-      return window.alert('Error deleting user!')
-    }
-    const result = await res.json()
+    const result = await secureFetch(
+      `${process.env.API_BASE_URL}/api/secure/user/${user.id}`,
+      accessToken,
+      'delete'
+    )
     window.alert(result.message)
     await this.fetchUserData(true)
   }
@@ -69,21 +67,19 @@ class UserList extends Component {
   // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
   // https://nextjs.org/docs/advanced-features/customizing-babel-config
   async handleCreateUser () {
+    const { accessToken } = this.props.auth
     const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')
     if (!email) return
-    const res = await fetch(`${process.env.API_BASE_URL}/api/secure/user`, {
-      method: 'post',
-      headers: {
-        Authorization: `Bearer ${this.props.auth.accessToken}`
-      },
-      body: JSON.stringify({ email })
-    })
-    if (res.status >= 400) {
-      return window.alert('Error creating user!')
+    const user = await secureFetch(
+      `${process.env.API_BASE_URL}/api/secure/user`,
+      accessToken,
+      'post',
+      { body: JSON.stringify({ email }) }
+    )
+    if (user) {
+      window.alert(`Created user: ${user.email}`)
+      await this.fetchUserData(true)
     }
-    const user = await res.json()
-    window.alert(`Created user: ${user.email}`)
-    await this.fetchUserData(true)
   }
 
   async componentDidMount () {
@@ -97,13 +93,15 @@ class UserList extends Component {
   render () {
     const { auth } = this.props
     const { users, usersError } = this.state
+    if (!auth.isAuthenticated) return null
     return (
       <div>
+        <h2>List of Users</h2>
         <button onClick={this.handleCreateUser}>Create user +</button>
+        <button onClick={this.fetchUserData}>Fetch users 🔄</button>
         {
           users && (
             <div>
-              <h1>Users (logged in: {auth.user.email})</h1>
               {usersError && <pre>Error loading users: {usersError}</pre>}
               <ul>
                 {users && users.length
@@ -119,6 +117,26 @@ class UserList extends Component {
             </div>
           )
         }
+        <style jsx>{`
+        ul {
+          padding: 0;
+        }
+
+        li {
+          list-style: none;
+          margin: 5px 0;
+        }
+
+        a {
+          text-decoration: none;
+          color: blue;
+        }
+
+        a:hover {
+          opacity: 0.6;
+        }
+        `}
+        </style>
       </div>
     )
   }
