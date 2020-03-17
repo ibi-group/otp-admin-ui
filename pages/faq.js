@@ -1,22 +1,13 @@
-import Markdown from 'react-markdown';
+import Markdown from 'react-markdown'
+
+import faq from '../public/faq.md'
 
 export default function FAQ () {
   return (
     <div>
       <h1>FAQ</h1>
-      <div className="markdown">
-        <Markdown
-          source={`
-This is our FAQ.
-Yes. We can have a [link](/about).
-And we can have a title as well.
-
-### This is a title
-
-**Question:** Where can I find more information about how to use the OpenTripPlanner API?
-**Answer:** The [OTP web services documentation](http://dev.opentripplanner.org/apidoc/1.4.0/) has detailed information about the OTP API.
-      `}
-        />
+      <div className='markdown'>
+        <Markdown source={faq} />
       </div>
       <style jsx global>{`
         .markdown {
@@ -37,7 +28,8 @@ And we can have a title as well.
           padding: 0;
           text-transform: uppercase;
         }
-      `}</style>
+      `}
+      </style>
     </div>
-  );
-};
+  )
+}

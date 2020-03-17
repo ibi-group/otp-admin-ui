@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 
 export default ({ children }) => (
   <div>

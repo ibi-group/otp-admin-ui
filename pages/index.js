@@ -2,13 +2,7 @@ import Link from 'next/link'
 import fetch from 'isomorphic-unfetch'
 import { useAuth } from 'use-auth0-hooks'
 
-function getPosts () {
-  return [
-    { id: 'hello-nextjs', title: 'Hello Next.js' },
-    { id: 'learn-nextjs', title: 'Learn Next.js is awesome' },
-    { id: 'deploy-nextjs', title: 'Deploy apps with ZEIT' }
-  ];
-}
+import UserList from '../components/UserList'
 
 const PostLink = ({ post }) => (
   <li>
@@ -30,12 +24,16 @@ const PostLink = ({ post }) => (
       a:hover {
         opacity: 0.6;
       }
-    `}</style>
+    `}
+    </style>
   </li>
-);
+)
 
 export default function Index () {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth({
+    audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+    scope: ''
+  })
   if (isLoading) return 'Loading'
   if (!isLoading && !isAuthenticated) {
     return (
@@ -47,11 +45,7 @@ export default function Index () {
   return (
     <div>
       <h1>Batman TV Shows {isAuthenticated ? 'logged in' : 'logged out'}</h1>
-      <ul>
-      {getPosts().map(post => (
-          <PostLink key={post.id} post={post} />
-        ))}
-      </ul>
+      <UserList />
       <style jsx>{`
           h1,
           a {
@@ -84,7 +78,6 @@ export default function Index () {
 Index.getInitialProps = async function () {
   const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
   const data = await res.json()
-
   console.log(`Show data fetched. Count: ${data.length}`)
 
   return {

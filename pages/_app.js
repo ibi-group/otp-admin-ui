@@ -63,6 +63,9 @@ export default class Root extends App {
 
     return (
       <Auth0Provider
+        allowSignUp={false}
+        audience={`https://${process.env.AUTH0_DOMAIN}/api/v2/`}
+        scope=''
         domain={process.env.AUTH0_DOMAIN}
         clientId={process.env.AUTH0_CLIENT_ID}
         redirectUri={process.env.REDIRECT_URI}

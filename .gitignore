@@ -1,6 +1,6 @@
 .now
 node_modules/
-.env
+.env*
 next.config.js
 .next/
 /npm-debug.log
