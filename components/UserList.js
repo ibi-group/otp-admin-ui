@@ -8,7 +8,8 @@ async function secureFetch (url, accessToken, method = 'get', options = {}) {
   const res = await fetch(url, {
     method,
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
     },
     ...options
   })
