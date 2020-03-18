@@ -1,5 +1,6 @@
 import { useAuth } from 'use-auth0-hooks'
 
+import LogSummary from '../components/LogSummary'
 import UserList from '../components/UserList'
 
 export default function Index () {
@@ -18,6 +19,7 @@ export default function Index () {
     <div>
       <h1>OTP Admin Dashboard Overview</h1>
       <UserList />
+      <LogSummary />
       <style jsx>{`
           * {
             font-family: 'Arial';
