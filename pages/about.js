@@ -1,10 +1,9 @@
-import Link from 'next/link'
-import Header from '../components/Header';
+import MarkdownContent from '../components/MarkdownContent'
 
-export default function Index () {
+import readme from '../README.md'
+
+export default function About () {
   return (
-    <div>
-      <p>About the dashboard</p>
-    </div>
+    <MarkdownContent title='About' markdown={readme} />
   )
 }

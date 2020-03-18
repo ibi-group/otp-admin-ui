@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
 import { useAuth } from 'use-auth0-hooks'
 
@@ -28,6 +29,16 @@ export default function NavBar (props) {
             <Link href='/about'>
               <a>About</a>
             </Link>
+          </li>
+          <li>
+            <a
+              href='https://fdot-otp.ibi-transit.com/'
+              rel='noopener noreferrer'
+              target='_blank'
+            >
+              View RMCE{' '}
+              <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
+            </a>
           </li>
           {!isLoading && (
             isAuthenticated ? (
@@ -87,6 +98,8 @@ export default function NavBar (props) {
           cursor: pointer;
           border: none;
           background: none;
+          padding: 0;
+          margin-top: -1px;
         }
       `}
       </style>
