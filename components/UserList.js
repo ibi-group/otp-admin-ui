@@ -29,6 +29,9 @@ class UserList extends Component {
       users: null,
       usersError: null
     }
+    // TODO fix babel plugin so we can use class properties
+    // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
+    // https://nextjs.org/docs/advanced-features/customizing-babel-config
     this.handleCreateUser = this.handleCreateUser.bind(this)
     this.fetchUserData = this.fetchUserData.bind(this)
     this.handleDeleteUser = this.handleDeleteUser.bind(this)
@@ -52,7 +55,11 @@ class UserList extends Component {
 
   async handleDeleteUser (user) {
     const { accessToken } = this.props.auth
-    if (!window.confirm(`Are you sure you want to delete user ${user.email}?`)) {
+    let message = `Are you sure you want to delete user ${user.email}?`
+    if (user.isDataToolsUser) {
+      message = 'WARNING: user is a Data Tools user!\n' + message
+    }
+    if (!window.confirm(message)) {
       return
     }
     const result = await secureFetch(
@@ -64,9 +71,6 @@ class UserList extends Component {
     await this.fetchUserData(true)
   }
 
-  // TODO fix babel plugin so we can use class properties
-  // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
-  // https://nextjs.org/docs/advanced-features/customizing-babel-config
   async handleCreateUser () {
     const { accessToken } = this.props.auth
     const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')

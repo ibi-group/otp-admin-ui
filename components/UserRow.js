@@ -28,10 +28,3 @@ const UserRow = ({ onDeleteUser, user }) => {
 }
 
 export default UserRow
-
-
-const PostLink = ({ post }) => (
-  <li>
-
-  </li>
-)

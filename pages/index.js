@@ -18,10 +18,6 @@ export default function Index () {
     <div>
       <h1>OTP Admin Dashboard Overview</h1>
       <UserList />
-      <div>
-        <h2>Geocoding logs</h2>
-        
-      </div>
       <style jsx>{`
           * {
             font-family: 'Arial';
