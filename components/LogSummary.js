@@ -127,6 +127,6 @@ class LogSummary extends Component {
 }
 
 export default withAuth(LogSummary, {
-  audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
-  scope: ''
+  audience: process.env.AUTH0_AUDIENCE,
+  scope: process.env.AUTH0_SCOPE
 })
