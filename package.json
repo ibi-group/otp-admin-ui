@@ -4,8 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
     "build": "next build",
+    "dev": "next",
+    "deploy": "now",
+    "lint": "mastarm lint components pages --quiet",
     "start": "next start"
   },
   "dependencies": {

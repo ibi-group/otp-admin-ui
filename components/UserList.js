@@ -103,7 +103,9 @@ class UserList extends Component {
       <div>
         <h2>List of Users</h2>
         <button onClick={this.handleCreateUser}>Create user +</button>
-        <button onClick={this.fetchUserData}>Fetch users 🔄</button>
+        <button onClick={this.fetchUserData}>
+          Fetch users <span aria-label='refresh' role='img'>🔄</span>
+        </button>
         {
           users && (
             <div>

@@ -16,6 +16,7 @@ export default function NavBar (props) {
         <ul>
           <li>
             <Link href='/'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
               <a>Home</a>
             </Link>
           </li>

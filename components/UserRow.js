@@ -3,7 +3,7 @@ const UserRow = ({ onDeleteUser, user }) => {
 
   return (
     <li>
-      <a>{user.email}</a>
+      {user.email}
       <style jsx>{`
         li {
           list-style: none;
