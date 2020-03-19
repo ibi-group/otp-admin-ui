@@ -56,9 +56,7 @@ class LogSummary extends Component {
     const { auth } = this.props
     const { logs, logsError } = this.state
     if (!auth.isAuthenticated) return null
-    // TODO: Get this from result.
-    const keyId = 'lxkkweeppe'
-    const startDate = logs && moment(logs.startDate)
+    const hasLogs = logs && logs.length > 0
     return (
       <div>
         <h2>Log Summary</h2>
@@ -71,24 +69,39 @@ class LogSummary extends Component {
           Open AWS console
         </a>
         {
-          logs && logs.items && (
+          hasLogs && (
             <div>
               {logsError && <pre>Error loading logs: {logsError}</pre>}
-              All requests made by key ID: {keyId} (last 30 days)
-              <ul>
-                {logs.items[keyId].map((item, i) => {
-                  if (i > 0) startDate.add(1, 'days')
-                  return (
-                    <li key={i}>
-                      {startDate.format('MMM D')}: {item[0]} requests
-                    </li>
-                  )
-                })}
-              </ul>
+              <div>All requests made over the last 30 days</div>
+              {logs.map((plan, planIndex) => {
+                const keyIds = Object.keys(plan.items)
+                if (keyIds.length === 0) return null
+                const startDate = moment(plan.startDate)
+                return (
+                  <div className='usage-list'>
+                    <h3>API Key: {keyIds[0]}</h3>
+                    <ul key={planIndex}>
+                      {plan.items[keyIds[0]].map((item, itemIndex) => {
+                        if (itemIndex > 0) startDate.add(1, 'days')
+                        return (
+                          <li key={itemIndex}>
+                            {startDate.format('MMM D')}: {item[0]} requests
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                )
+              })}
             </div>
           )
         }
         <style jsx>{`
+        .usage-list {
+          display: inline-block;
+          margin: 5px;
+        }
+
         ul {
           padding: 0;
         }
