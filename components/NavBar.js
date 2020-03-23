@@ -100,7 +100,7 @@ const NavLink = (props) => (
         target='_blank'
       >
         {props.children}{' '}
-        <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
+        {/* <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} /> */}
       </a>
       : props.href
         ? <Link href={props.href}>
