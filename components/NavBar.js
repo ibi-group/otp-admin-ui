@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
 import { useAuth } from 'use-auth0-hooks'
 
@@ -15,46 +16,52 @@ export default function NavBar (props) {
       <nav>
         <ul>
           <li>
-            <Link href='/'>
-              {/* eslint-disable jsx-a11y/anchor-is-valid */}
-              <a>Home</a>
-            </Link>
+            <NavLink href='/'>
+              Home
+            </NavLink>
           </li>
           <li>
-            <Link href='/faq'>
-              <a>FAQ</a>
-            </Link>
+            <NavLink href='/faq'>
+              FAQ
+            </NavLink>
           </li>
           <li>
-            <Link href='/about'>
-              <a>About</a>
-            </Link>
+            <NavLink href='/about'>
+              About
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              href='https://fdot-otp.ibi-transit.com/'
+              external
+            >
+              View RMCE
+            </NavLink>
           </li>
           {!isLoading && (
             isAuthenticated ? (
               <>
                 <li>
-                  <Link href='/profile'>
-                    <a>Profile</a>
-                  </Link>
+                  <NavLink href='/profile'>
+                    Profile
+                  </NavLink>
                 </li>
                 <li>
-                  <button onClick={handleLogout}>
+                  <NavLink onClick={handleLogout}>
                     Log out
-                  </button>
+                  </NavLink>
                 </li>
               </>
             ) : (
               <li>
-                <button onClick={handleLogin}>
+                <NavLink onClick={handleLogin}>
                   Log in
-                </button>
+                </NavLink>
               </li>
             )
           )}
         </ul>
       </nav>
-
       <style jsx>{`
         header {
           padding: 0.2rem;
@@ -78,19 +85,46 @@ export default function NavBar (props) {
         li:nth-child(3) {
           margin-right: auto;
         }
-        a {
-          color: #fff;
-          text-decoration: none;
-        }
-        button {
-          font-size: 1rem;
-          color: #fff;
-          cursor: pointer;
-          border: none;
-          background: none;
-        }
       `}
       </style>
     </header>
   )
 }
+
+const NavLink = (props) => (
+  <>
+    {props.external
+      ? <a
+        href={props.href}
+        rel='noopener noreferrer'
+        target='_blank'
+      >
+        {props.children}{' '}
+        <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
+      </a>
+      : props.href
+        ? <Link href={props.href}>
+          <button>{props.children}</button>
+        </Link>
+        : <button onClick={props.onClick}>
+          {props.children}
+        </button>
+    }
+    <style jsx>{`
+      a {
+        color: #fff;
+        text-decoration: none;
+      }
+      button {
+        font-size: 1rem;
+        color: inherit;
+        border: none;
+        background: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+      }
+    `}
+    </style>
+  </>
+)
