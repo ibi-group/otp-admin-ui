@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
+// import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
 import { useAuth } from 'use-auth0-hooks'
 
