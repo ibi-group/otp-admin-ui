@@ -39,16 +39,6 @@ export default function NavBar (props) {
               View RMCE
             </NavLink>
           </li>
-          <li>
-            <a
-              href='https://fdot-otp.ibi-transit.com/'
-              rel='noopener noreferrer'
-              target='_blank'
-            >
-              View RMCE{' '}
-              <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
-            </a>
-          </li>
           {!isLoading && (
             isAuthenticated ? (
               <>
