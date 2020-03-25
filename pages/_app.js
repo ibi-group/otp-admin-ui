@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { Auth0Provider } from 'use-auth0-hooks'
 
 import Layout from '../components/MyLayout'
-import { AUTH0_SCOPE } from '../util/constants'
+import { AUTH0_SCOPE, REDIRECT_URI } from '../util/constants'
 
 /**
  * Where to send the user after they have signed in.
@@ -68,7 +68,7 @@ export default class Root extends App {
         scope={AUTH0_SCOPE}
         domain={process.env.AUTH0_DOMAIN}
         clientId={process.env.AUTH0_CLIENT_ID}
-        redirectUri={process.env.REDIRECT_URI}
+        redirectUri={REDIRECT_URI}
         onLoginError={onLoginError}
         onAccessTokenError={onAccessTokenError}
         onRedirecting={onRedirecting}

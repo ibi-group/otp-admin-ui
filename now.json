@@ -10,8 +10,7 @@
       "API_KEY": "@api-key",
       "AUTH0_AUDIENCE": "@auth0-audience",
       "AUTH0_DOMAIN": "@auth0-domain",
-      "AUTH0_CLIENT_ID": "@auth0-client-id",
-      "REDIRECT_URI": "@redirect-uri"
+      "AUTH0_CLIENT_ID": "@auth0-client-id"
     }
   }
 }

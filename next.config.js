@@ -17,9 +17,7 @@ module.exports = (phase, { defaultConfig }) => {
     API_KEY: process.env.API_KEY,
     AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE,
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-    REDIRECT_URI: process.env.REDIRECT_URI,
-    POST_LOGOUT_REDIRECT_URI: process.env.POST_LOGOUT_REDIRECT_URI
+    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID
   }
   // Return webpack configurations.
   return {
