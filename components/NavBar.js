@@ -9,7 +9,7 @@ export default function NavBar (props) {
   const { isAuthenticated, isLoading, login, logout } = useAuth()
 
   const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
-  const handleLogout = () => logout({ returnTo: process.env.POST_LOGOUT_REDIRECT_URI })
+  const handleLogout = () => logout({ returnTo: process.env.REDIRECT_URI })
 
   return (
     <header>

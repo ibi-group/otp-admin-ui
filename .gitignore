@@ -1,7 +1,6 @@
 .now
 node_modules/
-next.config.js
 .next/
 /npm-debug.log
 .DS_Store
-now.json
+.env*
