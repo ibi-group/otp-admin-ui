@@ -3,12 +3,13 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'use-auth0-hooks'
 
 import { logout } from '../util/auth'
+import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Oops () {
   const { asPath, query } = useRouter()
   const { error } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
-    scope: process.env.AUTH0_SCOPE
+    scope: AUTH0_SCOPE
   })
   // There appears to be an issue with use-auth0-hooks, where logout does not
   // occur properly if an unauthorized user attempts login. Without the

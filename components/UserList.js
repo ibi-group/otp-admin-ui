@@ -3,6 +3,7 @@ import fetch from 'isomorphic-unfetch'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
+import { AUTH0_SCOPE } from '../util/constants'
 
 async function secureFetch (url, accessToken, method = 'get', options = {}) {
   const res = await fetch(url, {
@@ -151,5 +152,5 @@ class UserList extends Component {
 
 export default withAuth(UserList, {
   audience: process.env.AUTH0_AUDIENCE,
-  scope: process.env.AUTH0_SCOPE
+  scope: AUTH0_SCOPE
 })

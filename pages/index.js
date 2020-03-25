@@ -1,11 +1,12 @@
 import { useAuth } from 'use-auth0-hooks'
 
 import UserList from '../components/UserList'
+import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index () {
   const { isAuthenticated, isLoading } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
-    scope: process.env.AUTH0_SCOPE
+    scope: AUTH0_SCOPE
   })
   if (!isLoading && !isAuthenticated) {
     return (
