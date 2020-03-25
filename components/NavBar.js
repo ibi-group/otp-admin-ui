@@ -3,14 +3,14 @@ import { useRouter } from 'next/router'
 // import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
 import { useAuth } from 'use-auth0-hooks'
-import { REDIRECT_URI } from '../util/constants'
+import { getAuthRedirectUri } from '../util/auth'
 
 export default function NavBar (props) {
   const { pathname, query } = useRouter()
   const { isAuthenticated, isLoading, login, logout } = useAuth()
 
   const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
-  const handleLogout = () => logout({ returnTo: REDIRECT_URI })
+  const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
 
   return (
     <header>
