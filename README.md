@@ -7,8 +7,8 @@ Front end application to manage OpenTripPlanner and [otp-middleware](https://git
 ```
 git clone https://github.com/ibi-group/otp-admin-ui.git
 cd otp-admin-ui
-cp next.config.tmp.js next.config.js
-# Update next.config.js values
+cp .env.tmp .env.build
+# Update .env.build values (e.g. $ vi .env.build)
 # Install packages
 yarn
 # Start up dev instance
