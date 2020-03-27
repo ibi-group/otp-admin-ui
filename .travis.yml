@@ -9,7 +9,7 @@ node_js:
   - '12' # mastarm 5 requires node.js 10 or greater
 # Copy example config for use in build.
 before_script:
-  - cp next.config.tmp.js next.config.js
+  - cp .env.tmp .env.build
 script:
   - yarn
   - yarn lint
