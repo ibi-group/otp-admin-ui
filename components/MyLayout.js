@@ -1,6 +1,6 @@
-import Head from 'next/head';
+import Head from 'next/head'
 
-import NavBar from './Navbar';
+import NavBar from './NavBar'
 
 export default ({ children }) => (
   <div>
@@ -9,7 +9,7 @@ export default ({ children }) => (
     </Head>
     <NavBar />
     <main>
-      <div className="container">
+      <div className='container'>
         {children}
       </div>
     </main>
@@ -18,13 +18,15 @@ export default ({ children }) => (
         max-width: 42rem;
         margin: 1.5rem auto;
       }
-    `}</style>
+    `}
+    </style>
     <style jsx global>{`
       body {
         margin: 0;
         color: #333;
         font-family: -apple-system, 'Segoe UI';
       }
-    `}</style>
+    `}
+    </style>
   </div>
-);
+)

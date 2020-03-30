@@ -1,9 +1,7 @@
 .now
 node_modules/
-.env
-next.config.js
 .next/
 /npm-debug.log
 .DS_Store
-/.env.production
-now.json
+.env*
+!.env.tmp

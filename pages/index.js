@@ -1,42 +1,13 @@
-import Link from 'next/link'
-import fetch from 'isomorphic-unfetch'
 import { useAuth } from 'use-auth0-hooks'
 
-function getPosts () {
-  return [
-    { id: 'hello-nextjs', title: 'Hello Next.js' },
-    { id: 'learn-nextjs', title: 'Learn Next.js is awesome' },
-    { id: 'deploy-nextjs', title: 'Deploy apps with ZEIT' }
-  ];
-}
-
-const PostLink = ({ post }) => (
-  <li>
-    <Link href="/p/[id]" as={`/p/${post.id}`}>
-      <a>{post.title}</a>
-    </Link>
-    <style jsx>{`
-      li {
-        list-style: none;
-        margin: 5px 0;
-      }
-
-      a {
-        text-decoration: none;
-        color: blue;
-        font-family: 'Arial';
-      }
-
-      a:hover {
-        opacity: 0.6;
-      }
-    `}</style>
-  </li>
-);
+import UserList from '../components/UserList'
+import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index () {
-  const { isAuthenticated, isLoading } = useAuth()
-  if (isLoading) return 'Loading'
+  const { isAuthenticated, isLoading } = useAuth({
+    audience: process.env.AUTH0_AUDIENCE,
+    scope: AUTH0_SCOPE
+  })
   if (!isLoading && !isAuthenticated) {
     return (
       <div>
@@ -46,48 +17,14 @@ export default function Index () {
   }
   return (
     <div>
-      <h1>Batman TV Shows {isAuthenticated ? 'logged in' : 'logged out'}</h1>
-      <ul>
-      {getPosts().map(post => (
-          <PostLink key={post.id} post={post} />
-        ))}
-      </ul>
+      <h1>OTP Admin Dashboard Overview</h1>
+      <UserList />
       <style jsx>{`
-          h1,
-          a {
+          * {
             font-family: 'Arial';
-          }
-
-          ul {
-            padding: 0;
-          }
-
-          li {
-            list-style: none;
-            margin: 5px 0;
-          }
-
-          a {
-            text-decoration: none;
-            color: blue;
-          }
-
-          a:hover {
-            opacity: 0.6;
           }
         `}
       </style>
     </div>
   )
-}
-
-Index.getInitialProps = async function () {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-  const data = await res.json()
-
-  console.log(`Show data fetched. Count: ${data.length}`)
-
-  return {
-    shows: data.map(entry => entry.show)
-  }
 }
