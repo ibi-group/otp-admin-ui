@@ -32,6 +32,11 @@ export default function NavBar (props) {
             </NavLink>
           </li>
           <li>
+            <NavLink href='/status'>
+              Status
+            </NavLink>
+          </li>
+          <li>
             <NavLink
               href='https://fdot-otp.ibi-transit.com/'
               external

@@ -5,6 +5,9 @@ import { withAuth } from 'use-auth0-hooks'
 import UserRow from './UserRow'
 import { AUTH0_SCOPE } from '../util/constants'
 
+const ADMIN_USER_URL = `${process.env.API_BASE_URL}/api/admin/user`
+const OTP_USER_URL = `${process.env.API_BASE_URL}/api/public/user`
+
 async function secureFetch (url, accessToken, method = 'get', options = {}) {
   const res = await fetch(url, {
     method,
@@ -48,11 +51,13 @@ class UserList extends Component {
     if (!accessToken) {
       return
     }
-    const fetchedUsers = await secureFetch(`${process.env.API_BASE_URL}/api/secure/user`, accessToken)
+    const fetchedUsers = await secureFetch(this._getUrl(), accessToken)
     if (fetchedUsers) {
       this.setState({ users: fetchedUsers })
     }
   }
+
+  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL}
 
   async handleDeleteUser (user) {
     const { accessToken } = this.props.auth
@@ -64,7 +69,7 @@ class UserList extends Component {
       return
     }
     const result = await secureFetch(
-      `${process.env.API_BASE_URL}/api/secure/user/${user.id}`,
+      `${this._getUrl()}/${user.id}`,
       accessToken,
       'delete'
     )
@@ -77,7 +82,7 @@ class UserList extends Component {
     const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')
     if (!email) return
     const user = await secureFetch(
-      `${process.env.API_BASE_URL}/api/secure/user`,
+      this._getUrl(),
       accessToken,
       'post',
       { body: JSON.stringify({ email }) }
@@ -102,7 +107,7 @@ class UserList extends Component {
     if (!auth.isAuthenticated) return null
     return (
       <div>
-        <h2>List of Users</h2>
+        <h2>List of {this.props.type === 'admin' ? 'Admin' : 'OTP'} Users</h2>
         <button onClick={this.handleCreateUser}>Create user +</button>
         <button onClick={this.fetchUserData}>
           Fetch users <span aria-label='refresh' role='img'>🔄</span>

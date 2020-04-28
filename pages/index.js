@@ -19,7 +19,8 @@ export default function Index () {
   return (
     <div>
       <h1>OTP Admin Dashboard Overview</h1>
-      <UserList />
+      <UserList type='admin' />
+      <UserList type='otp' />
       <LogSummary />
       <style jsx>{`
           * {
