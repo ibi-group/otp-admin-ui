@@ -110,7 +110,9 @@ const NavLink = (props) => (
       </a>
       : props.href
         ? <Link href={props.href}>
-          <button>{props.children}</button>
+          {/* href is passed by NextLink */}
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
+          <a>{props.children}</a>
         </Link>
         : <button onClick={props.onClick}>
           {props.children}

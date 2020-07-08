@@ -1,5 +1,5 @@
 module.exports = (phase, { defaultConfig }) => {
-  // Add loader for markdown files.
+  // Add raw loader for markdown files.
   const webpack = (config) => {
     config.module.rules.push(
       {
@@ -9,7 +9,10 @@ module.exports = (phase, { defaultConfig }) => {
     )
     return config
   }
-  if (process.env.API_URL === undefined) {
+  // If running in a development environment, API_BASE_URL will be undefined
+  // so we use dotenv to load the env file. Otherwise, these are assigned in
+  // now.json to secrets stored within the zeit.co environment.
+  if (process.env.API_BASE_URL === undefined) {
     require('dotenv').config({path: '.env.build'})
   }
   const env = {
@@ -19,7 +22,7 @@ module.exports = (phase, { defaultConfig }) => {
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID
   }
-  // Return webpack configurations.
+  // Return config with environment variables and webpack configuration.
   return {
     env,
     webpack
