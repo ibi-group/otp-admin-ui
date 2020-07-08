@@ -1,19 +1,8 @@
 import moment from 'moment'
 import { Component } from 'react'
-import fetch from 'isomorphic-unfetch'
 import { withAuth } from 'use-auth0-hooks'
 
-async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
-    ...options
-  })
-  return res.json()
-}
+import { secureFetch } from '../util'
 
 class LogSummary extends Component {
   constructor (props) {
@@ -38,7 +27,7 @@ class LogSummary extends Component {
     if (!accessToken) {
       return
     }
-    const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs`, accessToken)
+    const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs?startDate=blah`, accessToken)
     if (fetchedLogs) {
       this.setState({ logs: fetchedLogs })
     }
@@ -60,7 +49,7 @@ class LogSummary extends Component {
     return (
       <div>
         <h2>Log Summary</h2>
-        <button onClick={this.handleFetchLogs}>Fetch logs 🔄</button>
+        <button onClick={this.handleFetchLogs}>Fetch logs</button>
         <a
           target='_blank'
           rel='noopener noreferrer'

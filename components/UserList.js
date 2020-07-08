@@ -1,30 +1,9 @@
 import { Component } from 'react'
-import fetch from 'isomorphic-unfetch'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
-import { AUTH0_SCOPE } from '../util/constants'
-
-const ADMIN_USER_URL = `${process.env.API_BASE_URL}/api/admin/user`
-const OTP_USER_URL = `${process.env.API_BASE_URL}/api/public/user`
-
-async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
-    ...options
-  })
-  if (res.status >= 400) {
-    const result = await res.json()
-    let message = `Error ${method}-ing user: ${result.message}`
-    if (result.detail) message += `  (${result.detail})`
-    return window.alert(message)
-  }
-  return res.json()
-}
+import { secureFetch } from '../util'
+import { ADMIN_USER_URL, AUTH0_SCOPE, OTP_USER_URL } from '../util/constants'
 
 class UserList extends Component {
   constructor (props) {
@@ -57,7 +36,7 @@ class UserList extends Component {
     }
   }
 
-  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL}
+  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL }
 
   async handleDeleteUser (user) {
     const { accessToken } = this.props.auth
