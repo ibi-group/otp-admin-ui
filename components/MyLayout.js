@@ -1,32 +1,99 @@
 import Head from 'next/head'
+import React, { Component } from 'react'
+import { withAuth } from 'use-auth0-hooks'
+
+import VerifyEmailScreen from '../components/verify-email-screen'
+import { AUTH0_SCOPE } from '../util/constants'
+import { fetchOrInitializeUser } from '../util/user-action'
+import { renderChildrenWithProps } from '../util/ui'
 
 import NavBar from './NavBar'
 
-export default ({ children }) => (
-  <div>
-    <Head>
-      <title>OTP Admin Dashboard</title>
-    </Head>
-    <NavBar />
-    <main>
-      <div className='container'>
-        {children}
+const ADMIN_USER_PATH = '/api/admin/user'
+const API_USER_PATH = '/api/secure/application'
+
+class MyLayout extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      adminUser: null,
+      apiUser: null,
+      isUserFetched: false
+    }
+  }
+
+  async componentDidUpdate () {
+    const { auth } = this.props
+    if (auth.isAuthenticated && !this.state.isUserFetched) {
+      // Fetch and cache user data
+      const state = this.state
+
+      console.log('Fetching admin and api users')
+
+      // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
+      this.setState({
+        ...state,
+        isUserFetched: true
+      })
+
+      const adminUser = await fetchOrInitializeUser(`${process.env.API_BASE_URL}${ADMIN_USER_PATH}`, process.env.API_KEY, auth)
+      const apiUser = await fetchOrInitializeUser(`${process.env.API_BASE_URL}${API_USER_PATH}`, process.env.API_KEY, auth)
+
+      this.setState({
+        ...state,
+        adminUser,
+        apiUser,
+        isUserFetched: true
+      })
+    }
+  }
+
+  render () {
+    const { auth, children } = this.props
+    const { isAuthenticated, isLoading, user } = auth
+    const { adminUser, apiUser } = this.state
+
+    let contents
+    if (isAuthenticated && user && !user.email_verified) {
+      contents = <VerifyEmailScreen />
+    } else {
+      contents = renderChildrenWithProps(children, this.state) // TODO: find a better way to pass props to children.
+    }
+
+    return (
+      <div>
+        <Head>
+          <title>OTP Admin Dashboard</title>
+        </Head>
+        <NavBar />
+        <main>
+          <div className='container'>
+            {contents}
+          </div>
+        </main>
+        <style jsx>{`
+          .container {
+            max-width: 42rem;
+            margin: 1.5rem auto;
+          }
+        `}
+        </style>
+        <style jsx global>{`
+          body {
+            margin: 0;
+            color: #333;
+            font-family: -apple-system, 'Segoe UI';
+          }
+        `}
+        </style>
       </div>
-    </main>
-    <style jsx>{`
-      .container {
-        max-width: 42rem;
-        margin: 1.5rem auto;
-      }
-    `}
-    </style>
-    <style jsx global>{`
-      body {
-        margin: 0;
-        color: #333;
-        font-family: -apple-system, 'Segoe UI';
-      }
-    `}
-    </style>
-  </div>
-)
+    )
+  }
+}
+
+export default withAuth(MyLayout, {
+  audience: process.env.AUTH0_AUDIENCE,
+  scope: AUTH0_SCOPE
+})
+

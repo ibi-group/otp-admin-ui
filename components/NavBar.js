@@ -10,12 +10,11 @@ export default function NavBar (props) {
   const { isAuthenticated, isLoading, login, logout } = useAuth()
 
   const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
-  const handleLogout = () => logout({ returnTo: URL_ROOT })
+  const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
 
   const afterLoginPath = '/signedin'
   const handleSignup = () => login({
     appState: { returnTo: { pathname, query } },
-    redirect_uri: `${getAuthRedirectUri()}${afterLoginPath}`,
     screen_hint: 'signup'
   })
 
