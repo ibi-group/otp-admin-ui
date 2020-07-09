@@ -27,7 +27,7 @@ class LogSummary extends Component {
     if (!accessToken) {
       return
     }
-    const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs?startDate=blah`, accessToken)
+    const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs`, accessToken)
     if (fetchedLogs) {
       this.setState({ logs: fetchedLogs })
     }
