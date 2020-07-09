@@ -11,7 +11,7 @@ import NavBar from './NavBar'
 /**
  * Fetches user preferences, or if none available, make an initial user preference object, and return the result.
  */
-export async function fetchUser (route, proc, auth) {
+async function fetchUser (route, proc, auth) {
   const { accessToken } = auth
 
   try {
