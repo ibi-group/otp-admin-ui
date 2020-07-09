@@ -19,22 +19,23 @@ class MyLayout extends Component {
     this.state = {
       adminUser: null,
       apiUser: null,
-      isUserFetched: false
+      isUserFetched: false,
+      isUserRequested: false
     }
   }
 
   async componentDidUpdate () {
     const { auth } = this.props
-    if (auth.isAuthenticated && !this.state.isUserFetched) {
-      // Fetch and cache user data
-      const state = this.state
+    const { accessToken, isAuthenticated } = auth 
+    const state = this.state
 
-      console.log('Fetching admin and api users')
+    if (isAuthenticated && accessToken && !state.isUserRequested) {
+      // Fetch and cache user data when the auth0 access token becomes available.
 
       // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
       this.setState({
         ...state,
-        isUserFetched: true
+        isUserRequested: true
       })
 
       const adminUser = await fetchOrInitializeUser(`${process.env.API_BASE_URL}${ADMIN_USER_PATH}`, process.env.API_KEY, auth)
@@ -44,7 +45,8 @@ class MyLayout extends Component {
         ...state,
         adminUser,
         apiUser,
-        isUserFetched: true
+        isUserFetched: true,
+        isUserRequested: true
       })
     }
   }

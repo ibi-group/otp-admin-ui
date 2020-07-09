@@ -1,20 +1,6 @@
 import { addUser, fetchUser, updateUser } from './middleware'
 import { isNewUser } from './user'
 
-function getStateForNewUser (auth0User) {
-  return {
-    auth0UserId: auth0User.sub,
-    email: auth0User.email,
-    hasConsentedToTerms: false, // User must agree to terms.
-    isEmailVerified: auth0User.email_verified,
-    notificationChannel: 'email',
-    phoneNumber: '',
-    recentLocations: [],
-    savedLocations: [],
-    storeTripHistory: false // User must opt in.
-  }
-}
-
 /**
  * Fetches user preferences, or if none available, make an initial user preference object, and return the result.
  */
@@ -51,7 +37,7 @@ export async function fetchOrInitializeUser (route, proc, auth) {
     if (!isNewAccount) {
       return resultData
     } else {
-      return getStateForNewUser(user)
+      return null
     }
   } catch (error) {
     // TODO: improve error handling.
