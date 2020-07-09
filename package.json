@@ -7,8 +7,7 @@
     "build": "next build",
     "dev": "next",
     "deploy": "now",
-    "lint": "mastarm lint components pages --quiet",
-    "start": "next start"
+    "lint": "mastarm lint components pages --quiet"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
