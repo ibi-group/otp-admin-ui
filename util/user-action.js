@@ -1,5 +1,4 @@
 import { addUser, fetchUser, updateUser } from './middleware'
-import { isNewUser } from './user'
 
 /**
  * Fetches user preferences, or if none available, make an initial user preference object, and return the result.
