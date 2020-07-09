@@ -3,17 +3,57 @@ import React, { Component } from 'react'
 import { withAuth } from 'use-auth0-hooks'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
-import { AUTH0_SCOPE } from '../util/constants'
-import { fetchOrInitializeUser } from '../util/user-action'
+import { ADMIN_USER_PATH, API_USER_PATH, AUTH0_SCOPE } from '../util/constants'
+import { fetchUser as fetchUserRaw } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
-
 import NavBar from './NavBar'
 
-const ADMIN_USER_PATH = '/api/admin/user'
-const API_USER_PATH = '/api/secure/application'
+/**
+ * Fetches user preferences, or if none available, make an initial user preference object, and return the result.
+ */
+export async function fetchUser (route, proc, auth) {
+  const { accessToken } = auth
+
+  try {
+    const result = await fetchUserRaw(route, proc, accessToken)
+
+    // Beware! On AWS API gateway, if a user is not found in the middleware
+    // (e.g. they just created their Auth0 password but have not completed the account setup form yet),
+    // the call above will return, for example:
+    // {
+    //    status: 'success',
+    //    data: {
+    //      "result": "ERR",
+    //      "message": "No user with id=000000 found.",
+    //      "code": 404,
+    //      "detail": null
+    //    }
+    // }
+    //
+    // The same call to a middleware instance that is not behind an API gateway
+    // will return:
+    // {
+    //    status: 'error',
+    //    message: 'Error get-ing user...'
+    // }
+    // TODO: Improve AWS response.
+
+    const resultData = result.data
+    const isNewAccount = result.status === 'error' || (resultData && resultData.result === 'ERR')
+
+    if (!isNewAccount) {
+      return resultData
+    } else {
+      return null
+    }
+  } catch (error) {
+    // TODO: improve error handling.
+    alert(`An error was encountered:\n${error}`)
+  }
+}
 
 class MyLayout extends Component {
-  constructor() {
+  constructor () {
     super()
 
     this.state = {
@@ -26,7 +66,7 @@ class MyLayout extends Component {
 
   async componentDidUpdate () {
     const { auth } = this.props
-    const { accessToken, isAuthenticated } = auth 
+    const { accessToken, isAuthenticated } = auth
     const state = this.state
 
     if (isAuthenticated && accessToken && !state.isUserRequested) {
@@ -38,8 +78,8 @@ class MyLayout extends Component {
         isUserRequested: true
       })
 
-      const adminUser = await fetchOrInitializeUser(`${process.env.API_BASE_URL}${ADMIN_USER_PATH}`, process.env.API_KEY, auth)
-      const apiUser = await fetchOrInitializeUser(`${process.env.API_BASE_URL}${API_USER_PATH}`, process.env.API_KEY, auth)
+      const adminUser = await fetchUser(`${process.env.API_BASE_URL}${ADMIN_USER_PATH}`, process.env.API_KEY, auth)
+      const apiUser = await fetchUser(`${process.env.API_BASE_URL}${API_USER_PATH}`, process.env.API_KEY, auth)
 
       this.setState({
         ...state,
@@ -53,8 +93,7 @@ class MyLayout extends Component {
 
   render () {
     const { auth, children } = this.props
-    const { isAuthenticated, isLoading, user } = auth
-    const { adminUser, apiUser } = this.state
+    const { isAuthenticated, user } = auth
 
     let contents
     if (isAuthenticated && user && !user.email_verified) {
@@ -85,7 +124,6 @@ class MyLayout extends Component {
           body {
             margin: 0;
             color: #333;
-            font-family: -apple-system, 'Segoe UI';
           }
         `}
         </style>
@@ -98,4 +136,3 @@ export default withAuth(MyLayout, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })
-
