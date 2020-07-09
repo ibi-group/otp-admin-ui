@@ -63,9 +63,14 @@ class LogSummary extends Component {
               {logsError && <pre>Error loading logs: {logsError}</pre>}
               <div>All requests made over the last 30 days</div>
               {logs.map((plan, planIndex) => {
+                // If there are no API key IDs for the usage plan, show nothing.
                 const keyIds = Object.keys(plan.items)
                 if (keyIds.length === 0) return null
+                // Render the # of requests per API key on each day beginning
+                // with the start date.
                 const startDate = moment(plan.startDate)
+                // TODO: Move this into its own component if the API key usage
+                // becomes much larger.
                 return (
                   <div className='usage-list'>
                     <h3>API Key: {keyIds[0]}</h3>
