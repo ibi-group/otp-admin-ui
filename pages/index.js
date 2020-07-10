@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import Select from 'react-select'
 import { useAuth } from 'use-auth0-hooks'
 
-import ErrorEventsSummary from '../components/ErrorEventsSummary'
-import LogSummary from '../components/LogSummary'
+import ErrorEventsDashboard from '../components/ErrorEventsDashboard'
+import RequestLogsDashboard from '../components/RequestLogsDashboard'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index () {
@@ -40,8 +40,8 @@ export default function Index () {
           Please select a category above.
         </p>
       }
-      {dashboard === 'errors' && <ErrorEventsSummary />}
-      {dashboard === 'requests' && <LogSummary />}
+      {dashboard === 'errors' && <ErrorEventsDashboard />}
+      {dashboard === 'requests' && <RequestLogsDashboard />}
       <style jsx>{`
           * {
             font-family: 'Arial';

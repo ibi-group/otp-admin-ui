@@ -4,7 +4,7 @@ import { withAuth } from 'use-auth0-hooks'
 
 import { secureFetch } from '../util'
 
-class LogSummary extends Component {
+class ErrorEventsDashboard extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -30,7 +30,14 @@ class LogSummary extends Component {
     const url = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
     const fetchedErrorEvents = await secureFetch(url, accessToken)
     if (fetchedErrorEvents) {
-      this.setState({ events: fetchedErrorEvents })
+      this.setState({
+        events: fetchedErrorEvents,
+        fetchMessage: `Updated at ${moment().format('h:mm:ss a')}`
+      })
+    } else {
+      this.setState({
+        fetchMessage: `Failed to update!`
+      })
     }
   }
 
@@ -44,26 +51,33 @@ class LogSummary extends Component {
 
   render () {
     const { auth } = this.props
-    const { events, eventsError } = this.state
+    const { events, eventsError, fetchMessage } = this.state
     if (!auth.isAuthenticated) return null
     const hasEvents = events && events.length > 0
-    console.log(events)
     return (
       <div>
         <h2>Error Events Summary</h2>
-        <button onClick={this.handleFetchErrors}>Fetch errors</button>
-        <a
-          target='_blank'
-          rel='noopener noreferrer'
-          href='https://app.bugsnag.com/'
-        >
-          Open Bugsnag console
-        </a>
+        <div className='controls'>
+          <button onClick={this.handleFetchErrors}>
+            Fetch errors
+          </button>
+          {fetchMessage && <span className='fetchMessage'>{fetchMessage}</span>}
+          <a
+            className='push'
+            target='_blank'
+            rel='noopener noreferrer'
+            href='https://app.bugsnag.com/'
+          >
+            Open Bugsnag console
+          </a>
+        </div>
         {hasEvents
           ? (
             <div>
               {eventsError && <pre>Error loading events: {eventsError}</pre>}
-              <div>All error events recorded over the last two weeks:</div>
+              <p>
+                All error events recorded over the last two weeks:
+              </p>
               <table>
                 <thead>
                   <tr>
@@ -99,9 +113,20 @@ class LogSummary extends Component {
           : 'No errors reported in the last two weeks.'
         }
         <style jsx>{`
-        td {
-          padding-right: 10px;
-        }
+          .controls {
+            display: flex;
+          }
+          .fetchMessage {
+            margin-left: 5px;
+            padding-top: 3px;
+            font-size: small;
+          }
+          .push {
+            margin-left: auto;
+          }
+          td {
+            padding-right: 10px;
+          }
         `}
         </style>
       </div>
@@ -109,7 +134,7 @@ class LogSummary extends Component {
   }
 }
 
-export default withAuth(LogSummary, {
+export default withAuth(ErrorEventsDashboard, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })
