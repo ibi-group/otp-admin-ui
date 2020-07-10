@@ -1,6 +1,7 @@
 import { useAuth } from 'use-auth0-hooks'
 
 import ApiUserSetup from '../components/ApiUserSetup'
+import LogSummary from '../components/LogSummary'
 import UserList from '../components/UserList'
 import { AUTH0_SCOPE } from '../util/constants'
 
@@ -20,7 +21,7 @@ export default function Index ({ adminUser, apiUser, isUserFetched }) {
   if (!isUserFetched) {
     return <div>Loading...</div>
   }
-  
+
   if (!adminUser && (!apiUser || !apiUser.hasConsentedToTerms)) {
     // New API user sign up will have both adminUser and apiUser to null,
     // or apiUser will have the terms not accepted.
@@ -31,7 +32,13 @@ export default function Index ({ adminUser, apiUser, isUserFetched }) {
   return (
     <div>
       <h1>OTP Admin Dashboard Overview</h1>
-      {adminUser && <UserList />}
+      {adminUser &&
+        <>
+          <UserList />
+          <UserList type='otp' />
+          <LogSummary />
+        </>
+      }
       <style jsx>{`
           * {
             font-family: 'Arial';

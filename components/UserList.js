@@ -1,27 +1,9 @@
 import { Component } from 'react'
-import fetch from 'isomorphic-unfetch'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
-import { AUTH0_SCOPE } from '../util/constants'
-
-async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
-    ...options
-  })
-  if (res.status >= 400) {
-    const result = await res.json()
-    let message = `Error ${method}-ing user: ${result.message}`
-    if (result.detail) message += `  (${result.detail})`
-    return window.alert(message)
-  }
-  return res.json()
-}
+import { secureFetch } from '../util'
+import { ADMIN_USER_URL, AUTH0_SCOPE, OTP_USER_URL } from '../util/constants'
 
 class UserList extends Component {
   constructor (props) {
@@ -48,11 +30,13 @@ class UserList extends Component {
     if (!accessToken) {
       return
     }
-    const fetchedUsers = await secureFetch(`${process.env.API_BASE_URL}/api/secure/user`, accessToken)
+    const fetchedUsers = await secureFetch(this._getUrl(), accessToken)
     if (fetchedUsers) {
       this.setState({ users: fetchedUsers })
     }
   }
+
+  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL }
 
   async handleDeleteUser (user) {
     const { accessToken } = this.props.auth
@@ -64,7 +48,7 @@ class UserList extends Component {
       return
     }
     const result = await secureFetch(
-      `${process.env.API_BASE_URL}/api/secure/user/${user.id}`,
+      `${this._getUrl()}/${user.id}`,
       accessToken,
       'delete'
     )
@@ -77,7 +61,7 @@ class UserList extends Component {
     const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')
     if (!email) return
     const user = await secureFetch(
-      `${process.env.API_BASE_URL}/api/secure/user`,
+      this._getUrl(),
       accessToken,
       'post',
       { body: JSON.stringify({ email }) }
@@ -102,7 +86,7 @@ class UserList extends Component {
     if (!auth.isAuthenticated) return null
     return (
       <div>
-        <h2>List of Users</h2>
+        <h2>List of {this.props.type === 'admin' ? 'Admin' : 'OTP'} Users</h2>
         <button onClick={this.handleCreateUser}>Create user +</button>
         <button onClick={this.fetchUserData}>
           Fetch users <span aria-label='refresh' role='img'>🔄</span>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-// import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
 import { useAuth } from 'use-auth0-hooks'
 import { getAuthRedirectUri } from '../util/auth'
@@ -35,6 +35,11 @@ export default function NavBar (props) {
           <li>
             <NavLink href='/about'>
               About
+            </NavLink>
+          </li>
+          <li>
+            <NavLink href='/status'>
+              Status
             </NavLink>
           </li>
           <li>
@@ -114,7 +119,7 @@ const NavLink = (props) => (
         target='_blank'
       >
         {props.children}{' '}
-        {/* <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} /> */}
+        <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
       </a>
       : props.href
         ? <Link href={props.href}>

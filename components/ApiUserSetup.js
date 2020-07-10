@@ -2,7 +2,7 @@ import { Component } from 'react'
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
-import { API_USER_PATH, AUTH0_SCOPE } from '../util/constants'
+import { API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { addUser, updateUser } from '../util/middleware'
 
 /**
@@ -62,7 +62,7 @@ class ApiUserSetup extends Component {
       apiUser.auth0UserId = auth.user.sub
       apiUser.email = auth.user.email
 
-      await createOrUpdateUser(`${process.env.API_BASE_URL}${API_USER_PATH}`, apiUser, true, process.env.API_KEY, auth.accessToken)
+      await createOrUpdateUser(`${process.env.API_BASE_URL}${API_USER_URL}`, apiUser, true, process.env.API_KEY, auth.accessToken)
     } else {
       alert('Could not save your data (Auth0 id was not available).')
     }

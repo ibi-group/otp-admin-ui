@@ -1,7 +1,9 @@
-export default function Index () {
+import MarkdownContent from '../components/MarkdownContent'
+
+import readme from '../README.md'
+
+export default function About () {
   return (
-    <div>
-      <p>About the dashboard</p>
-    </div>
+    <MarkdownContent title='About' markdown={readme} />
   )
 }
