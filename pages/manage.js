@@ -19,6 +19,7 @@ export default function Manage () {
     )
   }
   const manageOptions = [
+    // TODO: Remove Home or do we want a summary view here?
     {label: 'Home'}, // value is undefined to match missing query param
     {value: 'admin', label: 'Admin Users'},
     {value: 'otp', label: 'OpenTripPlanner Users'}
@@ -32,7 +33,14 @@ export default function Manage () {
         options={manageOptions}
         onChange={(option) => push(option.value ? `/manage?type=${option.value}` : '/manage')}
       />
-      {type === 'otp' || type === 'admin' ? <UserList type={type} /> : null}
+      {!type &&
+        <p>
+          Please select a category above.
+        </p>
+      }
+      {/* UserList component repeated to trigger re-render on type change. */}
+      {type === 'otp' && <UserList type={type} />}
+      {type === 'admin' && <UserList type={type} />}
       <style jsx>{`
           * {
             font-family: 'Arial';

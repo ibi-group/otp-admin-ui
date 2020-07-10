@@ -27,9 +27,10 @@ class LogSummary extends Component {
     if (!accessToken) {
       return
     }
-    const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`, accessToken)
-    if (fetchedLogs) {
-      this.setState({ events: fetchedLogs })
+    const url = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
+    const fetchedErrorEvents = await secureFetch(url, accessToken)
+    if (fetchedErrorEvents) {
+      this.setState({ events: fetchedErrorEvents })
     }
   }
 
@@ -58,45 +59,48 @@ class LogSummary extends Component {
         >
           Open Bugsnag console
         </a>
-        {
-          hasEvents && (
+        {hasEvents
+          ? (
             <div>
               {eventsError && <pre>Error loading events: {eventsError}</pre>}
               <div>All error events recorded over the last two weeks:</div>
-              <ul>
-                {events.map((event, eventIndex) => {
-                  return (
-                    <li key={eventIndex}>
-                      {event.errorId}
-                    </li>
-                  )
-                })}
-              </ul>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Error</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                {/* TODO: Pending a refactor of the backend Bugsnag code, this
+                  should split up the errors according to the project they are
+                  assigned to.
+                */}
+                {events
+                  .sort((a, b) => moment(b.received) - moment(a.received))
+                  .map((event, eventIndex) => {
+                    // TODO: these fields are subject to change pending backend
+                    // changes.
+                    return (
+                      <tr key={eventIndex}>
+                        <td>{event.projectName}</td>
+                        <td>
+                          {event.exceptions.map(e =>
+                            <span>{e.errorClass}: {e.message}</span>)
+                          }
+                        </td>
+                        <td>{moment(event.received).format('D MMM HH:mm')}</td>
+                      </tr>
+                    )
+                  })}
+              </table>
             </div>
           )
+          : 'No errors reported in the last two weeks.'
         }
         <style jsx>{`
-        .usage-list {
-          display: inline-block;
-          margin: 5px;
-        }
-
-        ul {
-          padding: 0;
-        }
-
-        li {
-          list-style: none;
-          margin: 5px 0;
-        }
-
-        a {
-          text-decoration: none;
-          color: blue;
-        }
-
-        a:hover {
-          opacity: 0.6;
+        td {
+          padding-right: 10px;
         }
         `}
         </style>

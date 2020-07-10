@@ -20,6 +20,8 @@ export default function Index () {
     )
   }
   const dashboardOptions = [
+    // TODO: Remove Home?
+    // TODO: Factor shared code with manage.js?
     {label: 'Home'}, // value is undefined to match missing query param
     {value: 'errors', label: 'Errors'},
     {value: 'requests', label: 'Request logs'}
@@ -33,6 +35,11 @@ export default function Index () {
         options={dashboardOptions}
         onChange={(option) => push(option.value ? `/?dashboard=${option.value}` : '/')}
       />
+      {!dashboard &&
+        <p>
+          Please select a category above.
+        </p>
+      }
       {dashboard === 'errors' && <ErrorEventsSummary />}
       {dashboard === 'requests' && <LogSummary />}
       <style jsx>{`
