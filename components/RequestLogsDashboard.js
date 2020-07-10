@@ -74,7 +74,7 @@ class RequestLogsDashboard extends Component {
           hasLogs && (
             <div>
               {logsError && <pre>Error loading logs: {logsError}</pre>}
-              <div>All requests made over the last 30 days</div>
+              <p>All requests made over the last 30 days</p>
               {logs.map((plan, planIndex) => {
                 // If there are no API key IDs for the usage plan, show nothing.
                 const keyIds = Object.keys(plan.items)
