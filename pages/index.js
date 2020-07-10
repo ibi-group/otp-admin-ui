@@ -1,5 +1,6 @@
 import { useAuth } from 'use-auth0-hooks'
 
+import LogSummary from '../components/LogSummary'
 import UserList from '../components/UserList'
 import { AUTH0_SCOPE } from '../util/constants'
 
@@ -18,7 +19,9 @@ export default function Index () {
   return (
     <div>
       <h1>OTP Admin Dashboard Overview</h1>
-      <UserList />
+      <UserList type='admin' />
+      <UserList type='otp' />
+      <LogSummary />
       <style jsx>{`
           * {
             font-family: 'Arial';
