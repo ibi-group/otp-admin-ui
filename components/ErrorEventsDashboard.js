@@ -86,27 +86,29 @@ class ErrorEventsDashboard extends Component {
                     <th>Date</th>
                   </tr>
                 </thead>
-                {/* TODO: Pending a refactor of the backend Bugsnag code, this
-                  should split up the errors according to the project they are
-                  assigned to.
-                */}
-                {events
-                  .sort((a, b) => moment(b.received) - moment(a.received))
-                  .map((event, eventIndex) => {
-                    // TODO: these fields are subject to change pending backend
-                    // changes.
-                    return (
-                      <tr key={eventIndex}>
-                        <td>{event.projectName}</td>
-                        <td>
-                          {event.exceptions.map(e =>
-                            <span>{e.errorClass}: {e.message}</span>)
-                          }
-                        </td>
-                        <td>{moment(event.received).format('D MMM HH:mm')}</td>
-                      </tr>
-                    )
-                  })}
+                <tbody>
+                  {/* TODO: Pending a refactor of the backend Bugsnag code, this
+                    should split up the errors according to the project they are
+                    assigned to.
+                  */}
+                  {events
+                    .sort((a, b) => moment(b.received) - moment(a.received))
+                    .map((event, eventIndex) => {
+                      // TODO: these fields are subject to change pending backend
+                      // changes.
+                      return (
+                        <tr key={eventIndex}>
+                          <td>{event.projectName}</td>
+                          <td>
+                            {event.exceptions.map((e, i) =>
+                              <span key={i}>{e.errorClass}: {e.message}</span>)
+                            }
+                          </td>
+                          <td>{moment(event.received).format('D MMM HH:mm')}</td>
+                        </tr>
+                      )
+                    })}
+                </tbody>
               </table>
             </div>
           )
