@@ -56,7 +56,7 @@ export async function secureFetch (url, accessToken, apiKey, method = 'get', opt
   }
 }
 
-export async function fetchUser (url, apiKey, token) {
+async function fetchUserRaw (url, apiKey, token) {
   const requestUrl = `${url}/fromtoken`
   return secureFetch(requestUrl, token, apiKey)
 }
@@ -66,6 +66,71 @@ export async function addUser (url, apiKey, token, data) {
   return secureFetch(requestUrl, token, apiKey, 'POST', {
     body: JSON.stringify(data)
   })
+}
+
+/**
+ * Fetches user preferences, or if none available, make an initial user
+ * preference object, and return the result.
+ */
+export async function fetchUser (route, proc, auth) {
+  const { accessToken } = auth
+
+  try {
+    const result = await fetchUserRaw(route, proc, accessToken)
+
+    // Beware! On AWS API gateway, if a user is not found in the middleware
+    // (e.g. they just created their Auth0 password but have not completed the account setup form yet),
+    // the call above will return, for example:
+    // {
+    //    status: 'success',
+    //    data: {
+    //      "result": "ERR",
+    //      "message": "No user with id=000000 found.",
+    //      "code": 404,
+    //      "detail": null
+    //    }
+    // }
+    //
+    // The same call to a middleware instance that is not behind an API gateway
+    // will return:
+    // {
+    //    status: 'error',
+    //    message: 'Error get-ing user...'
+    // }
+    // TODO: Improve AWS response.
+
+    const resultData = result.data
+    const isNewAccount = result.status === 'error' || (resultData && resultData.result === 'ERR')
+
+    if (!isNewAccount) {
+      return resultData
+    } else {
+      return null
+    }
+  } catch (error) {
+    // TODO: improve error handling.
+    alert(`An error was encountered:\n${error}`)
+  }
+}
+
+/**
+ * Updates (or creates) a user entry in the middleware.
+ */
+export async function createOrUpdateUser (url, userData, isNew, apiKey, accessToken) {
+  let result
+  if (isNew) {
+    result = await addUser(url, apiKey, accessToken, userData)
+  } else {
+    result = await updateUser(url, apiKey, accessToken, userData)
+  }
+
+  // TODO: improve the UI feedback messages for this.
+  if (result.status === 'success' && result.data) {
+    return result.data
+  } else {
+    alert(`An error was encountered:\n${JSON.stringify(result)}`)
+    return false
+  }
 }
 
 export async function updateUser (url, apiKey, token, data) {

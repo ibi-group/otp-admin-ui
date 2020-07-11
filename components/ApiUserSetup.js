@@ -2,27 +2,7 @@ import { Component } from 'react'
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
-import { API_USER_URL, AUTH0_SCOPE } from '../util/constants'
-import { addUser, updateUser } from '../util/middleware'
-
-/**
- * Updates (or creates) a user entry in the middleware.
- */
-async function createOrUpdateUser (url, userData, isNew, apiKey, accessToken) {
-  let result
-  if (isNew) {
-    result = await addUser(url, apiKey, accessToken, userData)
-  } else {
-    result = await updateUser(url, apiKey, accessToken, userData)
-  }
-
-  // TODO: improve the UI feedback messages for this.
-  if (result.status === 'success' && result.data) {
-    alert('Your preferences have been saved.')
-  } else {
-    alert(`An error was encountered:\n${JSON.stringify(result)}`)
-  }
-}
+import { AUTH0_SCOPE } from '../util/constants'
 
 class ApiUserSetup extends Component {
   constructor (props) {
@@ -51,18 +31,13 @@ class ApiUserSetup extends Component {
   }
 
   handleCreateAccount = async e => {
-    // Don't submit the form through the <form> way.
-    e.preventDefault()
-
-    const { auth } = this.props
+    const { auth, createUser } = this.props
     if (auth.user) {
       const { apiUser } = this.state
-
       // Add required attributes for middleware storage.
       apiUser.auth0UserId = auth.user.sub
       apiUser.email = auth.user.email
-
-      await createOrUpdateUser(`${process.env.API_BASE_URL}${API_USER_URL}`, apiUser, true, process.env.API_KEY, auth.accessToken)
+      createUser(apiUser)
     } else {
       alert('Could not save your data (Auth0 id was not available).')
     }
@@ -136,17 +111,25 @@ class ApiUserSetup extends Component {
           </Container>
 
           <Form.Group>
-            <Form.Check type='checkbox'>
-              <Form.Check.Input onChange={this.handleTermsChange} type='checkbox' value={hasConsentedToTerms} />
-              <Form.Check.Label>I have read and consent to the <a href='/'>Terms of Service</a> for using the FDOT RMCE API.</Form.Check.Label>
-            </Form.Check>
-            <Form.Text>You must agree to the terms to continue.</Form.Text>
+            <Form.Check
+              id='hasConsentedToTerms'
+              label={
+                <>
+                  I have read and consent to the{' '}
+                  <a href='/' target='_blank' rel='noopener noreferrer'>Terms of Service</a>{' '}
+                  for using the FDOT RMCE API.
+                </>
+              }
+              onChange={this.handleTermsChange}
+              type='checkbox'
+              value={hasConsentedToTerms}
+            />
+            <Form.Text muted>You must agree to the terms to continue.</Form.Text>
           </Form.Group>
 
           <Button
             disabled={!hasConsentedToTerms}
             onClick={this.handleCreateAccount}
-            type='submit'
             variant='primary'
           >
             Create account

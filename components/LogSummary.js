@@ -11,13 +11,9 @@ class LogSummary extends Component {
       logs: null,
       logsError: null
     }
-    // TODO fix babel plugin so we can use class properties
-    // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
-    // https://nextjs.org/docs/advanced-features/customizing-babel-config
-    this.handleFetchLogs = this.handleFetchLogs.bind(this)
   }
 
-  async handleFetchLogs (force = false) {
+  handleFetchLogs = async (force = false) => {
     const { logs, logsError } = this.state
     if (!force && (logs || logsError)) {
       return

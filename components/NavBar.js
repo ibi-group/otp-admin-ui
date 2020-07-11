@@ -11,8 +11,6 @@ export default function NavBar (props) {
 
   const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
   const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
-
-  const afterLoginPath = '/signedin'
   const handleSignup = () => login({
     appState: { returnTo: { pathname, query } },
     screen_hint: 'signup'
@@ -73,7 +71,7 @@ export default function NavBar (props) {
                 </li>
                 <li>
                   <NavLink onClick={handleSignup}>
-                    Sign up
+                    Sign up for API access
                   </NavLink>
                 </li>
               </>
