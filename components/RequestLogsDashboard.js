@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Component } from 'react'
+import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import { secureFetch } from '../util'
@@ -11,13 +12,9 @@ class RequestLogsDashboard extends Component {
       logs: null,
       logsError: null
     }
-    // TODO fix babel plugin so we can use class properties
-    // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
-    // https://nextjs.org/docs/advanced-features/customizing-babel-config
-    this.handleFetchLogs = this.handleFetchLogs.bind(this)
   }
 
-  async handleFetchLogs (force = false) {
+  handleFetchLogs = async (force = false) => {
     const { logs, logsError } = this.state
     if (!force && (logs || logsError)) {
       return
@@ -57,9 +54,9 @@ class RequestLogsDashboard extends Component {
       <div>
         <h2>Request Log Summary</h2>
         <div className='controls'>
-          <button onClick={this.handleFetchLogs}>
+          <Button onClick={this.handleFetchLogs}>
             Fetch logs
-          </button>
+          </Button>
           {fetchMessage && <span className='fetchMessage'>{fetchMessage}</span>}
           <a
             className='push'
@@ -105,12 +102,11 @@ class RequestLogsDashboard extends Component {
         }
         <style jsx>{`
           .controls {
+            align-items: center;
             display: flex;
           }
           .fetchMessage {
             margin-left: 5px;
-            padding-top: 3px;
-            font-size: small;
           }
           .push {
             margin-left: auto;

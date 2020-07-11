@@ -7,7 +7,7 @@ import { getAuthRedirectUri } from '../util/auth'
 export default function NavBar (props) {
   const { pathname, query } = useRouter()
   const { isAuthenticated, isLoading, login, logout } = useAuth()
-
+  const { adminUser } = props
   const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
   const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
   const handleSignup = () => login({
@@ -24,11 +24,13 @@ export default function NavBar (props) {
               Dashboard
             </NavLink>
           </li>
-          <li>
-            <NavLink href='/manage'>
-              Manage
-            </NavLink>
-          </li>
+          {adminUser &&
+            <li>
+              <NavLink href='/manage'>
+                Manage
+              </NavLink>
+            </li>
+          }
           {!isLoading && (
             isAuthenticated ? (
               <>
@@ -52,7 +54,7 @@ export default function NavBar (props) {
                 </li>
                 <li>
                   <NavLink onClick={handleSignup}>
-                    Sign up
+                    Sign up for API access
                   </NavLink>
                 </li>
               </>
@@ -80,7 +82,7 @@ export default function NavBar (props) {
         li {
           margin-right: 1rem;
         }
-        li:nth-child(2) {
+        li:nth-last-child(3) {
           margin-right: auto;
         }
       `}

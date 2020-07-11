@@ -5,7 +5,7 @@ import { useAuth } from 'use-auth0-hooks'
 import UserList from '../components/UserList'
 import { AUTH0_SCOPE } from '../util/constants'
 
-export default function Manage () {
+export default function Manage (props) {
   const { isAuthenticated, isLoading } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
@@ -16,6 +16,14 @@ export default function Manage () {
       <div>
         Please log in to view the Admin Dashboard.
       </div>
+    )
+  }
+  // Do not allow non-admin users to view page.
+  if (!props.adminUser) {
+    return (
+      <p>
+        Must be admin user to view this page!
+      </p>
     )
   }
   const manageOptions = [

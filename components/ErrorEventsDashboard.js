@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Component } from 'react'
+import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import { secureFetch } from '../util'
@@ -11,13 +12,9 @@ class ErrorEventsDashboard extends Component {
       events: null,
       eventsError: null
     }
-    // TODO fix babel plugin so we can use class properties
-    // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
-    // https://nextjs.org/docs/advanced-features/customizing-babel-config
-    this.handleFetchErrors = this.handleFetchErrors.bind(this)
   }
 
-  async handleFetchErrors (force = false) {
+  handleFetchErrors = async (force = false) => {
     const { events, eventsError } = this.state
     if (!force && (events || eventsError)) {
       return
@@ -58,9 +55,9 @@ class ErrorEventsDashboard extends Component {
       <div>
         <h2>Error Events Summary</h2>
         <div className='controls'>
-          <button onClick={this.handleFetchErrors}>
+          <Button onClick={this.handleFetchErrors}>
             Fetch errors
-          </button>
+          </Button>
           {fetchMessage && <span className='fetchMessage'>{fetchMessage}</span>}
           <a
             className='push'
@@ -116,12 +113,11 @@ class ErrorEventsDashboard extends Component {
         }
         <style jsx>{`
           .controls {
+            align-items: center;
             display: flex;
           }
           .fetchMessage {
             margin-left: 5px;
-            padding-top: 3px;
-            font-size: small;
           }
           .push {
             margin-left: auto;
