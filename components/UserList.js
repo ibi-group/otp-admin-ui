@@ -1,9 +1,10 @@
 import { Component } from 'react'
+import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
 import { secureFetch } from '../util'
-import { ADMIN_USER_URL, AUTH0_SCOPE, OTP_USER_URL } from '../util/constants'
+import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
 
 class UserList extends Component {
   constructor (props) {
@@ -30,7 +31,12 @@ class UserList extends Component {
     }
   }
 
-  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL }
+  _getUrl () {
+    const { type } = this.props
+    const selectedType = USER_TYPES.find(t => t.value === type)
+    if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
+    return selectedType.url
+  }
 
   handleDeleteUser = async (user) => {
     const { accessToken } = this.props.auth
@@ -75,16 +81,21 @@ class UserList extends Component {
   }
 
   render () {
-    const { auth } = this.props
+    const { auth, type } = this.props
     const { users, usersError } = this.state
+    const selectedType = USER_TYPES.find(t => t.value === type)
     if (!auth.isAuthenticated) return null
+    if (!selectedType) return <div>Page does not exist!</div>
     return (
       <div>
-        <h2>List of {this.props.type === 'admin' ? 'Admin' : 'OTP'} Users</h2>
-        <button onClick={this.handleCreateUser}>Create user +</button>
-        <button onClick={this.fetchUserData}>
+        <h2>List of {selectedType.label}</h2>
+        <Button variant='outline-primary' onClick={this.handleCreateUser}>
+          Create user +
+        </Button>
+        {' '}
+        <Button onClick={this.fetchUserData}>
           Fetch users <span aria-label='refresh' role='img'>🔄</span>
-        </button>
+        </Button>
         {
           users && (
             <div>
