@@ -78,8 +78,8 @@ class MyLayout extends Component {
         isUserRequested: true
       })
 
-      const adminUser = await fetchUser(`${process.env.API_BASE_URL}${ADMIN_USER_URL}`, process.env.API_KEY, auth)
-      const apiUser = await fetchUser(`${process.env.API_BASE_URL}${API_USER_URL}`, process.env.API_KEY, auth)
+      const adminUser = await fetchUser(ADMIN_USER_URL, process.env.API_KEY, auth)
+      const apiUser = await fetchUser(API_USER_URL, process.env.API_KEY, auth)
 
       this.setState({
         ...state,
@@ -92,6 +92,7 @@ class MyLayout extends Component {
   }
 
   render () {
+    console.log(this.state)
     const { auth, children } = this.props
     const { isAuthenticated, user } = auth
 
