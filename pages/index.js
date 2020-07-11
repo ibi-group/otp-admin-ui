@@ -1,8 +1,7 @@
 import { useAuth } from 'use-auth0-hooks'
 
+import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserSetup from '../components/ApiUserSetup'
-import LogSummary from '../components/LogSummary'
-import UserList from '../components/UserList'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index ({ adminUser, apiUser, isUserFetched }) {
@@ -28,23 +27,10 @@ export default function Index ({ adminUser, apiUser, isUserFetched }) {
     // For these users, display the API setup component.
     return <ApiUserSetup />
   }
-
+  if (adminUser) return <AdminUserDashboard />
   return (
     <div>
-      <h1>OTP Admin Dashboard Overview</h1>
-      {adminUser &&
-        <>
-          <UserList />
-          <UserList type='otp' />
-          <LogSummary />
-        </>
-      }
-      <style jsx>{`
-          * {
-            font-family: 'Arial';
-          }
-        `}
-      </style>
+      <h1>TODO: API User Dashboard</h1>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import VerifyEmailScreen from '../components/verify-email-screen'
 import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { fetchUser as fetchUserRaw } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
+import Footer from './Footer'
 import NavBar from './NavBar'
 
 /**
@@ -78,8 +79,8 @@ class MyLayout extends Component {
         isUserRequested: true
       })
 
-      const adminUser = await fetchUser(`${process.env.API_BASE_URL}${ADMIN_USER_URL}`, process.env.API_KEY, auth)
-      const apiUser = await fetchUser(`${process.env.API_BASE_URL}${API_USER_URL}`, process.env.API_KEY, auth)
+      const adminUser = await fetchUser(ADMIN_USER_URL, process.env.API_KEY, auth)
+      const apiUser = await fetchUser(API_USER_URL, process.env.API_KEY, auth)
 
       this.setState({
         ...state,
@@ -113,9 +114,11 @@ class MyLayout extends Component {
             {contents}
           </div>
         </main>
+        <Footer />
         <style jsx>{`
           .container {
             max-width: 42rem;
+            min-height: 500px;
             margin: 1.5rem auto;
           }
         `}
