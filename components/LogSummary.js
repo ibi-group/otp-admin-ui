@@ -2,7 +2,7 @@ import moment from 'moment'
 import { Component } from 'react'
 import { withAuth } from 'use-auth0-hooks'
 
-import { secureFetch } from '../util'
+import { secureFetch } from '../util/middleware'
 
 class LogSummary extends Component {
   constructor (props) {
@@ -24,8 +24,10 @@ class LogSummary extends Component {
       return
     }
     const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs`, accessToken)
-    if (fetchedLogs) {
-      this.setState({ logs: fetchedLogs })
+    if (fetchedLogs.status === 'success') {
+      this.setState({ logs: fetchedLogs.data })
+    } else {
+      window.alert(fetchedLogs.message)
     }
   }
 
