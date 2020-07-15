@@ -4,7 +4,7 @@ import { withAuth } from 'use-auth0-hooks'
 
 import { secureFetch } from '../util'
 
-class LogSummary extends Component {
+class RequestLogsDashboard extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -29,7 +29,14 @@ class LogSummary extends Component {
     }
     const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs`, accessToken)
     if (fetchedLogs) {
-      this.setState({ logs: fetchedLogs })
+      this.setState({
+        logs: fetchedLogs,
+        fetchMessage: `Updated at ${moment().format('h:mm:ss a')}`
+      })
+    } else {
+      this.setState({
+        fetchMessage: `Failed to update!`
+      })
     }
   }
 
@@ -43,25 +50,31 @@ class LogSummary extends Component {
 
   render () {
     const { auth } = this.props
-    const { logs, logsError } = this.state
+    const { logs, logsError, fetchMessage } = this.state
     if (!auth.isAuthenticated) return null
     const hasLogs = logs && logs.length > 0
     return (
       <div>
-        <h2>Log Summary</h2>
-        <button onClick={this.handleFetchLogs}>Fetch logs</button>
-        <a
-          target='_blank'
-          rel='noopener noreferrer'
-          href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
-        >
-          Open AWS console
-        </a>
+        <h2>Request Log Summary</h2>
+        <div className='controls'>
+          <button onClick={this.handleFetchLogs}>
+            Fetch logs
+          </button>
+          {fetchMessage && <span className='fetchMessage'>{fetchMessage}</span>}
+          <a
+            className='push'
+            target='_blank'
+            rel='noopener noreferrer'
+            href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
+          >
+            Open AWS console
+          </a>
+        </div>
         {
           hasLogs && (
             <div>
               {logsError && <pre>Error loading logs: {logsError}</pre>}
-              <div>All requests made over the last 30 days</div>
+              <p>All requests made over the last 30 days</p>
               {logs.map((plan, planIndex) => {
                 // If there are no API key IDs for the usage plan, show nothing.
                 const keyIds = Object.keys(plan.items)
@@ -91,28 +104,39 @@ class LogSummary extends Component {
           )
         }
         <style jsx>{`
-        .usage-list {
-          display: inline-block;
-          margin: 5px;
-        }
+          .controls {
+            display: flex;
+          }
+          .fetchMessage {
+            margin-left: 5px;
+            padding-top: 3px;
+            font-size: small;
+          }
+          .push {
+            margin-left: auto;
+          }
+          .usage-list {
+            display: inline-block;
+            margin: 5px;
+          }
 
-        ul {
-          padding: 0;
-        }
+          ul {
+            padding: 0;
+          }
 
-        li {
-          list-style: none;
-          margin: 5px 0;
-        }
+          li {
+            list-style: none;
+            margin: 5px 0;
+          }
 
-        a {
-          text-decoration: none;
-          color: blue;
-        }
+          a {
+            text-decoration: none;
+            color: blue;
+          }
 
-        a:hover {
-          opacity: 0.6;
-        }
+          a:hover {
+            opacity: 0.6;
+          }
         `}
         </style>
       </div>
@@ -120,7 +144,7 @@ class LogSummary extends Component {
   }
 }
 
-export default withAuth(LogSummary, {
+export default withAuth(RequestLogsDashboard, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })

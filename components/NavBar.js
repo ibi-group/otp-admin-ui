@@ -1,8 +1,7 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
-
 import { useAuth } from 'use-auth0-hooks'
+
+import NavLink from './NavLink'
 import { getAuthRedirectUri } from '../util/auth'
 
 export default function NavBar (props) {
@@ -18,30 +17,12 @@ export default function NavBar (props) {
         <ul>
           <li>
             <NavLink href='/'>
-              Home
+              Dashboard
             </NavLink>
           </li>
           <li>
-            <NavLink href='/faq'>
-              FAQ
-            </NavLink>
-          </li>
-          <li>
-            <NavLink href='/about'>
-              About
-            </NavLink>
-          </li>
-          <li>
-            <NavLink href='/status'>
-              Status
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              href='https://fdot-otp.ibi-transit.com/'
-              external
-            >
-              View RMCE
+            <NavLink href='/manage'>
+              Manage
             </NavLink>
           </li>
           {!isLoading && (
@@ -88,7 +69,7 @@ export default function NavBar (props) {
         li {
           margin-right: 1rem;
         }
-        li:nth-child(3) {
+        li:nth-child(2) {
           margin-right: auto;
         }
       `}
@@ -96,43 +77,3 @@ export default function NavBar (props) {
     </header>
   )
 }
-
-const NavLink = (props) => (
-  <>
-    {props.external
-      ? <a
-        href={props.href}
-        rel='noopener noreferrer'
-        target='_blank'
-      >
-        {props.children}{' '}
-        <ExternalLinkAlt style={{ marginBottom: '3px' }} size={10} />
-      </a>
-      : props.href
-        ? <Link href={props.href}>
-          {/* href is passed by NextLink */}
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <a>{props.children}</a>
-        </Link>
-        : <button onClick={props.onClick}>
-          {props.children}
-        </button>
-    }
-    <style jsx>{`
-      a {
-        color: #fff;
-        text-decoration: none;
-      }
-      button {
-        font-size: 1rem;
-        color: inherit;
-        border: none;
-        background: none;
-        padding: 0;
-        font: inherit;
-        cursor: pointer;
-      }
-    `}
-    </style>
-  </>
-)

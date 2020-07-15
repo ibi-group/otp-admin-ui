@@ -1,5 +1,6 @@
 import Head from 'next/head'
 
+import Footer from './Footer'
 import NavBar from './NavBar'
 
 export default ({ children }) => (
@@ -13,9 +14,11 @@ export default ({ children }) => (
         {children}
       </div>
     </main>
+    <Footer />
     <style jsx>{`
       .container {
         max-width: 42rem;
+        min-height: 500px;
         margin: 1.5rem auto;
       }
     `}
