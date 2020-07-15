@@ -4,6 +4,7 @@ import { useAuth } from 'use-auth0-hooks'
 import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserSetup from '../components/ApiUserSetup'
 import ApiUserWelcome from '../components/ApiUserWelcome'
+import VerifyEmailScreen from '../components/verify-email-screen'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index (props) {
@@ -11,22 +12,27 @@ export default function Index (props) {
     adminUser,
     apiUser,
     createUser,
-    isUserFetched,
-    isUserRequested
+    isUserFetched
   } = props
   const { query } = useRouter()
-  const { isAuthenticated } = useAuth({
+  const { isAuthenticated, user } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-  // FIXME: isLoading appears to be broken in useAuth.
-  if (!isAuthenticated && !isUserRequested) {
+
+  if (!isAuthenticated) {
     return (
       <div>
         Please log in to view the Admin Dashboard.
       </div>
     )
   }
+
+  if (user && !user.email_verified) {
+    return <VerifyEmailScreen />
+  }
+
+  // FIXME: isLoading appears to be broken in useAuth.
   if (!isUserFetched) {
     return <div>Loading...</div>
   }

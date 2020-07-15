@@ -3,7 +3,7 @@ import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
-import { secureFetch } from '../util'
+import { secureFetch } from '../util/middleware'
 
 class ErrorEventsDashboard extends Component {
   constructor (props) {
@@ -26,9 +26,9 @@ class ErrorEventsDashboard extends Component {
     }
     const url = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
     const fetchedErrorEvents = await secureFetch(url, accessToken)
-    if (fetchedErrorEvents) {
+    if (fetchedErrorEvents.status === 'sucess') {
       this.setState({
-        events: fetchedErrorEvents,
+        events: fetchedErrorEvents.data,
         fetchMessage: `Updated at ${moment().format('h:mm:ss a')}`
       })
     } else {

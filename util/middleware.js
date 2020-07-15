@@ -1,33 +1,6 @@
 if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
 
 /**
- * This method builds the options object for call to the fetch method.
- * @param {string} accessToken If non-null, a bearer Authorization header will be added with the specified token.
- * @param {string} apiKey If non-null, an x-api-key header will be added with the specified key.
- * @param {string} method The HTTP method to execute.
- * @param {*} options Extra options to pass to fetch.
- */
-export function getSecureFetchOptions (accessToken, apiKey, method = 'get', options = {}) {
-  const headers = {
-    // JSON request bodies only.
-    'Content-Type': 'application/json'
-  }
-  if (apiKey) {
-    headers['x-api-key'] = apiKey
-  }
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`
-  }
-
-  return {
-    method,
-    mode: 'cors', // Middleware is at a different URL.
-    headers,
-    ...options
-  }
-}
-
-/**
  * This convenience method wraps a fetch call to the specified URL
  * with the token and api key added (if provided) to the HTTP request header,
  * and wraps the response by adding the success/error status of the call.
@@ -37,8 +10,15 @@ export function getSecureFetchOptions (accessToken, apiKey, method = 'get', opti
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra options to pass to fetch.
  */
-export async function secureFetch (url, accessToken, apiKey, method = 'get', options = {}) {
-  const res = await fetch(url, getSecureFetchOptions(accessToken, apiKey, method, options))
+export async function secureFetch (url, accessToken, method = 'get', options = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
+    },
+    ...options
+  })
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result = await res.json()
@@ -56,14 +36,9 @@ export async function secureFetch (url, accessToken, apiKey, method = 'get', opt
   }
 }
 
-async function fetchUserRaw (url, apiKey, token) {
-  const requestUrl = `${url}/fromtoken`
-  return secureFetch(requestUrl, token, apiKey)
-}
-
-export async function addUser (url, apiKey, token, data) {
+export async function addUser (url, token, data) {
   const requestUrl = `${url}`
-  return secureFetch(requestUrl, token, apiKey, 'POST', {
+  return secureFetch(requestUrl, token, 'POST', {
     body: JSON.stringify(data)
   })
 }
@@ -72,11 +47,12 @@ export async function addUser (url, apiKey, token, data) {
  * Fetches user preferences, or if none available, make an initial user
  * preference object, and return the result.
  */
-export async function fetchUser (route, proc, auth) {
+export async function fetchUser (route, apiKey, auth) {
   const { accessToken } = auth
+  const requestUrl = `${route}/fromtoken`
 
   try {
-    const result = await fetchUserRaw(route, proc, accessToken)
+    const result = await secureFetch(requestUrl, accessToken)
 
     // Beware! On AWS API gateway, if a user is not found in the middleware
     // (e.g. they just created their Auth0 password but have not completed the account setup form yet),
@@ -116,12 +92,12 @@ export async function fetchUser (route, proc, auth) {
 /**
  * Updates (or creates) a user entry in the middleware.
  */
-export async function createOrUpdateUser (url, userData, isNew, apiKey, accessToken) {
+export async function createOrUpdateUser (url, userData, isNew, accessToken) {
   let result
   if (isNew) {
-    result = await addUser(url, apiKey, accessToken, userData)
+    result = await addUser(url, accessToken, userData)
   } else {
-    result = await updateUser(url, apiKey, accessToken, userData)
+    result = await updateUser(url, accessToken, userData)
   }
 
   // TODO: improve the UI feedback messages for this.
@@ -133,12 +109,12 @@ export async function createOrUpdateUser (url, userData, isNew, apiKey, accessTo
   }
 }
 
-export async function updateUser (url, apiKey, token, data) {
+export async function updateUser (url, token, data) {
   const { id } = data // Middleware ID, NOT auth0 (or similar) id.
   const requestUrl = `${url}/${id}`
 
   if (id) {
-    return secureFetch(requestUrl, token, apiKey, 'PUT', {
+    return secureFetch(requestUrl, token, 'PUT', {
       body: JSON.stringify(data)
     })
   } else {
