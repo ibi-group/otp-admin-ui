@@ -26,7 +26,9 @@ export default function Footer (props) {
               </NavLink>
             </li>
             <li>
-              <NavLink href='https://fdot-rmce.statuspage.io/' external>
+              <NavLink
+                href={process.env.STATUS_PAGE_URL}
+                external>
                 Status
               </NavLink>
             </li>
@@ -38,7 +40,7 @@ export default function Footer (props) {
             <li>
               <NavLink
                 // FIXME: Update link
-                href='https://fdot-otp.ibi-transit.com/'
+                href={process.env.OTP_UI_URL}
                 external
               >
                 View Trip Planner
@@ -46,8 +48,7 @@ export default function Footer (props) {
             </li>
             <li>
               <NavLink
-                // FIXME: Update link
-                href='#'
+                href={process.env.API_DOCUMENTATION_URL}
                 external
               >
                 API documentation
@@ -73,15 +74,6 @@ export default function Footer (props) {
               </NavLink>
             </li>
           </ul>
-        </div>
-        {/* FIXME: Remove subscribe? */}
-        <div className='ft-main-item'>
-          <h2 className='ft-title'>Stay Updated</h2>
-          <p>Subscribe to our newsletter to get our latest news.</p>
-          <form>
-            <input type='email' name='email' placeholder='Enter email address' />
-            <input type='submit' value='Subscribe' />
-          </form>
         </div>
       </section>
       <section className='ft-legal'>
