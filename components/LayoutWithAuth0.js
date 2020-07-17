@@ -3,6 +3,7 @@ import { withRouter } from 'next/router'
 import React, { Component } from 'react'
 import { withAuth } from 'use-auth0-hooks'
 
+import VerifyEmailScreen from '../components/verify-email-screen'
 import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { createOrUpdateUser, fetchUser } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
@@ -66,10 +67,17 @@ class LayoutWithAuth0 extends Component {
   }
 
   render () {
-    const { children } = this.props
+    const { auth, children } = this.props
     const { adminUser } = this.state
+    const { user } = auth
 
-    const contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser}) // TODO: find a better way to pass props to children.
+    let contents
+    if (user && !user.email_verified) {
+      contents = <VerifyEmailScreen />
+    } else {
+      // TODO: find a better way to pass props to children.
+      contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser})
+    }
 
     return (
       <div>
