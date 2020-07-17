@@ -11,22 +11,23 @@ export default function Index (props) {
     adminUser,
     apiUser,
     createUser,
-    isUserFetched,
-    isUserRequested
+    isUserFetched
   } = props
   const { query } = useRouter()
   const { isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-  // FIXME: isLoading appears to be broken in useAuth.
-  if (!isAuthenticated && !isUserRequested) {
+
+  if (!isAuthenticated) {
     return (
       <div>
         Please log in to view the Admin Dashboard.
       </div>
     )
   }
+
+  // FIXME: isLoading appears to be broken in useAuth.
   if (!isUserFetched) {
     return <div>Loading...</div>
   }

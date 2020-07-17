@@ -3,8 +3,8 @@ import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
-import { secureFetch } from '../util'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
+import { secureFetch } from '../util/middleware'
 
 class UserList extends Component {
   constructor (props) {
@@ -26,8 +26,10 @@ class UserList extends Component {
       return
     }
     const fetchedUsers = await secureFetch(this._getUrl(), accessToken)
-    if (fetchedUsers) {
-      this.setState({ users: fetchedUsers })
+    if (fetchedUsers.status === 'success') {
+      this.setState({ users: fetchedUsers.data })
+    } else {
+      window.alert(fetchedUsers.message)
     }
   }
 
@@ -66,8 +68,8 @@ class UserList extends Component {
       'post',
       { body: JSON.stringify({ email }) }
     )
-    if (user) {
-      window.alert(`Created user: ${user.email}`)
+    if (user.status === 'success') {
+      window.alert(`Created user: ${user.data.email}`)
       await this.fetchUserData(true)
     }
   }

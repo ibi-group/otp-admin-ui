@@ -3,7 +3,7 @@ import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
-import { secureFetch } from '../util'
+import { secureFetch } from '../util/middleware'
 
 class RequestLogsDashboard extends Component {
   constructor (props) {
@@ -25,9 +25,10 @@ class RequestLogsDashboard extends Component {
       return
     }
     const fetchedLogs = await secureFetch(`${process.env.API_BASE_URL}/api/secure/logs`, accessToken)
-    if (fetchedLogs) {
+
+    if (fetchedLogs.status === 'success') {
       this.setState({
-        logs: fetchedLogs,
+        logs: fetchedLogs.data,
         fetchMessage: `Updated at ${moment().format('h:mm:ss a')}`
       })
     } else {

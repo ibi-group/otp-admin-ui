@@ -10,7 +10,7 @@ import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
 
-class MyLayout extends Component {
+class LayoutWithAuth0 extends Component {
   constructor () {
     super()
 
@@ -69,13 +69,14 @@ class MyLayout extends Component {
   render () {
     const { auth, children } = this.props
     const { adminUser } = this.state
-    const { isAuthenticated, user } = auth
+    const { user } = auth
 
     let contents
-    if (isAuthenticated && user && !user.email_verified) {
+    if (user && !user.email_verified) {
       contents = <VerifyEmailScreen />
     } else {
-      contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser}) // TODO: find a better way to pass props to children.
+      // TODO: find a better way to pass props to children.
+      contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser})
     }
 
     return (
@@ -111,7 +112,7 @@ class MyLayout extends Component {
 }
 
 export default withRouter(
-  withAuth(MyLayout, {
+  withAuth(LayoutWithAuth0, {
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
