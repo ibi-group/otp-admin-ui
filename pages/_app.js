@@ -2,7 +2,7 @@ import App from 'next/app'
 import Router from 'next/router'
 import { Auth0Provider } from 'use-auth0-hooks'
 
-import Layout from '../components/MyLayout'
+import LayoutWithAuth0 from '../components/LayoutWithAuth0'
 import { getAuthRedirectUri } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'
 
@@ -77,9 +77,9 @@ export default class Root extends App {
         onRedirecting={onRedirecting}
         onRedirectCallback={onRedirectCallback}
       >
-        <Layout>
+        <LayoutWithAuth0>
           <Component {...pageProps} />
-        </Layout>
+        </LayoutWithAuth0>
       </Auth0Provider>
     )
   }
