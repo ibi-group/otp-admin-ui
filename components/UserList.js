@@ -1,9 +1,10 @@
 import { Component } from 'react'
+import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
-import { secureFetch } from '../util'
-import { ADMIN_USER_URL, AUTH0_SCOPE, OTP_USER_URL } from '../util/constants'
+import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
+import { secureFetch } from '../util/middleware'
 
 class UserList extends Component {
   constructor (props) {
@@ -12,15 +13,9 @@ class UserList extends Component {
       users: null,
       usersError: null
     }
-    // TODO fix babel plugin so we can use class properties
-    // https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
-    // https://nextjs.org/docs/advanced-features/customizing-babel-config
-    this.handleCreateUser = this.handleCreateUser.bind(this)
-    this.fetchUserData = this.fetchUserData.bind(this)
-    this.handleDeleteUser = this.handleDeleteUser.bind(this)
   }
 
-  async fetchUserData (force = false) {
+  fetchUserData = async (force = false) => {
     const { users, usersError } = this.state
     if (!force && (users || usersError)) {
       return
@@ -31,14 +26,21 @@ class UserList extends Component {
       return
     }
     const fetchedUsers = await secureFetch(this._getUrl(), accessToken)
-    if (fetchedUsers) {
-      this.setState({ users: fetchedUsers })
+    if (fetchedUsers.status === 'success') {
+      this.setState({ users: fetchedUsers.data })
+    } else {
+      window.alert(fetchedUsers.message)
     }
   }
 
-  _getUrl () { return this.props.type === 'admin' ? ADMIN_USER_URL : OTP_USER_URL }
+  _getUrl () {
+    const { type } = this.props
+    const selectedType = USER_TYPES.find(t => t.value === type)
+    if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
+    return selectedType.url
+  }
 
-  async handleDeleteUser (user) {
+  handleDeleteUser = async (user) => {
     const { accessToken } = this.props.auth
     let message = `Are you sure you want to delete user ${user.email}?`
     if (user.isDataToolsUser) {
@@ -56,7 +58,7 @@ class UserList extends Component {
     await this.fetchUserData(true)
   }
 
-  async handleCreateUser () {
+  handleCreateUser = async () => {
     const { accessToken } = this.props.auth
     const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')
     if (!email) return
@@ -66,8 +68,8 @@ class UserList extends Component {
       'post',
       { body: JSON.stringify({ email }) }
     )
-    if (user) {
-      window.alert(`Created user: ${user.email}`)
+    if (user.status === 'success') {
+      window.alert(`Created user: ${user.data.email}`)
       await this.fetchUserData(true)
     }
   }
@@ -81,16 +83,21 @@ class UserList extends Component {
   }
 
   render () {
-    const { auth } = this.props
+    const { auth, type } = this.props
     const { users, usersError } = this.state
+    const selectedType = USER_TYPES.find(t => t.value === type)
     if (!auth.isAuthenticated) return null
+    if (!selectedType) return <div>Page does not exist!</div>
     return (
       <div>
-        <h2>List of {this.props.type === 'admin' ? 'Admin' : 'OTP'} Users</h2>
-        <button onClick={this.handleCreateUser}>Create user +</button>
-        <button onClick={this.fetchUserData}>
+        <h2>List of {selectedType.label}</h2>
+        <Button variant='outline-primary' onClick={this.handleCreateUser}>
+          Create user +
+        </Button>
+        {' '}
+        <Button onClick={this.fetchUserData}>
           Fetch users <span aria-label='refresh' role='img'>🔄</span>
-        </button>
+        </Button>
         {
           users && (
             <div>

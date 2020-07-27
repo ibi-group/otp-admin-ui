@@ -3,9 +3,9 @@ import Select from 'react-select'
 import { useAuth } from 'use-auth0-hooks'
 
 import UserList from '../components/UserList'
-import { AUTH0_SCOPE } from '../util/constants'
+import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
 
-export default function Manage () {
+export default function Manage (props) {
   const { isAuthenticated, isLoading } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
@@ -18,11 +18,18 @@ export default function Manage () {
       </div>
     )
   }
+  // Do not allow non-admin users to view page.
+  if (!props.adminUser) {
+    return (
+      <p>
+        Must be admin user to view this page!
+      </p>
+    )
+  }
   const manageOptions = [
     // TODO: Remove Home or do we want a summary view here?
     {label: 'Home'}, // value is undefined to match missing query param
-    {value: 'admin', label: 'Admin Users'},
-    {value: 'otp', label: 'OpenTripPlanner Users'}
+    ...USER_TYPES
   ]
   return (
     <div>
@@ -41,6 +48,7 @@ export default function Manage () {
       {/* UserList component repeated to trigger re-render on type change. */}
       {type === 'otp' && <UserList type={type} />}
       {type === 'admin' && <UserList type={type} />}
+      {type === 'api' && <UserList type={type} />}
       <style jsx>{`
           * {
             font-family: 'Arial';

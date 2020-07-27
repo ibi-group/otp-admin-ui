@@ -1,53 +1,53 @@
 import { useRouter } from 'next/router'
-import Select from 'react-select'
 import { useAuth } from 'use-auth0-hooks'
 
-import ErrorEventsDashboard from '../components/ErrorEventsDashboard'
-import RequestLogsDashboard from '../components/RequestLogsDashboard'
+import AdminUserDashboard from '../components/AdminUserDashboard'
+import ApiUserSetup from '../components/ApiUserSetup'
+import ApiUserWelcome from '../components/ApiUserWelcome'
 import { AUTH0_SCOPE } from '../util/constants'
 
-export default function Index () {
-  const { isAuthenticated, isLoading } = useAuth({
+export default function Index (props) {
+  const {
+    adminUser,
+    apiUser,
+    createUser,
+    isUserFetched
+  } = props
+  const { query } = useRouter()
+  const { isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-  const { push, query: { dashboard } } = useRouter()
-  if (!isLoading && !isAuthenticated) {
+
+  if (!isAuthenticated) {
     return (
       <div>
         Please log in to view the Admin Dashboard.
       </div>
     )
   }
-  const dashboardOptions = [
-    // TODO: Remove Home?
-    // TODO: Factor shared code with manage.js?
-    {label: 'Home'}, // value is undefined to match missing query param
-    {value: 'errors', label: 'Errors'},
-    {value: 'requests', label: 'Request logs'}
-  ]
+
+  // FIXME: isLoading appears to be broken in useAuth.
+  if (!isUserFetched) {
+    return <div>Loading...</div>
+  }
+
+  if (!adminUser && (!apiUser || !apiUser.hasConsentedToTerms)) {
+    // New API user sign up will have both adminUser and apiUser to null,
+    // or apiUser will have the terms not accepted.
+    // For these users, display the API setup component.
+    return <ApiUserSetup createUser={createUser} />
+  }
+  // If an API user has just been created, show welcome message.
+  let banner
+  if (query && query.newApiAccount) {
+    banner = <ApiUserWelcome />
+  }
+  if (adminUser) return <AdminUserDashboard />
   return (
     <div>
-      <h1>Dashboard</h1>
-      <Select
-        placeholder='Select dashboard...'
-        value={dashboardOptions.find(o => o.value === dashboard)}
-        options={dashboardOptions}
-        onChange={(option) => push(option.value ? `/?dashboard=${option.value}` : '/')}
-      />
-      {!dashboard &&
-        <p>
-          Please select a category above.
-        </p>
-      }
-      {dashboard === 'errors' && <ErrorEventsDashboard />}
-      {dashboard === 'requests' && <RequestLogsDashboard />}
-      <style jsx>{`
-          * {
-            font-family: 'Arial';
-          }
-        `}
-      </style>
+      {banner}
+      <h1>TODO: API User Dashboard</h1>
     </div>
   )
 }
