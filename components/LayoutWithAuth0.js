@@ -29,7 +29,6 @@ class LayoutWithAuth0 extends Component {
       API_USER_URL,
       apiUser,
       true,
-      process.env.API_KEY,
       accessToken
     )
     if (newApiUser) {

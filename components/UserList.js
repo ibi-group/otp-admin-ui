@@ -1,3 +1,4 @@
+import { withRouter } from 'next/router'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
@@ -59,19 +60,8 @@ class UserList extends Component {
   }
 
   handleCreateUser = async () => {
-    const { accessToken } = this.props.auth
-    const email = window.prompt('Enter an email address', 'landontreed+hello@gmail.com')
-    if (!email) return
-    const user = await secureFetch(
-      this._getUrl(),
-      accessToken,
-      'post',
-      { body: JSON.stringify({ email }) }
-    )
-    if (user.status === 'success') {
-      window.alert(`Created user: ${user.data.email}`)
-      await this.fetchUserData(true)
-    }
+    const {router, type} = this.props
+    router.push(`/manage?type=${type}&mode=create`)
   }
 
   async componentDidMount () {
@@ -88,6 +78,10 @@ class UserList extends Component {
     const selectedType = USER_TYPES.find(t => t.value === type)
     if (!auth.isAuthenticated) return null
     if (!selectedType) return <div>Page does not exist!</div>
+    // TODO: Add way to create user...
+    // if (this.props.router.query.mode === 'create') {
+    //   return <CreateUser type={type} />
+    // }
     return (
       <div>
         <h2>List of {selectedType.label}</h2>
@@ -111,7 +105,7 @@ class UserList extends Component {
                       onDeleteUser={this.handleDeleteUser}
                     />
                   ))
-                  : 'No users exist'}
+                  : <p>No users exist</p>}
               </ul>
             </div>
           )
@@ -141,7 +135,7 @@ class UserList extends Component {
   }
 }
 
-export default withAuth(UserList, {
+export default withRouter(withAuth(UserList, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
-})
+}))

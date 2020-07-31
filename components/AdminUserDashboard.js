@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import Select from 'react-select'
 
-import ErrorEventsDashboard from '../components/ErrorEventsDashboard'
-import RequestLogsDashboard from '../components/RequestLogsDashboard'
+import ErrorEventsDashboard from './ErrorEventsDashboard'
+import RequestLogsDashboard from './RequestLogsDashboard'
 
 export default function AdminUserDashboard (props) {
   const { push, query: { dashboard } } = useRouter()
@@ -28,7 +28,7 @@ export default function AdminUserDashboard (props) {
         </p>
       }
       {dashboard === 'errors' && <ErrorEventsDashboard />}
-      {dashboard === 'requests' && <RequestLogsDashboard />}
+      {dashboard === 'requests' && <RequestLogsDashboard isAdmin />}
       <style jsx>{`
           * {
             font-family: 'Arial';

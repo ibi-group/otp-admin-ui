@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
+import ApiKeyUsage from './ApiKeyUsage'
 import { secureFetch } from '../util/middleware'
 
 class RequestLogsDashboard extends Component {
@@ -47,7 +48,7 @@ class RequestLogsDashboard extends Component {
   }
 
   render () {
-    const { auth } = this.props
+    const { auth, isAdmin } = this.props
     const { logs, logsError, fetchMessage } = this.state
     if (!auth.isAuthenticated) return null
     const hasLogs = logs && logs.length > 0
@@ -59,14 +60,16 @@ class RequestLogsDashboard extends Component {
             Fetch logs
           </Button>
           {fetchMessage && <span className='fetchMessage'>{fetchMessage}</span>}
-          <a
-            className='push'
-            target='_blank'
-            rel='noopener noreferrer'
-            href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
-          >
-            Open AWS console
-          </a>
+          {isAdmin &&
+            <a
+              className='push'
+              target='_blank'
+              rel='noopener noreferrer'
+              href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
+            >
+              Open AWS console
+            </a>
+          }
         </div>
         {
           hasLogs && (
@@ -74,30 +77,9 @@ class RequestLogsDashboard extends Component {
               {logsError && <pre>Error loading logs: {logsError}</pre>}
               <p>All requests made over the last 30 days</p>
               {logs.map((plan, planIndex) => {
-                // If there are no API key IDs for the usage plan, show nothing.
-                const keyIds = Object.keys(plan.items)
-                if (keyIds.length === 0) return null
-                // Render the # of requests per API key on each day beginning
-                // with the start date.
-                const startDate = moment(plan.startDate)
-                // TODO: Move this into its own component if the API key usage
-                // becomes much larger.
-                return (
-                  <div className='usage-list'>
-                    <h3>API Key: {keyIds[0]}</h3>
-                    <ul key={planIndex}>
-                      {plan.items[keyIds[0]].map((item, itemIndex) => {
-                        if (itemIndex > 0) startDate.add(1, 'days')
-                        return (
-                          <li key={itemIndex}>
-                            {startDate.format('MMM D')}: {item[0]} requests
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </div>
-                )
-              })}
+                return <ApiKeyUsage key={planIndex} plan={plan} />
+              })
+              }
             </div>
           )
         }

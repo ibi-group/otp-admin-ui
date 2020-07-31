@@ -7,7 +7,6 @@ import { AUTH0_SCOPE } from '../util/constants'
 class ApiUserSetup extends Component {
   constructor (props) {
     super(props)
-
     this.state = {
       apiUser: {
         appName: null,
