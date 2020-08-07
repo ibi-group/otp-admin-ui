@@ -29,7 +29,7 @@ class ApiKeyUsage extends Component {
       return
     }
     const keyIds = Object.keys(plan.items)
-    secureFetch(`${API_USER_URL}/apikey?apiKeyId=${keyIds[0]}`, accessToken)
+    secureFetch(`${API_USER_URL}/apikey/${keyIds[0]}`, accessToken)
       .then(result => {
         window.prompt('Copy and paste your API key to use in requests', result.data.value)
       })
@@ -53,7 +53,7 @@ class ApiKeyUsage extends Component {
               size='sm'
               variant='link'
             >
-              view key
+              click to view key
             </Button>
           </small>
         </h3>
