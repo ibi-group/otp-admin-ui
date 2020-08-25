@@ -19,6 +19,8 @@ export default function Index (props) {
     scope: AUTH0_SCOPE
   })
 
+  console.log(process.env.AUTH0_AUDIENCE, process.env.API_DOCUMENTATION_URL)
+
   if (!isAuthenticated) {
     return (
       <div>
@@ -40,5 +42,10 @@ export default function Index (props) {
   }
   if (adminUser) return <AdminUserDashboard />
   // If an API user has just been created, show welcome message.
-  return <ApiUserDashboard welcome={query && query.newApiAccount} />
+  return (
+    <ApiUserDashboard
+      apiDocsUrl={process.env.API_DOCUMENTATION_URL}
+      apiUser={apiUser}
+      welcome={query && query.newApiAccount} />
+  )
 }
