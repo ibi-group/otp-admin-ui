@@ -13,13 +13,11 @@ export default function Index (props) {
     createUser,
     isUserFetched
   } = props
-  const { query } = useRouter()
+  const { push, query } = useRouter()
   const { isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-
-  console.log(process.env.AUTH0_AUDIENCE, process.env.API_DOCUMENTATION_URL)
 
   if (!isAuthenticated) {
     return (
@@ -44,8 +42,8 @@ export default function Index (props) {
   // If an API user has just been created, show welcome message.
   return (
     <ApiUserDashboard
-      apiDocsUrl={process.env.API_DOCUMENTATION_URL}
       apiUser={apiUser}
-      welcome={query && query.newApiAccount} />
+      clearWelcome={() => push('/')}
+      showWelcome={query && query.newApiAccount} />
   )
 }

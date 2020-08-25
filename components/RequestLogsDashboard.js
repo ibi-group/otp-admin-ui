@@ -51,7 +51,6 @@ class RequestLogsDashboard extends Component {
     const { auth, isAdmin } = this.props
     const { logs, logsError, fetchMessage } = this.state
     if (!auth.isAuthenticated) return null
-    const hasLogs = logs && logs.length > 0
     return (
       <div>
         <h2>Request Log Summary</h2>
@@ -71,18 +70,7 @@ class RequestLogsDashboard extends Component {
             </a>
           }
         </div>
-        {
-          hasLogs && (
-            <div>
-              {logsError && <pre>Error loading logs: {logsError}</pre>}
-              <p>All requests made over the last 30 days</p>
-              {logs.map((plan, planIndex) => {
-                return <ApiKeyUsage key={planIndex} plan={plan} />
-              })
-              }
-            </div>
-          )
-        }
+        <ApiKeyUsage logs={logs} logsError={logsError} />
         <style jsx>{`
           .controls {
             align-items: center;

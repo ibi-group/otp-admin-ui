@@ -7,6 +7,7 @@ import { getAuthRedirectUri } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'react-vis/dist/style.css'
 
 /**
  * Where to send the user after they have signed in.
