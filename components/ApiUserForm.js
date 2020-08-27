@@ -4,6 +4,12 @@ import { withAuth } from 'use-auth0-hooks'
 
 import { AUTH0_SCOPE } from '../util/constants'
 
+/**
+ * The basic form for creating an ApiUser. This can also be used to show a
+ * disabled view of the form (for viewing user details).
+ *
+ * TODO: Add the ability to update a user?
+ */
 class ApiUserForm extends Component {
   constructor (props) {
     super(props)

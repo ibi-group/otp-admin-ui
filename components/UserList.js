@@ -7,6 +7,10 @@ import UserRow from './UserRow'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
 import { secureFetch } from '../util/middleware'
 
+/**
+ * This component renders a list of users (can be any subtype of otp-middleware's
+ * AbstractUser).
+ */
 class UserList extends Component {
   constructor (props) {
     super(props)

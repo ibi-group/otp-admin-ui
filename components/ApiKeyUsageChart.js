@@ -13,10 +13,10 @@ import {
 import { withAuth } from 'use-auth0-hooks'
 
 /**
- * Shows API Key usage for a particular API Gateway usage plan.
- * @extends Component
+ * Renders a chart showing API Key usage (requests over time) for a particular
+ * API key.
  */
-class ApiKeyUsage extends Component {
+class ApiKeyUsageChart extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -181,7 +181,7 @@ class ApiKeyUsage extends Component {
   }
 }
 
-export default withAuth(ApiKeyUsage, {
+export default withAuth(ApiKeyUsageChart, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })

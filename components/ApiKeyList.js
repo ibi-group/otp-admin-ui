@@ -10,6 +10,10 @@ import { API_USER_URL } from '../util/constants'
 // create more)
 const API_KEY_LIMIT = 2
 
+/**
+ * Shows a list of API keys with management features (create, delete) for a
+ * particular ApiUser.
+ */
 class ApiKeyList extends Component {
   constructor (props) {
     super(props)

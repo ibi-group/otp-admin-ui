@@ -1,5 +1,4 @@
 import { User } from '@styled-icons/fa-solid/User'
-import { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 
 import AdminUserForm from './AdminUserForm'

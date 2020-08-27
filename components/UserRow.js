@@ -3,6 +3,9 @@ import { Button, ListGroup } from 'react-bootstrap'
 
 import UserDetails from './UserDetails'
 
+/**
+ * Renders a row in UserList for a specific user.
+ */
 const UserRow = ({ activeId, onDeleteUser, onViewUser, type, user }) => {
   const handleDeleteUser = event => onDeleteUser(user)
 

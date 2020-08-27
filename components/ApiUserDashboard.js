@@ -5,6 +5,10 @@ import ApiKeyList from './ApiKeyList'
 import RequestLogsDashboard from './RequestLogsDashboard'
 import {OTP_PLAN_URL} from '../util/constants'
 
+/**
+ * The high-level component visible to an ApiUser when they log in. This
+ * describes the user's API keys, points to some docs, and shows API key usage.
+ */
 class ApiUserDashboard extends Component {
   render () {
     const {apiUser, clearWelcome, showWelcome} = this.props

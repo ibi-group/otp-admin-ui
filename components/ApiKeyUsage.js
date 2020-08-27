@@ -6,7 +6,6 @@ import ApiKeyUsageChart from './ApiKeyUsageChart'
 
 /**
  * Shows API Key usage for all API Gateway usage plans found in logs prop.
- * @extends Component
  */
 class ApiKeyUsage extends Component {
   constructor (props) {

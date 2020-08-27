@@ -2,6 +2,10 @@ import { Key } from '@styled-icons/fa-solid/Key'
 import { Component } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
 
+/**
+ * Shows an individual API key with management features (create, delete). Delete
+ * is only permitted for admin users.
+ */
 export default class ApiKeyRow extends Component {
   _deleteKey = () => this.props.deleteKey(this.props.apiKey)
 
