@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import { Alert, Button } from 'react-bootstrap'
 
+import ApiKeyList from './ApiKeyList'
 import RequestLogsDashboard from './RequestLogsDashboard'
 import {OTP_PLAN_URL} from '../util/constants'
 
@@ -25,37 +26,23 @@ class ApiUserDashboard extends Component {
             </p>
           </Alert>
         }
-        <h3>List of API Keys for {apiUser.appName}</h3>
+        <h3>{apiUser.appName} API Keys</h3>
         <Alert variant='info'>
           Note: copy/paste the API key values below for use in
           the <code>x-api-key</code> header when making any request to the RMCE
           API.
         </Alert>
-        <ul>
-          {apiUser.apiKeys.map(key => {
-            return (
-              <li key={key.id}>
-                {key.value}{' '}
-                <Button
-                  onClick={window.confirm}
-                  size='sm'
-                  variant='link'
-                >
-                  Delete
-                </Button>
-              </li>
-            )
-          })}
-        </ul>
+        <ApiKeyList apiUser={apiUser} />
+        <h3>Interacting with the RMCE API</h3>
         {sampleKey
           ? <div>
             <p>
               <strong>Tip:</strong>{' '}
               Try planning a trip with the following CURL command:
             </p>
-            <pre><code>
+            <pre>
               {`curl -H 'x-api-key: ${sampleKey}' '${samplePlanUrl}'`}
-            </code></pre>
+            </pre>
           </div>
           : null
         }
@@ -63,9 +50,8 @@ class ApiUserDashboard extends Component {
           <Button
             variant='primary'
             size='lg'
-            href='https://fdot-support.s3.amazonaws.com/index.html'
             // FIXME: Why is this env variable undefined?
-            // href={process.env.API_DOCUMENTATION_URL}
+            href={process.env.API_DOCUMENTATION_URL || 'https://fdot-support.s3.amazonaws.com/index.html'}
             rel='noopener noreferrer'
             target='_blank'
             block>

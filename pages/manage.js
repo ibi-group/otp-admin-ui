@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router'
-import Select from 'react-select'
+import { Tab, Tabs } from 'react-bootstrap'
 import { useAuth } from 'use-auth0-hooks'
 
 import UserList from '../components/UserList'
-import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
+import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Manage (props) {
   const { isAuthenticated, isLoading } = useAuth({
@@ -26,29 +26,26 @@ export default function Manage (props) {
       </p>
     )
   }
-  const manageOptions = [
-    // TODO: Remove Home or do we want a summary view here?
-    {label: 'Home'}, // value is undefined to match missing query param
-    ...USER_TYPES
-  ]
+  const path = '/manage'
   return (
     <div>
-      <h1>Manage</h1>
-      <Select
-        placeholder='Manage...'
-        value={manageOptions.find(o => o.value === type)}
-        options={manageOptions}
-        onChange={(option) => push(option.value ? `/manage?type=${option.value}` : '/manage')}
-      />
-      {!type &&
-        <p>
-          Please select a category above.
-        </p>
-      }
-      {/* UserList component repeated to trigger re-render on type change. */}
-      {type === 'otp' && <UserList type={type} />}
-      {type === 'admin' && <UserList type={type} />}
-      {type === 'api' && <UserList type={type} />}
+      <Tabs
+        id='admin-dashboard-tabs'
+        className='mb-4'
+        activeKey={type || 'api'}
+        onSelect={(key) => push(key === '/' ? path : `${path}?type=${key}`)}
+        variant='pills'
+      >
+        <Tab eventKey='api' title='API Users'>
+          <UserList type={'api'} />
+        </Tab>
+        <Tab eventKey='admin' title='Admin Users'>
+          <UserList type={'admin'} />
+        </Tab>
+        <Tab eventKey='otp' title='OTP Users'>
+          <UserList type={'otp'} />
+        </Tab>
+      </Tabs>
       <style jsx>{`
           * {
             font-family: 'Arial';

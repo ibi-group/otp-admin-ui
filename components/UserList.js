@@ -1,6 +1,6 @@
 import { withRouter } from 'next/router'
 import { Component } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, ListGroup } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import UserRow from './UserRow'
@@ -41,27 +41,44 @@ class UserList extends Component {
     return selectedType.url
   }
 
-  handleDeleteUser = async (user) => {
+  onDeleteUser = async (user) => {
     const { accessToken } = this.props.auth
     let message = `Are you sure you want to delete user ${user.email}?`
+    // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {
       message = 'WARNING: user is a Data Tools user!\n' + message
     }
     if (!window.confirm(message)) {
       return
     }
-    const result = await secureFetch(
+    await secureFetch(
       `${this._getUrl()}/${user.id}`,
       accessToken,
       'delete'
     )
-    window.alert(result.message)
     await this.fetchUserData(true)
   }
 
-  handleCreateUser = async () => {
+  onViewUser = (user) => {
     const {router, type} = this.props
-    router.push(`/manage?type=${type}&mode=create`)
+    if (!user) router.push(`/manage?type=${type}`)
+    else router.push(`/manage?type=${type}&userId=${user.id}`)
+  }
+
+  onCreateUser = async () => {
+    const {auth, type} = this.props
+    const { accessToken } = auth
+    const email = window.prompt(`Enter an email address for ${type} user.`)
+    // TODO: Validate user.
+    if (!email) return
+    // Create user and re-fetch users.
+    await secureFetch(
+      this._getUrl(),
+      accessToken,
+      'post',
+      { body: JSON.stringify({ email }) }
+    )
+    await this.fetchUserData(true)
   }
 
   async componentDidMount () {
@@ -73,40 +90,46 @@ class UserList extends Component {
   }
 
   render () {
-    const { auth, type } = this.props
+    const { auth, router, type } = this.props
+    const { query } = router
     const { users, usersError } = this.state
     const selectedType = USER_TYPES.find(t => t.value === type)
     if (!auth.isAuthenticated) return null
     if (!selectedType) return <div>Page does not exist!</div>
-    // TODO: Add way to create user...
-    // if (this.props.router.query.mode === 'create') {
-    //   return <CreateUser type={type} />
-    // }
     return (
       <div>
-        <h2>List of {selectedType.label}</h2>
-        <Button variant='outline-primary' onClick={this.handleCreateUser}>
-          Create user +
-        </Button>
+        <h2 className='mb-4'>List of {selectedType.label}</h2>
+        {/*
+          Only permit user creation for admin users.
+          Other users must be created through standard flows.
+        */}
+        {type === 'admin' &&
+          <Button variant='outline-primary' onClick={this.onCreateUser}>
+            Create user +
+          </Button>
+        }
         {' '}
         <Button onClick={this.fetchUserData}>
-          Fetch users <span aria-label='refresh' role='img'>🔄</span>
+          Fetch users
         </Button>
         {
           users && (
-            <div>
+            <div style={{marginTop: 10}}>
               {usersError && <pre>Error loading users: {usersError}</pre>}
-              <ul>
+              <ListGroup>
                 {users && users.length
                   ? users.map(user => (
                     <UserRow
                       key={user.id}
+                      activeId={query.userId}
+                      type={type}
                       user={user}
-                      onDeleteUser={this.handleDeleteUser}
+                      onViewUser={this.onViewUser}
+                      onDeleteUser={this.onDeleteUser}
                     />
                   ))
-                  : <p>No users exist</p>}
-              </ul>
+                  : <p>No users found.</p>}
+              </ListGroup>
             </div>
           )
         }

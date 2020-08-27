@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import ApiKeyUsageChart from './ApiKeyUsageChart'
@@ -8,29 +9,77 @@ import ApiKeyUsageChart from './ApiKeyUsageChart'
  * @extends Component
  */
 class ApiKeyUsage extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      aggregatedView: false
+    }
+  }
+
+  _getEmptyLogsMessage = () => <p className='lead text-center'>No usage logs found</p>
+
+  _toggleAggregatedView = () => {
+    this.setState({aggregatedView: !this.state.aggregatedView})
+    // TODO: add query param?
+  }
+
   render () {
-    const { logs, logsError } = this.props
+    const { isAdmin, logs, logsError } = this.props
+    const { aggregatedView } = this.state
     const hasLogs = logs && logs.length > 0
     if (!hasLogs) {
-      return (
-        <p>No usage logs found</p>
+      return this._getEmptyLogsMessage()
+    }
+    let charts
+    if (aggregatedView) {
+      // Collect all per key request counts into single plan.
+      let plan
+      logs.forEach((p, i) => {
+        if (!plan) plan = p
+        else plan.result.items = {...plan.result.items, ...p.result.items}
+      })
+      charts = (
+        <ApiKeyUsageChart
+          aggregatedView
+          isAdmin={isAdmin}
+          plan={plan} />
+      )
+    } else {
+      charts = (
+        logs
+          .map((plan, planIndex) => {
+            // If there are no API key IDs for the usage plan, show nothing.
+            const keyIds = Object.keys(plan.result.items)
+            if (keyIds.length === 0) return null
+            return keyIds.map(id => (
+              <ApiKeyUsageChart
+                key={id}
+                id={id}
+                isAdmin={isAdmin}
+                plan={plan} />
+            ))
+          })
+          // Filter out any null charts
+          .filter(c => c)
       )
     }
     return (
       <div>
         {logsError && <pre>Error loading logs: {logsError}</pre>}
         <p>All requests made over the last 30 days</p>
-        {logs.map((plan, planIndex) => {
-          // If there are no API key IDs for the usage plan, show nothing.
-          const keyIds = Object.keys(plan.result.items)
-          if (keyIds.length === 0) return null
-          return (
-            <div className='usage-plan'>
-              {keyIds.map(id => <ApiKeyUsageChart key={id} id={id} plan={plan} />)}
-            </div>
-          )
-        })
-        }
+        <div>
+          {isAdmin &&
+            <Button onClick={this._toggleAggregatedView}>
+              Show {aggregatedView ? 'individual keys' : 'aggregated view'}
+            </Button>
+          }
+        </div>
+        <div className='key-charts'>
+          {charts.length === 0
+            ? this._getEmptyLogsMessage()
+            : charts
+          }
+        </div>
       </div>
     )
   }

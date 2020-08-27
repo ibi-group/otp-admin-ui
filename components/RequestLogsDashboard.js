@@ -70,7 +70,7 @@ class RequestLogsDashboard extends Component {
             </a>
           }
         </div>
-        <ApiKeyUsage logs={logs} logsError={logsError} />
+        <ApiKeyUsage isAdmin={isAdmin} logs={logs} logsError={logsError} />
         <style jsx>{`
           .controls {
             align-items: center;
