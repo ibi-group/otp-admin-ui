@@ -1,4 +1,4 @@
-import { Button, Image, Jumbotron } from 'react-bootstrap'
+import { Button, Jumbotron } from 'react-bootstrap'
 
 const WelcomeScreen = ({ handleSignup }) => (
   <>
