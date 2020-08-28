@@ -1,3 +1,4 @@
+import clone from 'clone'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
@@ -34,7 +35,7 @@ class ApiKeyUsage extends Component {
       // Collect all per key request counts into single plan.
       let plan
       logs.forEach((p, i) => {
-        if (!plan) plan = p
+        if (!plan) plan = clone(p)
         else plan.result.items = {...plan.result.items, ...p.result.items}
       })
       charts = (

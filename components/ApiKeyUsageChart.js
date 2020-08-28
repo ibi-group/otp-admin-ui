@@ -1,4 +1,5 @@
 import { Key } from '@styled-icons/fa-solid/Key'
+import clone from 'clone'
 import moment from 'moment'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
@@ -32,6 +33,11 @@ class ApiKeyUsageChart extends Component {
     const { aggregatedView, isAdmin } = this.props
     // Do not show chart title for non-admin users.
     if (!isAdmin) return null
+    // TODO: Right now, the "unknown" keys are the ones we've created outside
+    // the otp-admin-ui flow (i.e., we created them manually in the AWS
+    // console and used them in otp-react-redux). I think it might be more
+    // appropriate to handle this on the server side (e.g., filtering out keys
+    // if they don't match user accounts), but that's TBD.
     const defaultTitle = aggregatedView ? 'Total Requests' : 'Unknown Application'
     const defaultUser = aggregatedView ? 'All users' : '[no user]'
     const apiUser = this._getApiUser()
@@ -71,7 +77,7 @@ class ApiKeyUsageChart extends Component {
       keyIds.forEach((key, i) => {
         if (plan.result.items[key] && keysEncountered.indexOf(key) === -1) {
           keysEncountered.push(key)
-          const requestsForKey = [...plan.result.items[key]]
+          const requestsForKey = clone(plan.result.items[key])
           if (!requestData) {
             requestData = requestsForKey
           } else {
