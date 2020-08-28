@@ -1,20 +1,10 @@
-import { useRouter } from 'next/router'
 import { useAuth } from 'use-auth0-hooks'
 
 import NavLink from './NavLink'
-import { getAuthRedirectUri } from '../util/auth'
 
 export default function NavBar (props) {
-  const { pathname, query } = useRouter()
-  const { isAuthenticated, isLoading, login, logout } = useAuth()
-  const { adminUser } = props
-  const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
-  const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
-  const handleSignup = () => login({
-    appState: { returnTo: { pathname, query } },
-    screen_hint: 'signup'
-  })
-
+  const { isAuthenticated, isLoading } = useAuth()
+  const { adminUser, handleLogin, handleLogout, handleSignup } = props
   return (
     <header>
       <nav>

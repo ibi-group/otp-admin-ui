@@ -4,6 +4,7 @@ import { useAuth } from 'use-auth0-hooks'
 import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserSetup from '../components/ApiUserSetup'
 import ApiUserWelcome from '../components/ApiUserWelcome'
+import WelcomeScreen from '../components/WelcomeScreen'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index (props) {
@@ -11,6 +12,7 @@ export default function Index (props) {
     adminUser,
     apiUser,
     createUser,
+    handleSignup,
     isUserFetched
   } = props
   const { query } = useRouter()
@@ -21,9 +23,7 @@ export default function Index (props) {
 
   if (!isAuthenticated) {
     return (
-      <div>
-        Please log in to view the Admin Dashboard.
-      </div>
+      <WelcomeScreen handleSignup={handleSignup} />
     )
   }
 

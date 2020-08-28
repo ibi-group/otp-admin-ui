@@ -13,7 +13,7 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update content at link
+                // FIXME: Update content at link OR change to Quick Start.
                 href='/about'>
                 About this app
               </NavLink>
@@ -39,7 +39,6 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update link
                 href={process.env.OTP_UI_URL}
                 external
               >
