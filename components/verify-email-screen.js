@@ -30,28 +30,32 @@ class VerifyEmailScreen extends Component {
     return (
       <div>
         <h1>Verify your email address</h1>
-        <p>
+        <p className='mt-5'>
           Please check your email inbox and follow the link in the message
           to verify your email address before finishing your account setup.
         </p>
         <p>
           Once you're verified, click the button below to continue.
         </p>
-        <Button
-          size='lg'
-          variant='primary'
-          onClick={this._handleClick}
-        >
-          My email is verified!
-        </Button>
-        {' '}
-        <Button
-          size='lg'
-          variant='outline-primary'
-          onClick={this.resendVerificationEmail}
-        >
-          Resend verification email
-        </Button>
+        <div className='mt-5'>
+          <Button
+            size='lg'
+            variant='primary'
+            onClick={this._handleClick}
+          >
+            My email is verified!
+          </Button>
+        </div>
+        <div className='mt-5'>
+          <Button
+            size='sm'
+            style={{padding: '0px'}}
+            variant='link'
+            onClick={this.resendVerificationEmail}
+          >
+            Resend verification email
+          </Button>
+        </div>
       </div>
     )
   }

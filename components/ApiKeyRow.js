@@ -7,7 +7,14 @@ import { Button, ListGroup } from 'react-bootstrap'
  * is only permitted for admin users.
  */
 export default class ApiKeyRow extends Component {
-  _deleteKey = () => this.props.deleteKey(this.props.apiKey)
+  _deleteKey = () => {
+    const { apiKey, deleteKey } = this.props
+    const message = `Are you sure you want to delete API key ${apiKey.keyId}?`
+    if (!window.confirm(message)) {
+      return
+    }
+    deleteKey(apiKey)
+  }
 
   _viewApiKey = () => {
     const { apiKey } = this.props

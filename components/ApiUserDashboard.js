@@ -13,6 +13,7 @@ class ApiUserDashboard extends Component {
   render () {
     const {apiUser, clearWelcome, showWelcome} = this.props
     // Sample OTP URL to show in sample CURL command
+    // TODO: Make configurable (for deployments in other areas).
     const samplePlanUrl = `${OTP_PLAN_URL}?fromPlace=P%26R%3A%3A28.45119%2C-81.36818&toPlace=Downtownish%3A%3A28.54834%2C-81.37745`
     // Use the first API key value in the sample CURL command.
     const sampleKey = apiUser.apiKeys[0] ? apiUser.apiKeys[0].value : null
@@ -22,7 +23,8 @@ class ApiUserDashboard extends Component {
           <Alert
             variant='success'
             onClose={clearWelcome}
-            dismissible>
+            dismissible
+          >
             <Alert.Heading>API User Created!</Alert.Heading>
             <p>
               Welcome to your new API User account. To get started, check out
