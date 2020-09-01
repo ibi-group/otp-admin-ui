@@ -46,7 +46,7 @@ class VerifyEmailScreen extends Component {
             My email is verified!
           </Button>
         </div>
-        <div className='mt-5'>
+        <div className='mt-4'>
           <Button
             size='sm'
             style={{padding: '0px'}}
