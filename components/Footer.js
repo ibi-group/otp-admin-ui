@@ -13,7 +13,9 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update content at link OR change to Quick Start.
+                // FIXME: Update content at link OR perhaps replace with some
+                // Quick Start/Getting Started docs that could help out a new
+                // API user.
                 href='/about'>
                 About this app
               </NavLink>
