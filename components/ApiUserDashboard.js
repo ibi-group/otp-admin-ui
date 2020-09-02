@@ -39,31 +39,33 @@ class ApiUserDashboard extends Component {
           API.
         </Alert>
         <ApiKeyList apiUser={apiUser} />
-        <h3>Interacting with the RMCE API</h3>
-        {sampleKey
-          ? <div>
-            <p>
-              <strong>Tip:</strong>{' '}
-              Try planning a trip with the following CURL command:
-            </p>
-            <pre>
-              {`curl -H 'x-api-key: ${sampleKey}' '${samplePlanUrl}'`}
-            </pre>
-          </div>
-          : null
-        }
-        <p>
-          <Button
-            variant='primary'
-            size='lg'
-            // FIXME: Why is this env variable undefined?
-            href={process.env.API_DOCUMENTATION_URL || 'https://fdot-support.s3.amazonaws.com/index.html'}
-            rel='noopener noreferrer'
-            target='_blank'
-            block>
-            View Complete API documentation
-          </Button>
-        </p>
+        <div className='mb-5'>
+          <h3>Interacting with the RMCE API</h3>
+          {sampleKey
+            ? <div>
+              <p>
+                <strong>Tip:</strong>{' '}
+                Try planning a trip with the following CURL command:
+              </p>
+              <pre>
+                {`curl -H 'x-api-key: ${sampleKey}' '${samplePlanUrl}'`}
+              </pre>
+            </div>
+            : null
+          }
+          <p>
+            <Button
+              variant='primary'
+              size='lg'
+              // FIXME: Why is this env variable undefined?
+              href={process.env.API_DOCUMENTATION_URL || 'https://fdot-support.s3.amazonaws.com/index.html'}
+              rel='noopener noreferrer'
+              target='_blank'
+              block>
+              View Complete API documentation
+            </Button>
+          </p>
+        </div>
         <RequestLogsDashboard />
       </>
     )

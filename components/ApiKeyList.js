@@ -67,7 +67,7 @@ class ApiKeyList extends Component {
     // FIXME: env variable not working.
     const supportEmail = process.env.SUPPORT_EMAIL || 'help@example.com'
     return (
-      <div className='mb-3'>
+      <div className='mb-5'>
         <ListGroup>
           {apiKeys.length > 0
             ? apiKeys.map(apiKey => {
@@ -90,11 +90,14 @@ class ApiKeyList extends Component {
           </Button>
           {keyLimitReached
             ? <div className='small mt-3 align-middle'>
-              Default API key limit reached (max = {API_KEY_LIMIT})! Cannot create more{' '}
-              keys for your account. Email{' '}
-              <a target='_blank' href={`mailto:${supportEmail}`}>{supportEmail}</a>
-              {' '}
-              to increase your request limits or additional API keys.
+              <p>
+                Default API key limit reached (max = {API_KEY_LIMIT})! Cannot
+                create more keys for your account.
+              </p>
+              <p>
+                Email <a target='_blank' href={`mailto:${supportEmail}`}>{supportEmail}</a>{' '}
+                to increase your request limits or additional API keys.
+              </p>
             </div>
             : null
           }
