@@ -42,10 +42,6 @@ class ErrorEventsDashboard extends Component {
     await this.handleFetchErrors()
   }
 
-  async componentDidUpdate () {
-    await this.handleFetchErrors()
-  }
-
   render () {
     const { auth } = this.props
     const { events, eventsError, fetchMessage } = this.state

@@ -42,10 +42,6 @@ class RequestLogsDashboard extends Component {
     await this.handleFetchLogs()
   }
 
-  async componentDidUpdate () {
-    await this.handleFetchLogs()
-  }
-
   render () {
     const { auth } = this.props
     const { logs, logsError, fetchMessage } = this.state
