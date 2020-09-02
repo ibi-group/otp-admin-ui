@@ -4,10 +4,15 @@ import { withAuth } from 'use-auth0-hooks'
 
 import { AUTH0_SCOPE } from '../util/constants'
 
-class ApiUserSetup extends Component {
+/**
+ * The basic form for creating an ApiUser. This can also be used to show a
+ * disabled view of the form (for viewing user details).
+ *
+ * TODO: Add the ability to update a user?
+ */
+class ApiUserForm extends Component {
   constructor (props) {
     super(props)
-
     this.state = {
       apiUser: {
         appName: null,
@@ -54,6 +59,10 @@ class ApiUserSetup extends Component {
   }
 
   render () {
+    const { createUser } = this.props
+    // Default values to apiUser passed from props. Otherwise, use original state.
+    // It is assumed that if coming from props, the apiUser already exists.
+    const apiUser = this.props.apiUser || this.state.apiUser
     const {
       appName,
       appPurpose,
@@ -61,12 +70,11 @@ class ApiUserSetup extends Component {
       company,
       hasConsentedToTerms,
       name
-    } = this.state.apiUser
+    } = apiUser
 
     return (
       <div>
-        <h1>Sign up for API access</h1>
-
+        {createUser && <h1>Sign up for API access</h1>}
         <Form>
           <Container>
             <Row>
@@ -76,12 +84,20 @@ class ApiUserSetup extends Component {
                   <Card.Body>
                     <Form.Group>
                       <Form.Label>Developer name</Form.Label>
-                      <Form.Control onChange={this.handleChange('name')} type='text' value={name} />
+                      <Form.Control
+                        disabled={!createUser}
+                        onChange={this.handleChange('name')}
+                        type='text'
+                        value={name} />
                     </Form.Group>
 
                     <Form.Group>
                       <Form.Label>Company</Form.Label>
-                      <Form.Control onChange={this.handleChange('company')} type='text' value={company} />
+                      <Form.Control
+                        disabled={!createUser}
+                        onChange={this.handleChange('company')}
+                        type='text'
+                        value={company} />
                     </Form.Group>
                   </Card.Body>
                 </Card>
@@ -92,17 +108,29 @@ class ApiUserSetup extends Component {
                   <Card.Body>
                     <Form.Group>
                       <Form.Label>Application name</Form.Label>
-                      <Form.Control onChange={this.handleChange('appName')} type='text' value={appName} />
+                      <Form.Control
+                        disabled={!createUser}
+                        onChange={this.handleChange('appName')}
+                        type='text'
+                        value={appName} />
                     </Form.Group>
 
                     <Form.Group>
                       <Form.Label>Application purpose</Form.Label>
-                      <Form.Control onChange={this.handleChange('appPurpose')} type='text' value={appPurpose} />
+                      <Form.Control
+                        disabled={!createUser}
+                        onChange={this.handleChange('appPurpose')}
+                        type='text'
+                        value={appPurpose} />
                     </Form.Group>
 
                     <Form.Group>
                       <Form.Label>Application URL</Form.Label>
-                      <Form.Control onChange={this.handleChange('appUrl')} type='text' value={appUrl} />
+                      <Form.Control
+                        disabled={!createUser}
+                        onChange={this.handleChange('appUrl')}
+                        type='text'
+                        value={appUrl} />
                     </Form.Group>
                   </Card.Body>
                 </Card>
@@ -112,6 +140,7 @@ class ApiUserSetup extends Component {
 
           <Form.Group>
             <Form.Check
+              disabled={!createUser}
               id='hasConsentedToTerms'
               label={
                 <>
@@ -122,25 +151,26 @@ class ApiUserSetup extends Component {
               }
               onChange={this.handleTermsChange}
               type='checkbox'
-              value={hasConsentedToTerms}
+              checked={hasConsentedToTerms}
             />
             <Form.Text muted>You must agree to the terms to continue.</Form.Text>
           </Form.Group>
-
-          <Button
-            disabled={!hasConsentedToTerms}
-            onClick={this.handleCreateAccount}
-            variant='primary'
-          >
-            Create account
-          </Button>
+          {createUser &&
+            <Button
+              disabled={!hasConsentedToTerms}
+              onClick={this.handleCreateAccount}
+              variant='primary'
+            >
+              Create account
+            </Button>
+          }
         </Form>
       </div>
     )
   }
 }
 
-export default withAuth(ApiUserSetup, {
+export default withAuth(ApiUserForm, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })

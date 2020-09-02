@@ -1,8 +1,10 @@
+import { useRouter } from 'next/router'
 import { useAuth } from 'use-auth0-hooks'
 
 import NavLink from './NavLink'
 
 export default function NavBar (props) {
+  const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
   return (
@@ -10,13 +12,13 @@ export default function NavBar (props) {
       <nav>
         <ul>
           <li>
-            <NavLink href='/'>
+            <NavLink pathname={pathname} href='/'>
               Dashboard
             </NavLink>
           </li>
           {adminUser &&
             <li>
-              <NavLink href='/manage'>
+              <NavLink pathname={pathname} href='/manage'>
                 Manage
               </NavLink>
             </li>
@@ -25,8 +27,8 @@ export default function NavBar (props) {
             isAuthenticated ? (
               <>
                 <li>
-                  <NavLink href='/profile'>
-                    Profile
+                  <NavLink pathname={pathname} href='/profile'>
+                    My Account
                   </NavLink>
                 </li>
                 <li>
@@ -68,6 +70,9 @@ export default function NavBar (props) {
           list-style: none;
           margin-left: 0;
           padding-left: 0;
+        }
+        li.active {
+          background-color: #444;
         }
         li {
           margin-right: 1rem;

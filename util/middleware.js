@@ -22,7 +22,7 @@ export async function secureFetch (url, accessToken, method = 'get', options = {
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result = await res.json()
-    let message = `Error ${method}-ing user: ${result.message}`
+    let message = `Error: ${result.message}`
     if (result.detail) message += `  (${result.detail})`
 
     return {

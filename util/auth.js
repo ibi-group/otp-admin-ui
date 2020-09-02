@@ -10,7 +10,6 @@ export function logout (path = '') {
 export const getAuthRedirectUri = () => {
   if (typeof window !== 'undefined') {
     const url = `${window.location.protocol}//${window.location.host}`
-    console.log(url)
     return url
   }
   return 'http://localhost:3000'
