@@ -29,7 +29,6 @@ class LayoutWithAuth0 extends Component {
       API_USER_URL,
       apiUser,
       true,
-      process.env.API_KEY,
       accessToken
     )
     if (newApiUser) {
@@ -73,8 +72,10 @@ class LayoutWithAuth0 extends Component {
 
     let contents
     if (user && !user.email_verified) {
+      // If user is logged in, but email is not verified, force user to verify.
       contents = <VerifyEmailScreen />
     } else {
+      // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
       contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser})
     }

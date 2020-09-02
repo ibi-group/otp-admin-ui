@@ -1,14 +1,20 @@
-import React from 'react'
-
 import { withAuth, withLoginRequired } from 'use-auth0-hooks'
 
-function Profile ({ auth }) {
-  const { user } = auth
+import AdminUserForm from '../components/AdminUserForm'
+import ApiUserForm from '../components/ApiUserForm'
+
+function Profile (props) {
+  const { adminUser, apiUser } = props
+  // TODO: It appears to be possible to access this page as an OTP user, so we
+  // need to prevent that.
+  if (!adminUser && !apiUser) {
+    return <p>Not authorized to view this page.</p>
+  }
   return (
     <div>
-      <h1>Profile</h1>
-      <p>This is the profile page.</p>
-      <pre>{JSON.stringify(user || { }, null, 2)}</pre>
+      <h1>My Account</h1>
+      {apiUser && <ApiUserForm apiUser={apiUser} />}
+      {adminUser && <AdminUserForm adminUser={adminUser} />}
     </div>
   )
 }

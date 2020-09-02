@@ -1,34 +1,32 @@
 import { useRouter } from 'next/router'
-import Select from 'react-select'
+import { Tab, Tabs } from 'react-bootstrap'
 
-import ErrorEventsDashboard from '../components/ErrorEventsDashboard'
-import RequestLogsDashboard from '../components/RequestLogsDashboard'
+import ErrorEventsDashboard from './ErrorEventsDashboard'
+import RequestLogsDashboard from './RequestLogsDashboard'
 
 export default function AdminUserDashboard (props) {
   const { push, query: { dashboard } } = useRouter()
-  const dashboardOptions = [
-    // TODO: Remove Home?
-    // TODO: Factor shared code with manage.js?
-    {label: 'Home'}, // value is undefined to match missing query param
-    {value: 'errors', label: 'Errors'},
-    {value: 'requests', label: 'Request logs'}
-  ]
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      <Select
-        placeholder='Select dashboard...'
-        value={dashboardOptions.find(o => o.value === dashboard)}
-        options={dashboardOptions}
-        onChange={(option) => push(option.value ? `/?dashboard=${option.value}` : '/')}
-      />
-      {!dashboard &&
-        <p>
-          Please select a category above.
-        </p>
-      }
-      {dashboard === 'errors' && <ErrorEventsDashboard />}
-      {dashboard === 'requests' && <RequestLogsDashboard />}
+      <Tabs
+        id='admin-dashboard-tabs'
+        className='mb-4'
+        activeKey={dashboard}
+        onSelect={(key) => push(key === '/' ? '/' : `/?dashboard=${key}`)}
+        variant='pills'
+      >
+        <Tab eventKey='/' title='Home'>
+          <p>
+            Please select a category above.
+          </p>
+        </Tab>
+        <Tab eventKey='errors' title='Errors'>
+          <ErrorEventsDashboard />
+        </Tab>
+        <Tab eventKey='requests' title='Request logs'>
+          <RequestLogsDashboard isAdmin />
+        </Tab>
+      </Tabs>
       <style jsx>{`
           * {
             font-family: 'Arial';
