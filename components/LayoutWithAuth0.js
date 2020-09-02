@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { withRouter } from 'next/router'
 import React, { Component } from 'react'
+import { SWRConfig } from 'swr'
 import { withAuth } from 'use-auth0-hooks'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
 import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
-import { createOrUpdateUser, fetchUser } from '../util/middleware'
+import { createOrUpdateUser, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
@@ -51,9 +52,9 @@ class LayoutWithAuth0 extends Component {
         ...state,
         isUserRequested: true
       })
-      // TODO: Combine into a single fetch fromToken.
-      const adminUser = await fetchUser(ADMIN_USER_URL, process.env.API_KEY, auth)
-      const apiUser = await fetchUser(API_USER_URL, process.env.API_KEY, auth)
+      // TODO: Combine into a single fetch fromToken or use SWR
+      const adminUser = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+      const apiUser = await secureFetch(`${API_USER_URL}/fromtoken`, accessToken)
 
       this.setState({
         ...state,
@@ -68,7 +69,7 @@ class LayoutWithAuth0 extends Component {
   render () {
     const { auth, children } = this.props
     const { adminUser } = this.state
-    const { user } = auth
+    const { accessToken, user } = auth
 
     let contents
     if (user && !user.email_verified) {
@@ -79,35 +80,41 @@ class LayoutWithAuth0 extends Component {
       // TODO: find a better way to pass props to children.
       contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser})
     }
-
     return (
-      <div>
-        <Head>
-          <title>OTP Admin Dashboard</title>
-        </Head>
-        <NavBar adminUser={adminUser} />
-        <main>
-          <div className='container'>
-            {contents}
-          </div>
-        </main>
-        <Footer />
-        <style jsx>{`
-          .container {
-            max-width: 42rem;
-            min-height: 500px;
-            margin: 1.5rem auto;
-          }
-        `}
-        </style>
-        <style jsx global>{`
-          body {
-            margin: 0;
-            color: #333;
-          }
-        `}
-        </style>
-      </div>
+      <SWRConfig
+        value={{
+          fetcher: (url, method, ...props) => secureFetch(url, accessToken, method, props),
+          refreshInterval: 30000
+        }}
+      >
+        <div>
+          <Head>
+            <title>OTP Admin Dashboard</title>
+          </Head>
+          <NavBar adminUser={adminUser} />
+          <main>
+            <div className='container'>
+              {contents}
+            </div>
+          </main>
+          <Footer />
+          <style jsx>{`
+            .container {
+              max-width: 42rem;
+              min-height: 500px;
+              margin: 1.5rem auto;
+            }
+          `}
+          </style>
+          <style jsx global>{`
+            body {
+              margin: 0;
+              color: #333;
+            }
+          `}
+          </style>
+        </div>
+      </SWRConfig>
     )
   }
 }

@@ -24,6 +24,7 @@
     "react-vis": "^1.11.7",
     "styled-components": "^5.0.1",
     "styled-icons": "^10.2.1",
+    "swr": "^0.3.2",
     "use-auth0-hooks": "^0.7.0"
   },
   "devDependencies": {
