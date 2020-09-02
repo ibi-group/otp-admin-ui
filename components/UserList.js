@@ -78,10 +78,6 @@ class UserList extends Component {
     await this.fetchUserData()
   }
 
-  async componentDidUpdate () {
-    await this.fetchUserData()
-  }
-
   render () {
     const { auth, type } = this.props
     const { users, usersError } = this.state
