@@ -146,7 +146,7 @@ class ApiUserForm extends Component {
                 <>
                   I have read and consent to the{' '}
                   <a href='/' target='_blank' rel='noopener noreferrer'>Terms of Service</a>{' '}
-                  for using the FDOT RMCE API.
+                  for using the {process.env.API_NAME}.
                 </>
               }
               onChange={this.handleTermsChange}

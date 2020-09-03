@@ -5,6 +5,7 @@ import { SWRConfig } from 'swr'
 import { withAuth } from 'use-auth0-hooks'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
+import { getAuthRedirectUri } from '../util/auth'
 import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { createOrUpdateUser, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
@@ -67,9 +68,16 @@ class LayoutWithAuth0 extends Component {
   }
 
   render () {
-    const { auth, children } = this.props
+    const { auth, children, router } = this.props
+    const { pathname, query } = router
     const { adminUser } = this.state
-    const { accessToken, user } = auth
+    const { accessToken, login, logout, user } = auth
+    const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
+    const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
+    const handleSignup = () => login({
+      appState: { returnTo: { pathname, query } },
+      screen_hint: 'signup'
+    })
 
     let contents
     if (user && !user.email_verified) {
@@ -78,7 +86,12 @@ class LayoutWithAuth0 extends Component {
     } else {
       // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
-      contents = renderChildrenWithProps(children, {...this.state, createUser: this.createUser})
+      const extraProps = {
+        ...this.state,
+        createUser: this.createUser,
+        handleSignup
+      }
+      contents = renderChildrenWithProps(children, extraProps)
     }
     return (
       <SWRConfig
@@ -89,9 +102,13 @@ class LayoutWithAuth0 extends Component {
       >
         <div>
           <Head>
-            <title>OTP Admin Dashboard</title>
+            <title>{process.env.SITE_TITLE}</title>
           </Head>
-          <NavBar adminUser={adminUser} />
+          <NavBar
+            adminUser={adminUser}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            handleSignup={handleSignup} />
           <main>
             <div className='container'>
               {contents}

@@ -2,8 +2,9 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'use-auth0-hooks'
 
 import AdminUserDashboard from '../components/AdminUserDashboard'
-import ApiUserForm from '../components/ApiUserForm'
 import ApiUserDashboard from '../components/ApiUserDashboard'
+import ApiUserForm from '../components/ApiUserForm'
+import WelcomeScreen from '../components/WelcomeScreen'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index (props) {
@@ -11,6 +12,7 @@ export default function Index (props) {
     adminUser,
     apiUser,
     createUser,
+    handleSignup,
     isUserFetched
   } = props
   const { push, query } = useRouter()
@@ -21,9 +23,7 @@ export default function Index (props) {
 
   if (!isAuthenticated) {
     return (
-      <div>
-        Please log in to view the Admin Dashboard.
-      </div>
+      <WelcomeScreen handleSignup={handleSignup} />
     )
   }
 
@@ -39,11 +39,11 @@ export default function Index (props) {
     return <ApiUserForm createUser={createUser} />
   }
   if (adminUser) return <AdminUserDashboard />
-  // If an API user has just been created, show welcome message.
   return (
     <ApiUserDashboard
       apiUser={apiUser}
       clearWelcome={() => push('/')}
+      // If an API user has just been created, show welcome message.
       showWelcome={query && query.newApiAccount} />
   )
 }
