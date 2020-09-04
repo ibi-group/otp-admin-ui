@@ -1,17 +1,25 @@
 import moment from 'moment'
-import useSWR from 'swr'
+import { Button } from 'react-bootstrap'
+import useSWR, { mutate } from 'swr'
 
 import FetchMessage from './FetchMessage'
 
+const ERROR_EVENTS_URL = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
+
 function ErrorEventsDashboard () {
-  const { data: events, error } = useSWR(`${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`)
+  const result = useSWR(ERROR_EVENTS_URL)
+  const { data, error } = result
+  const events = data && data.data
   const hasEvents = events && events.length > 0
   const MAX_EVENTS_TO_DISPLAY = 100
   return (
     <div>
       <h2>Error Events Summary</h2>
       <div className='controls'>
-        <FetchMessage data={events} error={error} />
+        <Button className='mr-3' onClick={() => mutate(ERROR_EVENTS_URL)}>
+          Fetch errors
+        </Button>
+        <FetchMessage result={result} />
         <a
           className='push'
           target='_blank'

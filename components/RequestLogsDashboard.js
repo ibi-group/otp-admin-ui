@@ -1,22 +1,28 @@
-import useSWR from 'swr'
+import { Button } from 'react-bootstrap'
+import useSWR, { mutate } from 'swr'
 import { useAuth } from 'use-auth0-hooks'
 
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
 import { AUTH0_SCOPE } from '../util/constants'
 
+const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
+
 function RequestLogsDashboard ({ isAdmin }) {
   const auth = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-  const { data: logs, error } = useSWR(`${process.env.API_BASE_URL}/api/secure/logs`)
+  const result = useSWR(REQUEST_LOGS_URL)
   if (!auth.isAuthenticated) return null
   return (
     <div>
       <h2>Request Log Summary</h2>
       <div className='controls'>
-        <FetchMessage data={logs} error={error} />
+        <Button className='mr-3' onClick={() => mutate(REQUEST_LOGS_URL)}>
+          Fetch logs
+        </Button>
+        <FetchMessage result={result} />
         {isAdmin &&
           <a
             className='push'
@@ -28,7 +34,10 @@ function RequestLogsDashboard ({ isAdmin }) {
           </a>
         }
       </div>
-      <ApiKeyUsage isAdmin={isAdmin} logs={logs} logsError={error} />
+      <ApiKeyUsage
+        isAdmin={isAdmin}
+        logs={result.data && result.data.data}
+        logsError={result.error} />
       <style jsx>{`
         .controls {
           align-items: center;

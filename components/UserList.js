@@ -66,20 +66,27 @@ function UserList ({ type }) {
   const selectedType = USER_TYPES.find(t => t.value === type)
   if (!isAuthenticated) return null
   if (!selectedType) return <div>Page does not exist!</div>
-  const { data: users, error } = useSWR(_getUrl(type))
+  const result = useSWR(_getUrl(type))
+  const { data, error, mutate } = result
+  const users = data && data.data
   return (
     <div>
       <h2 className='mb-4'>List of {selectedType.label}</h2>
-      {/*
-        Only permit user creation for admin users.
-        Other users must be created through standard flows.
-      */}
-      {type === 'admin' &&
-        <Button className='mr-3' variant='outline-primary' onClick={onCreateAdminUser}>
-          Create user +
+      <div className='controls'>
+        <Button className='mr-3' onClick={() => mutate(_getUrl(type))}>
+          Fetch users
         </Button>
-      }
-      <FetchMessage data={users} error={error} />
+        {/*
+          Only permit user creation for admin users.
+          Other users must be created through standard flows.
+        */}
+        {type === 'admin' &&
+          <Button className='mr-3' variant='outline-primary' onClick={onCreateAdminUser}>
+            Create user
+          </Button>
+        }
+        <FetchMessage result={result} />
+      </div>
       {
         users && (
           <div style={{marginTop: 10}}>
@@ -105,7 +112,10 @@ function UserList ({ type }) {
       ul {
         padding: 0;
       }
-
+      .controls {
+        align-items: center;
+        display: flex;
+      }
       li {
         list-style: none;
         margin: 5px 0;

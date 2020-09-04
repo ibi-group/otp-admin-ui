@@ -6,7 +6,12 @@ import { withAuth } from 'use-auth0-hooks'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
 import { getAuthRedirectUri } from '../util/auth'
-import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
+import {
+  ADMIN_USER_URL,
+  API_USER_URL,
+  AUTH0_SCOPE,
+  DEFAULT_REFRESH_MILLIS
+} from '../util/constants'
 import { createOrUpdateUser, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
@@ -97,7 +102,7 @@ class LayoutWithAuth0 extends Component {
       <SWRConfig
         value={{
           fetcher: (url, method, ...props) => secureFetch(url, accessToken, method, props),
-          refreshInterval: 30000
+          refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >
         <div>

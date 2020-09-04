@@ -9,16 +9,20 @@ if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
-export function secureFetch (url, accessToken, method = 'get', options = {}) {
+export async function secureFetch (url, accessToken, method = 'get', options = {}) {
   const headers = {
     Authorization: `Bearer ${accessToken}`
   }
   if (process.env.API_KEY) headers['x-api-key'] = process.env.API_KEY
-  return fetch(url, {
+  const res = await fetch(url, {
     method,
     headers,
     ...options
-  }).then(res => res.json())
+  })
+  return {
+    data: await res.json(),
+    timestamp: new Date()
+  }
 }
 
 export async function addUser (url, token, data) {

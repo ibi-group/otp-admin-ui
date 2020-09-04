@@ -5,6 +5,8 @@ export const API_USER_URL = `${process.env.API_BASE_URL}/api/secure/application`
 export const OTP_USER_URL = `${process.env.API_BASE_URL}/api/secure/user`
 export const OTP_PLAN_URL = `${process.env.API_BASE_URL}/otp/routers/default/plan`
 
+export const DEFAULT_REFRESH_MILLIS = 30000
+
 export const USER_TYPES = [
   {value: 'admin', label: 'Admin Users', url: ADMIN_USER_URL},
   {value: 'api', label: 'Third Party API Applications', url: API_USER_URL},
