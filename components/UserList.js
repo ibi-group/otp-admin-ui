@@ -67,7 +67,7 @@ function UserList ({ type }) {
   if (!isAuthenticated) return null
   if (!selectedType) return <div>Page does not exist!</div>
   const result = useSWR(_getUrl(type))
-  const { data, error, mutate } = result
+  const { data, error } = result
   const users = data && data.data
   return (
     <div>
