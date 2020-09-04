@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router'
 import { Tab, Tabs } from 'react-bootstrap'
-import { useAuth } from 'use-auth0-hooks'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import UserList from '../components/UserList'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Manage (props) {
-  const { isAuthenticated, isLoading } = useAuth({
+  const { isAuthenticated, isLoading } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })

@@ -1,15 +1,11 @@
 import useSWR from 'swr'
-import { useAuth } from 'use-auth0-hooks'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
-import { AUTH0_SCOPE } from '../util/constants'
 
 function RequestLogsDashboard ({ isAdmin }) {
-  const auth = useAuth({
-    audience: process.env.AUTH0_AUDIENCE,
-    scope: AUTH0_SCOPE
-  })
+  const auth = useAuth0()
   const { data: logs, error } = useSWR(`${process.env.API_BASE_URL}/api/secure/logs`)
   if (!auth.isAuthenticated) return null
   return (

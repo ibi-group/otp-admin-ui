@@ -53,7 +53,14 @@
   dependencies:
     cross-fetch "3.0.5"
 
-"@auth0/auth0-spa-js@^1.2.4":
+"@auth0/auth0-react@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-react/-/auth0-react-1.0.0.tgz#3eeced9557d54d4092032ecc071cd74052d09da7"
+  integrity sha512-AaGftJFXYsJNEHZq/PNNr5HVSOQCVjstBF2pD3gAwOrgjKO7fYoeNgKKQOcTLm/ge5vAkEBGgSBzWBj2SgZ38w==
+  dependencies:
+    "@auth0/auth0-spa-js" "^1.9.0"
+
+"@auth0/auth0-spa-js@^1.9.0":
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-1.11.0.tgz#800a59ddeaa11ad8a94a699c58f9971842ea065f"
   integrity sha512-PHYykO4IoEGeTT2SVzvZiJNK5QgznLJweJfVcb0C8X+rZYooBN5Qrdj0AfECzgK9h90kfU4u3s9h83VTSh6t3A==
@@ -9478,15 +9485,6 @@ query-string@^4.1.0, query-string@^4.2.3:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.8.3:
-  version "6.13.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.13.1.tgz#d913ccfce3b4b3a713989fe6d39466d92e71ccad"
-  integrity sha512-RfoButmcK+yCta1+FuU8REvisx1oEzhMKwhLUNcepQTPGcNMp1sIqjnfCtfnvGSQZQEhaBHvccujtWoUV3TTbA==
-  dependencies:
-    decode-uri-component "^0.2.0"
-    split-on-first "^1.0.0"
-    strict-uri-encode "^2.0.0"
-
 querystring-es3@^0.2.0, querystring-es3@~0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/querystring-es3/-/querystring-es3-0.2.1.tgz#9ec61f79049875707d69414596fd907a4d711e73"
@@ -10601,11 +10599,6 @@ spdx-license-ids@^3.0.0:
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
   integrity sha512-J+FWzZoynJEXGphVIS+XEh3kFSjZX/1i9gFBaWQcB+/tmpe2qUsSBABpcxqxnAxFdiUFEgAX1bjYGQvIZmoz9Q==
 
-split-on-first@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/split-on-first/-/split-on-first-1.1.0.tgz#f610afeee3b12bce1d0c30425e76398b78249a5f"
-  integrity sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==
-
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/split-string/-/split-string-3.1.0.tgz#7cb09dda3a86585705c64b39a6466038682e8fe2"
@@ -10777,11 +10770,6 @@ strict-uri-encode@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
   integrity sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM=
-
-strict-uri-encode@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
-  integrity sha1-ucczDHBChi9rFC3CdLvMWGbONUY=
 
 string-hash@1.1.3:
   version "1.1.3"
@@ -11629,14 +11617,6 @@ url@^0.11.0, url@~0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
-
-use-auth0-hooks@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/use-auth0-hooks/-/use-auth0-hooks-0.7.0.tgz#879a930ee36b893c91616ffa9b609ed8f685ff57"
-  integrity sha512-vL+G4jDu0nQduaMwg1+TMdLORpMgMQx72iPq0LGiEw0tXPmLmuIwi/7e7yrGJu+LuwZfD3g1qbI6Pjb+bDV7nw==
-  dependencies:
-    "@auth0/auth0-spa-js" "^1.2.4"
-    query-string "^6.8.3"
 
 use-subscription@1.4.1:
   version "1.4.1"

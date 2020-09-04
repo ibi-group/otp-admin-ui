@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
+import { withAuth0 } from '@auth0/auth0-react'
 
 import ApiKeyRow from './ApiKeyRow'
 import { secureFetch } from '../util/middleware'
@@ -107,7 +107,7 @@ class ApiKeyList extends Component {
   }
 }
 
-export default withAuth(ApiKeyList, {
+export default withAuth0(ApiKeyList, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })

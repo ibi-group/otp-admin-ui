@@ -1,4 +1,4 @@
-import { withAuth, withLoginRequired } from 'use-auth0-hooks'
+import { withAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 
 import AdminUserForm from '../components/AdminUserForm'
 import ApiUserForm from '../components/ApiUserForm'
@@ -19,6 +19,4 @@ function Profile (props) {
   )
 }
 
-export default withLoginRequired(
-  withAuth(Profile)
-)
+export default withAuthenticationRequired(withAuth0(Profile))

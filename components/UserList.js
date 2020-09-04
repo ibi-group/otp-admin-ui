@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { Button, ListGroup } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
-import { useAuth } from 'use-auth0-hooks'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import FetchMessage from './FetchMessage'
 import UserRow from './UserRow'
@@ -19,7 +19,7 @@ function _getUrl (type) {
  * AbstractUser).
  */
 function UserList ({ type }) {
-  const { accessToken, isAuthenticated } = useAuth({
+  const { accessToken, isAuthenticated } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })

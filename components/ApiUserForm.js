@@ -1,7 +1,8 @@
 import { Component } from 'react'
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
+import { withAuth0 } from '@auth0/auth0-react'
 
+import CreateApiUserButton from './CreateApiUserButton'
 import { AUTH0_SCOPE } from '../util/constants'
 
 /**
@@ -59,7 +60,7 @@ class ApiUserForm extends Component {
   }
 
   render () {
-    const { createUser } = this.props
+    const { isCreating } = this.props
     // Default values to apiUser passed from props. Otherwise, use original state.
     // It is assumed that if coming from props, the apiUser already exists.
     const apiUser = this.props.apiUser || this.state.apiUser
@@ -74,7 +75,7 @@ class ApiUserForm extends Component {
 
     return (
       <div>
-        {createUser && <h1>Sign up for API access</h1>}
+        {isCreating && <h1>Sign up for API access</h1>}
         <Form>
           <Container>
             <Row>
@@ -85,7 +86,7 @@ class ApiUserForm extends Component {
                     <Form.Group>
                       <Form.Label>Developer name</Form.Label>
                       <Form.Control
-                        disabled={!createUser}
+                        disabled={!isCreating}
                         onChange={this.handleChange('name')}
                         type='text'
                         value={name} />
@@ -94,7 +95,7 @@ class ApiUserForm extends Component {
                     <Form.Group>
                       <Form.Label>Company</Form.Label>
                       <Form.Control
-                        disabled={!createUser}
+                        disabled={!isCreating}
                         onChange={this.handleChange('company')}
                         type='text'
                         value={company} />
@@ -109,7 +110,7 @@ class ApiUserForm extends Component {
                     <Form.Group>
                       <Form.Label>Application name</Form.Label>
                       <Form.Control
-                        disabled={!createUser}
+                        disabled={!isCreating}
                         onChange={this.handleChange('appName')}
                         type='text'
                         value={appName} />
@@ -118,7 +119,7 @@ class ApiUserForm extends Component {
                     <Form.Group>
                       <Form.Label>Application purpose</Form.Label>
                       <Form.Control
-                        disabled={!createUser}
+                        disabled={!isCreating}
                         onChange={this.handleChange('appPurpose')}
                         type='text'
                         value={appPurpose} />
@@ -127,7 +128,7 @@ class ApiUserForm extends Component {
                     <Form.Group>
                       <Form.Label>Application URL</Form.Label>
                       <Form.Control
-                        disabled={!createUser}
+                        disabled={!isCreating}
                         onChange={this.handleChange('appUrl')}
                         type='text'
                         value={appUrl} />
@@ -140,7 +141,7 @@ class ApiUserForm extends Component {
 
           <Form.Group>
             <Form.Check
-              disabled={!createUser}
+              disabled={!isCreating}
               id='hasConsentedToTerms'
               label={
                 <>
@@ -155,14 +156,10 @@ class ApiUserForm extends Component {
             />
             <Form.Text muted>You must agree to the terms to continue.</Form.Text>
           </Form.Group>
-          {createUser &&
-            <Button
-              disabled={!hasConsentedToTerms}
-              onClick={this.handleCreateAccount}
-              variant='primary'
-            >
-              Create account
-            </Button>
+          {isCreating &&
+            <CreateApiUserButton
+              apiUser={apiUser}
+              disabled={!hasConsentedToTerms} />
           }
         </Form>
       </div>
@@ -170,7 +167,7 @@ class ApiUserForm extends Component {
   }
 }
 
-export default withAuth(ApiUserForm, {
+export default withAuth0(ApiUserForm, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })

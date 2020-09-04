@@ -10,6 +10,7 @@
     "lint": "mastarm lint components pages --quiet"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^1.0.0",
     "bootstrap": "^4.5.0",
     "clone": "^2.1.2",
     "dotenv": "^8.2.0",
@@ -24,8 +25,7 @@
     "react-vis": "^1.11.7",
     "styled-components": "^5.0.1",
     "styled-icons": "^10.2.1",
-    "swr": "^0.3.2",
-    "use-auth0-hooks": "^0.7.0"
+    "swr": "^0.3.2"
   },
   "devDependencies": {
     "mastarm": "^5.3.1",

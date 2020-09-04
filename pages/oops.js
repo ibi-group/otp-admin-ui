@@ -1,17 +1,17 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { useAuth } from 'use-auth0-hooks'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import { logout } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Oops () {
   const { asPath, query } = useRouter()
-  const { error } = useAuth({
+  const { error } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
-  // There appears to be an issue with use-auth0-hooks, where logout does not
+  // There appears to be an issue with @auth0/auth0-react, where logout does not
   // occur properly if an unauthorized user attempts login. Without the
   // logout invocation below, an attempt to re-login would not show the
   // login widget to the user for them to try again.

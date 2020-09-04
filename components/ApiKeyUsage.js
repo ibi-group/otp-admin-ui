@@ -1,7 +1,7 @@
 import clone from 'clone'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
+import { withAuth0 } from '@auth0/auth0-react'
 
 import ApiKeyUsageChart from './ApiKeyUsageChart'
 
@@ -85,7 +85,7 @@ class ApiKeyUsage extends Component {
   }
 }
 
-export default withAuth(ApiKeyUsage, {
+export default withAuth0(ApiKeyUsage, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })

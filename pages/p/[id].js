@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import Markdown from 'react-markdown'
-import LayoutWithAuth0 from '../../components/LayoutWithAuth0'
+import LayoutwithAuth0 from '../../components/LayoutwithAuth0'
 
 export default () => {
   const router = useRouter()
   return (
-    <LayoutWithAuth0>
+    <LayoutwithAuth0>
       <h1>{router.query.id}</h1>
       <div className='markdown'>
         <Markdown
@@ -40,6 +40,6 @@ And here's the content.
           text-transform: uppercase;
         }
       `}</style>
-    </LayoutWithAuth0>
+    </LayoutwithAuth0>
   )
 }

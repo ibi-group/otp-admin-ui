@@ -11,7 +11,7 @@ import {
   HorizontalGridLines,
   VerticalRectSeries
 } from 'react-vis'
-import { withAuth } from 'use-auth0-hooks'
+import { withAuth0 } from '@auth0/auth0-react'
 
 /**
  * Renders a chart showing API Key usage (requests over time) for a particular
@@ -187,7 +187,7 @@ class ApiKeyUsageChart extends Component {
   }
 }
 
-export default withAuth(ApiKeyUsageChart, {
+export default withAuth0(ApiKeyUsageChart, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: process.env.AUTH0_SCOPE
 })

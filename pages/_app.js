@@ -1,8 +1,8 @@
+import { Auth0Provider } from '@auth0/auth0-react'
 import App from 'next/app'
 import Router from 'next/router'
-import { Auth0Provider } from 'use-auth0-hooks'
 
-import LayoutWithAuth0 from '../components/LayoutWithAuth0'
+import LayoutwithAuth0 from '../components/LayoutwithAuth0'
 import { getAuthRedirectUri } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'
 
@@ -78,9 +78,9 @@ export default class Root extends App {
         onRedirecting={onRedirecting}
         onRedirectCallback={onRedirectCallback}
       >
-        <LayoutWithAuth0>
+        <LayoutwithAuth0>
           <Component {...pageProps} />
-        </LayoutWithAuth0>
+        </LayoutwithAuth0>
       </Auth0Provider>
     )
   }
