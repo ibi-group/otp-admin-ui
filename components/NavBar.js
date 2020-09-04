@@ -80,6 +80,9 @@ export default function NavBar (props) {
         li:nth-last-child(3) {
           margin-right: auto;
         }
+        li :global(a) {
+          padding: 33px 8px 21px 8px;
+        }
       `}
       </style>
     </header>
