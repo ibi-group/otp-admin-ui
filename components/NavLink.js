@@ -28,7 +28,6 @@ const NavLink = ({ children, external, href, pathname, onClick }) => {
         a {
           color: #fff;
           text-decoration: none;
-          padding: 33px 8px 21px 8px;
         }
         a.active {
           background-color: #444;
