@@ -6,7 +6,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next",
-    "deploy": "now",
+    "deploy": "vercel",
     "lint": "mastarm lint components pages --quiet"
   },
   "dependencies": {
