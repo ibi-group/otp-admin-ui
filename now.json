@@ -3,7 +3,6 @@
   "scope": "ibi-group",
   "alias": "",
   "version": 2,
-  "builds": [{"src": "next.config.js", "use": "@now/next"}],
   "build": {
     "env": {
       "API_BASE_URL": "@api-base-url",
