@@ -1,12 +1,18 @@
 import Head from 'next/head'
 import { withRouter } from 'next/router'
 import React, { Component } from 'react'
+import { SWRConfig } from 'swr'
 import { withAuth } from 'use-auth0-hooks'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
 import { getAuthRedirectUri } from '../util/auth'
-import { ADMIN_USER_URL, API_USER_URL, AUTH0_SCOPE } from '../util/constants'
-import { createOrUpdateUser, fetchUser } from '../util/middleware'
+import {
+  ADMIN_USER_URL,
+  API_USER_URL,
+  AUTH0_SCOPE,
+  DEFAULT_REFRESH_MILLIS
+} from '../util/constants'
+import { createOrUpdateUser, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
@@ -52,9 +58,9 @@ class LayoutWithAuth0 extends Component {
         ...state,
         isUserRequested: true
       })
-      // TODO: Combine into a single fetch fromToken.
-      const adminUser = await fetchUser(ADMIN_USER_URL, process.env.API_KEY, auth)
-      const apiUser = await fetchUser(API_USER_URL, process.env.API_KEY, auth)
+      // TODO: Combine into a single fetch fromToken or use SWR
+      const adminUser = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+      const apiUser = await secureFetch(`${API_USER_URL}/fromtoken`, accessToken)
 
       this.setState({
         ...state,
@@ -70,7 +76,7 @@ class LayoutWithAuth0 extends Component {
     const { auth, children, router } = this.props
     const { pathname, query } = router
     const { adminUser } = this.state
-    const { login, logout, user } = auth
+    const { accessToken, login, logout, user } = auth
     const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
     const handleSignup = () => login({
@@ -92,39 +98,45 @@ class LayoutWithAuth0 extends Component {
       }
       contents = renderChildrenWithProps(children, extraProps)
     }
-
     return (
-      <div>
-        <Head>
-          <title>{process.env.SITE_TITLE}</title>
-        </Head>
-        <NavBar
-          adminUser={adminUser}
-          handleLogin={handleLogin}
-          handleLogout={handleLogout}
-          handleSignup={handleSignup} />
-        <main>
-          <div className='container'>
-            {contents}
-          </div>
-        </main>
-        <Footer />
-        <style jsx>{`
-          .container {
-            max-width: 42rem;
-            min-height: 500px;
-            margin: 1.5rem auto;
-          }
-        `}
-        </style>
-        <style jsx global>{`
-          body {
-            margin: 0;
-            color: #333;
-          }
-        `}
-        </style>
-      </div>
+      <SWRConfig
+        value={{
+          fetcher: (url, method, ...props) => secureFetch(url, accessToken, method, props),
+          refreshInterval: DEFAULT_REFRESH_MILLIS
+        }}
+      >
+        <div>
+          <Head>
+            <title>{process.env.SITE_TITLE}</title>
+          </Head>
+          <NavBar
+            adminUser={adminUser}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            handleSignup={handleSignup} />
+          <main>
+            <div className='container'>
+              {contents}
+            </div>
+          </main>
+          <Footer />
+          <style jsx>{`
+            .container {
+              max-width: 42rem;
+              min-height: 500px;
+              margin: 1.5rem auto;
+            }
+          `}
+          </style>
+          <style jsx global>{`
+            body {
+              margin: 0;
+              color: #333;
+            }
+          `}
+          </style>
+        </div>
+      </SWRConfig>
     )
   }
 }

@@ -1,52 +1,34 @@
-import { withRouter } from 'next/router'
-import { Component } from 'react'
+import { useRouter } from 'next/router'
 import { Button, ListGroup } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
+import useSWR, { mutate } from 'swr'
+import { useAuth } from 'use-auth0-hooks'
 
+import FetchMessage from './FetchMessage'
 import UserRow from './UserRow'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
 import { secureFetch } from '../util/middleware'
+
+function _getUrl (type) {
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
+  return selectedType.url
+}
 
 /**
  * This component renders a list of users (can be any subtype of otp-middleware's
  * AbstractUser).
  */
-class UserList extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      users: null,
-      usersError: null
-    }
+function UserList ({ type }) {
+  const { accessToken, isAuthenticated } = useAuth({
+    audience: process.env.AUTH0_AUDIENCE,
+    scope: AUTH0_SCOPE
+  })
+  const router = useRouter()
+  const onViewUser = (user) => {
+    if (!user) router.push(`/manage?type=${type}`)
+    else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
-
-  fetchUserData = async (force = false) => {
-    const { users, usersError } = this.state
-    if (!force && (users || usersError)) {
-      return
-    }
-
-    const { accessToken } = this.props.auth
-    if (!accessToken) {
-      return
-    }
-    const fetchedUsers = await secureFetch(this._getUrl(), accessToken)
-    if (fetchedUsers.status === 'success') {
-      this.setState({ users: fetchedUsers.data })
-    } else {
-      window.alert(fetchedUsers.message)
-    }
-  }
-
-  _getUrl () {
-    const { type } = this.props
-    const selectedType = USER_TYPES.find(t => t.value === type)
-    if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
-    return selectedType.url
-  }
-
-  onDeleteUser = async (user) => {
-    const { accessToken } = this.props.auth
+  const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {
@@ -55,110 +37,102 @@ class UserList extends Component {
     if (!window.confirm(message)) {
       return
     }
-    await secureFetch(
-      `${this._getUrl()}/${user.id}`,
+    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
+    const result = await secureFetch(
+      `${_getUrl(type)}/${user.id}`,
       accessToken,
       'delete'
     )
-    await this.fetchUserData(true)
+    mutate(_getUrl(type))
+    if (result.code >= 400) {
+      window.alert(result.message)
+    }
   }
-
-  onViewUser = (user) => {
-    const {router, type} = this.props
-    if (!user) router.push(`/manage?type=${type}`)
-    else router.push(`/manage?type=${type}&userId=${user.id}`)
-  }
-
-  onCreateUser = async () => {
-    const {auth, type} = this.props
-    const { accessToken } = auth
-    const email = window.prompt(`Enter an email address for ${type} user.`)
+  const onCreateAdminUser = async () => {
+    const email = window.prompt(`Enter an email address for admin user.`)
     // TODO: Validate user.
     if (!email) return
     // Create user and re-fetch users.
+    const adminUrl = _getUrl('admin')
+    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
     await secureFetch(
-      this._getUrl(),
+      adminUrl,
       accessToken,
       'post',
       { body: JSON.stringify({ email }) }
     )
-    await this.fetchUserData(true)
+    mutate(adminUrl)
   }
-
-  async componentDidMount () {
-    await this.fetchUserData()
-  }
-
-  render () {
-    const { auth, router, type } = this.props
-    const { query } = router
-    const { users, usersError } = this.state
-    const selectedType = USER_TYPES.find(t => t.value === type)
-    if (!auth.isAuthenticated) return null
-    if (!selectedType) return <div>Page does not exist!</div>
-    return (
-      <div>
-        <h2 className='mb-4'>List of {selectedType.label}</h2>
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!isAuthenticated) return null
+  if (!selectedType) return <div>Page does not exist!</div>
+  const result = useSWR(_getUrl(type))
+  const { data, error } = result
+  const users = data && data.data
+  return (
+    <div>
+      <h2 className='mb-4'>List of {selectedType.label}</h2>
+      <div className='controls'>
+        <Button className='mr-3' onClick={() => mutate(_getUrl(type))}>
+          Fetch users
+        </Button>
         {/*
           Only permit user creation for admin users.
           Other users must be created through standard flows.
         */}
         {type === 'admin' &&
-          <Button variant='outline-primary' onClick={this.onCreateUser}>
-            Create user +
+          <Button className='mr-3' variant='outline-primary' onClick={onCreateAdminUser}>
+            Create user
           </Button>
         }
-        {' '}
-        <Button onClick={this.fetchUserData}>
-          Fetch users
-        </Button>
-        {
-          users && (
-            <div style={{marginTop: 10}}>
-              {usersError && <pre>Error loading users: {usersError}</pre>}
-              <ListGroup>
-                {users && users.length
-                  ? users.map(user => (
-                    <UserRow
-                      key={user.id}
-                      activeId={query.userId}
-                      type={type}
-                      user={user}
-                      onViewUser={this.onViewUser}
-                      onDeleteUser={this.onDeleteUser}
-                    />
-                  ))
-                  : <p>No users found.</p>}
-              </ListGroup>
-            </div>
-          )
-        }
-        <style jsx>{`
-        ul {
-          padding: 0;
-        }
-
-        li {
-          list-style: none;
-          margin: 5px 0;
-        }
-
-        a {
-          text-decoration: none;
-          color: blue;
-        }
-
-        a:hover {
-          opacity: 0.6;
-        }
-        `}
-        </style>
+        <FetchMessage result={result} />
       </div>
-    )
-  }
+      {
+        users && (
+          <div style={{marginTop: 10}}>
+            {error && <pre>Error loading users: {error}</pre>}
+            <ListGroup>
+              {users && users.length
+                ? users.map(user => (
+                  <UserRow
+                    key={user.id}
+                    activeId={router.query.userId}
+                    type={type}
+                    user={user}
+                    onViewUser={onViewUser}
+                    onDeleteUser={onDeleteUser}
+                  />
+                ))
+                : <p>No users found.</p>}
+            </ListGroup>
+          </div>
+        )
+      }
+      <style jsx>{`
+      ul {
+        padding: 0;
+      }
+      .controls {
+        align-items: center;
+        display: flex;
+      }
+      li {
+        list-style: none;
+        margin: 5px 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+
+      a:hover {
+        opacity: 0.6;
+      }
+      `}
+      </style>
+    </div>
+  )
 }
 
-export default withRouter(withAuth(UserList, {
-  audience: process.env.AUTH0_AUDIENCE,
-  scope: AUTH0_SCOPE
-}))
+export default UserList

@@ -11,8 +11,8 @@ import ApiUserForm from './ApiUserForm'
 const UserDetails = (props) => {
   const { onViewUser, show, type, user } = props
 
-  const hideUser = () => onViewUser(null)
-  const showUser = () => onViewUser(user)
+  const hideUser = () => onViewUser(null, type)
+  const showUser = () => onViewUser(user, type)
 
   return (
     <>

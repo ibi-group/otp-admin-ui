@@ -7,7 +7,7 @@ import UserDetails from './UserDetails'
  * Renders a row in UserList for a specific user.
  */
 const UserRow = ({ activeId, onDeleteUser, onViewUser, type, user }) => {
-  const handleDeleteUser = event => onDeleteUser(user)
+  const handleDeleteUser = event => onDeleteUser(user, type)
 
   return (
     <ListGroup.Item as='li'>
