@@ -19,10 +19,8 @@ export async function secureFetch (url, accessToken, method = 'get', options = {
     headers,
     ...options
   })
-  return {
-    data: await res.json(),
-    timestamp: new Date()
-  }
+  const json = await res.json()
+  return json
 }
 
 export async function addUser (url, token, data) {

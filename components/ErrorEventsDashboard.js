@@ -1,4 +1,6 @@
+import { Sync } from '@styled-icons/fa-solid/Sync'
 import moment from 'moment'
+import { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
 
@@ -7,18 +9,21 @@ import FetchMessage from './FetchMessage'
 const ERROR_EVENTS_URL = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
 
 function ErrorEventsDashboard () {
-  const result = useSWR(ERROR_EVENTS_URL)
-  const { data, error } = result
-  const events = data && data.data
-  const hasEvents = events && events.length > 0
-  const MAX_EVENTS_TO_DISPLAY = 100
+  const [pageIndex, setPageIndex] = useState(0)
+  const url = `${ERROR_EVENTS_URL}?page=${pageIndex}`
+  const result = useSWR(url)
+  const { data: events, error, isValidating } = result
+  const hasEvents = events && events.data && events.data.length > 0
+  const eventsCount = hasEvents ? events.data.length : 0
   return (
     <div>
       <h2>Error Events Summary</h2>
       <div className='controls'>
-        <Button className='mr-3' onClick={() => mutate(ERROR_EVENTS_URL)}>
-          Fetch errors
+        <Button disabled={isValidating} className='mr-3' onClick={() => mutate(url)}>
+          <Sync size={20} />
         </Button>
+        <Button className='mr-3' disabled={pageIndex <= 0} onClick={() => setPageIndex(pageIndex - 1)}>Previous</Button>
+        <Button className='mr-3' onClick={() => setPageIndex(pageIndex + 1)}>Next</Button>
         <FetchMessage result={result} />
         <a
           className='push'
@@ -34,8 +39,8 @@ function ErrorEventsDashboard () {
           <div>
             {error && <pre>Error loading events: {error}</pre>}
             <p>
-              {events.length} error events recorded over the last two weeks
-              {events.length > MAX_EVENTS_TO_DISPLAY && ` (showing first ${MAX_EVENTS_TO_DISPLAY})`}
+              {eventsCount} error events recorded over the last two weeks
+              (page {events.page + 1} of  {events.total / events.limit})
             </p>
             <table>
               <thead>
@@ -50,10 +55,8 @@ function ErrorEventsDashboard () {
                   should split up the errors according to the project they are
                   assigned to.
                 */}
-                {events
+                {events.data
                   .sort((a, b) => moment(b.received) - moment(a.received))
-                  // FIXME: Add pagination to server/UI.
-                  .filter((event, index) => index <= MAX_EVENTS_TO_DISPLAY)
                   .map((event, eventIndex) => {
                     // TODO: these fields are subject to change pending backend
                     // changes.

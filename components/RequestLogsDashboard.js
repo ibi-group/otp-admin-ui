@@ -14,6 +14,7 @@ function RequestLogsDashboard ({ isAdmin }) {
     scope: AUTH0_SCOPE
   })
   const result = useSWR(REQUEST_LOGS_URL)
+  console.log(result.data)
   if (!auth.isAuthenticated) return null
   return (
     <div>
@@ -36,7 +37,7 @@ function RequestLogsDashboard ({ isAdmin }) {
       </div>
       <ApiKeyUsage
         isAdmin={isAdmin}
-        logs={result.data && result.data.data}
+        logs={result.data}
         logsError={result.error} />
       <style jsx>{`
         .controls {
