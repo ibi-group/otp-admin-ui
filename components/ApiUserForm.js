@@ -17,6 +17,40 @@ const validationSchema = yup.object({
   name: yup.string().required('Please enter your name.')
 })
 
+// Field layout (assumes all text fields)
+const fieldLayout = [
+  {
+    title: 'Developer information',
+    fields: [
+      {
+        title: 'Developer name',
+        field: 'name'
+      },
+      {
+        title: 'Company',
+        field: 'company'
+      }
+    ]
+  },
+  {
+    title: 'Application information',
+    fields: [
+      {
+        title: 'Application name',
+        field: 'appName'
+      },
+      {
+        title: 'Application purpose',
+        field: 'appPurpose'
+      },
+      {
+        title: 'Application URL',
+        field: 'appUrl'
+      }
+    ]
+  }
+]
+
 /**
  * Creates a blank ApiUser object to be filled out.
  */
@@ -85,98 +119,39 @@ class ApiUserForm extends Component {
             <Form noValidate onSubmit={handleSubmit}>
               <Container style={{paddingLeft: 0, paddingRight: 0}}>
                 <Row>
-                  <Col>
-                    <Card>
-                      <Card.Header>Developer information</Card.Header>
-                      <Card.Body>
-                        <Form.Group>
-                          <Form.Label>Developer name</Form.Label>
-                          <Form.Control
-                            disabled={!createUser}
-                            isInvalid={touched.name && !!errors.name}
-                            name='name'
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            type='text'
-                            value={values.name}
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.name}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Form.Group>
-                          <Form.Label>Company</Form.Label>
-                          <Form.Control
-                            disabled={!createUser}
-                            isInvalid={touched.company && !!errors.company}
-                            name='company'
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            type='text'
-                            value={values.company}
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.company}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col>
-                    <Card>
-                      <Card.Header>Application information</Card.Header>
-                      <Card.Body>
-                        <Form.Group>
-                          <Form.Label>Application name</Form.Label>
-                          <Form.Control
-                            disabled={!createUser}
-                            isInvalid={touched.appName && !!errors.appName}
-                            name='appName'
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            type='text'
-                            value={values.appName}
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.appName}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Form.Group>
-                          <Form.Label>Application purpose</Form.Label>
-                          <Form.Control
-                            disabled={!createUser}
-                            isInvalid={touched.appPurpose && !!errors.appPurpose}
-                            name='appPurpose'
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            type='text'
-                            value={values.appPurpose}
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.appPurpose}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Form.Group>
-                          <Form.Label>Application URL</Form.Label>
-                          <Form.Control
-                            disabled={!createUser}
-                            isInvalid={touched.appUrl && !!errors.appUrl}
-                            name='appUrl'
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            type='text'
-                            value={values.appUrl}
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.appUrl}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Card.Body>
-                    </Card>
-                  </Col>
+                  {
+                    fieldLayout.map((col, colIndex) => (
+                      <Col key={colIndex}>
+                        <Card>
+                          <Card.Header>{col.title}</Card.Header>
+                          <Card.Body>
+                            {
+                              col.fields.map((field, fieldIndex) => {
+                                const fieldName = field.field
+                                return (
+                                  <Form.Group key={fieldIndex}>
+                                    <Form.Label>{field.title}</Form.Label>
+                                    <Form.Control
+                                      disabled={!createUser}
+                                      isInvalid={touched[fieldName] && !!errors[fieldName]}
+                                      name={fieldName}
+                                      onBlur={handleBlur}
+                                      onChange={handleChange}
+                                      type='text'
+                                      value={values[fieldName]}
+                                    />
+                                    <Form.Control.Feedback type='invalid'>
+                                      {errors[fieldName]}
+                                    </Form.Control.Feedback>
+                                  </Form.Group>
+                                )
+                              })
+                            }
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    ))
+                  }
                 </Row>
               </Container>
 
@@ -202,16 +177,12 @@ class ApiUserForm extends Component {
                 </Form.Group>
               </div>
               {createUser &&
-              <Button
-                type='submit'
-                variant='primary'
-              >
+              <Button type='submit' variant='primary'>
                 Create account
               </Button>
               }
             </Form>
           )}
-
         </Formik>
       </div>
     )
