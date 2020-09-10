@@ -7,7 +7,7 @@ import * as yup from 'yup'
 
 import { AUTH0_SCOPE } from '../util/constants'
 
-// The validation schema for the form.
+// The validation schema for the form fields.
 const validationSchema = yup.object({
   appName: yup.string().required('Please enter your application name.'),
   appPurpose: yup.string(),
@@ -18,36 +18,26 @@ const validationSchema = yup.object({
 })
 
 /**
+ * Creates a blank ApiUser object to be filled out.
+ */
+function createBlankApiUser () {
+  return {
+    appName: '',
+    appPurpose: '',
+    appUrl: '',
+    company: '',
+    hasConsentedToTerms: false,
+    name: ''
+  }
+}
+
+/**
  * The basic form for creating an ApiUser, including input validation.
  * This can also be used to show a disabled view of the form (for viewing user details).
  *
  * TODO: Add the ability to update a user?
  */
 class ApiUserForm extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      apiUser: {
-        appName: '',
-        appPurpose: '',
-        appUrl: '',
-        company: '',
-        hasConsentedToTerms: false,
-        name: ''
-      }
-    }
-  }
-
-  handleChange = field => e => {
-    const newData = {}
-    newData[field] = e.target.value
-    this.updateUserState(newData)
-  }
-
-  handleTermsChange = e => {
-    this.updateUserState({ hasConsentedToTerms: e.target.checked })
-  }
-
   handleCreateAccount = async apiUserData => {
     const { auth, createUser } = this.props
     if (auth.user) {
@@ -63,45 +53,22 @@ class ApiUserForm extends Component {
     }
   }
 
-  updateUserState = newUserData => {
-    const { apiUser } = this.state
-    this.setState({
-      apiUser: {
-        ...apiUser,
-        ...newUserData
-      }
-    })
-  }
-
-  dummy () {
-
-  }
-
   render () {
     const { createUser } = this.props
-    // Default values to apiUser passed from props. Otherwise, use original state.
-    // It is assumed that if coming from props, the apiUser already exists.
-    const apiUser = this.props.apiUser || this.state.apiUser
-    const {
-      appName,
-      appPurpose,
-      appUrl,
-      company,
-      hasConsentedToTerms,
-      name
-    } = apiUser
+    // If the ApiUser already exists, it is passed from props.
+    // Otherwise, it is a new ApiUser, and a blank one is created.
+    const apiUser = this.props.apiUser || createBlankApiUser()
 
     // We display validation for a particular field on blur (after the user finishes typing in it),
     // so it is not too disruptive to the user.
     // The onBlur/onHandleBlur and touched props are used to that effect.
     // All field validation errors are also shown when the user clicks Create Account.
-
     return (
       <div>
         {createUser && <h1>Sign up for API access</h1>}
         <Formik
           validateOnChange={false}
-          validateOnBlur // validate controls after user has finished typing.
+          validateOnBlur
           validationSchema={validationSchema}
           onSubmit={this.handleCreateAccount}
           initialValues={apiUser}
@@ -112,7 +79,6 @@ class ApiUserForm extends Component {
             handleChange,
             values,
             touched,
-            isValid,
             errors
           }) => (
 
