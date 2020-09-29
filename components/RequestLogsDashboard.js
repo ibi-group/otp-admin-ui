@@ -1,3 +1,5 @@
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
+import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
 import { useAuth } from 'use-auth0-hooks'
@@ -14,26 +16,32 @@ function RequestLogsDashboard ({ isAdmin }) {
     scope: AUTH0_SCOPE
   })
   const result = useSWR(REQUEST_LOGS_URL)
-  console.log(result.data)
+  const { isValidating } = result
   if (!auth.isAuthenticated) return null
   return (
     <div>
       <h2>Request Log Summary</h2>
-      <div className='controls'>
-        <Button className='mr-3' onClick={() => mutate(REQUEST_LOGS_URL)}>
-          Fetch logs
-        </Button>
-        <FetchMessage result={result} />
-        {isAdmin &&
+      {isAdmin &&
+        <h5>
           <a
             className='push'
             target='_blank'
             rel='noopener noreferrer'
             href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
           >
-            Open AWS console
+            <ExternalLinkAlt className='mr-1 mb-1' size={20} />Open AWS console
           </a>
-        }
+        </h5>
+      }
+      <div className='controls'>
+        <Button
+          disabled={isValidating}
+          className='mr-3'
+          onClick={() => mutate(REQUEST_LOGS_URL)}
+        >
+          <Sync size={20} />
+        </Button>
+        <FetchMessage result={result} />
       </div>
       <ApiKeyUsage
         isAdmin={isAdmin}
@@ -59,15 +67,6 @@ function RequestLogsDashboard ({ isAdmin }) {
         li {
           list-style: none;
           margin: 5px 0;
-        }
-
-        a {
-          text-decoration: none;
-          color: blue;
-        }
-
-        a:hover {
-          opacity: 0.6;
         }
       `}
       </style>

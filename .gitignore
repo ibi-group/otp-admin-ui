@@ -1,8 +1,8 @@
 .now
 node_modules/
 .next/
-/npm-debug.log
 .DS_Store
 .env*
 !.env.tmp
 .vercel
+*.log

@@ -1,8 +1,6 @@
 import moment from 'moment'
 import { Spinner } from 'react-bootstrap'
 
-import { DEFAULT_REFRESH_MILLIS } from '../util/constants'
-
 function FetchMessage ({ result }) {
   const timestamp = result.data && result.data.timestamp
   const spinner = (
@@ -16,12 +14,7 @@ function FetchMessage ({ result }) {
     : result.isValidating
       ? spinner
       : `Updated at ${timeString}`
-  return (
-    <small>
-      {fetchMessage}<br />
-      <small>auto-refreshes every {DEFAULT_REFRESH_MILLIS / 1000} seconds</small>
-    </small>
-  )
+  return <small>{fetchMessage}</small>
 }
 
 export default FetchMessage
