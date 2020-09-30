@@ -1,5 +1,5 @@
 import clone from 'clone'
-import { Formik } from 'formik'
+import { Field, Formik } from 'formik'
 import { Component } from 'react'
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
@@ -108,10 +108,7 @@ class ApiUserForm extends Component {
           initialValues={apiUser}
         >
           {({
-            handleBlur,
             handleSubmit,
-            handleChange,
-            values,
             touched,
             errors
           }) => (
@@ -131,14 +128,12 @@ class ApiUserForm extends Component {
                                 return (
                                   <Form.Group key={fieldIndex}>
                                     <Form.Label>{field.title}</Form.Label>
-                                    <Form.Control
+                                    <Field
+                                      as={Form.Control}
                                       disabled={!createUser}
                                       isInvalid={touched[fieldName] && !!errors[fieldName]}
                                       name={fieldName}
-                                      onBlur={handleBlur}
-                                      onChange={handleChange}
-                                      type='text'
-                                      value={values[fieldName]}
+                                      // onBlur, onChange, and value are passed automatically.
                                     />
                                     <Form.Control.Feedback type='invalid'>
                                       {errors[fieldName]}
@@ -157,8 +152,8 @@ class ApiUserForm extends Component {
 
               <div className='mt-3'>
                 <Form.Group>
-                  <Form.Check
-                    checked={values.hasConsentedToTerms}
+                  <Field
+                    as={Form.Check}
                     disabled={!createUser}
                     feedback={errors.hasConsentedToTerms}
                     isInvalid={touched.hasConsentedToTerms && !!errors.hasConsentedToTerms}
@@ -170,9 +165,7 @@ class ApiUserForm extends Component {
                       </>
                     }
                     name='hasConsentedToTerms'
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    type='checkbox'
+                    // onBlur, onChange, and value are passed automatically.
                   />
                 </Form.Group>
               </div>
