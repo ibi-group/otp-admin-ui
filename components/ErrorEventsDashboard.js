@@ -13,7 +13,6 @@ function ErrorEventsDashboard () {
   const url = `${ERROR_EVENTS_URL}?offset=${offset}&limit=${limit}`
   const result = useSWR(url)
   const { data: events } = result
-  console.log(result)
   const hasEvents = events && events.data && events.data.length > 0
   return (
     <div>
@@ -72,6 +71,12 @@ function ErrorEventsDashboard () {
                   })}
               </tbody>
             </table>
+            <PageControls
+              limit={limit}
+              offset={offset}
+              setOffset={setOffset}
+              showSkipButtons
+              result={result} />
           </div>
         )
         : 'No errors reported in the last two weeks.'
