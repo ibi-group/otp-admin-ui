@@ -59,8 +59,20 @@ class LayoutWithAuth0 extends Component {
         isUserRequested: true
       })
       // TODO: Combine into a single fetch fromToken or use SWR
-      const adminUser = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, accessToken)
-      const apiUser = await secureFetch(`${API_USER_URL}/fromtoken`, accessToken)
+      const adminUserFetchResult = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+      const apiUserFetchResult = await secureFetch(`${API_USER_URL}/fromtoken`, accessToken)
+
+      // Check that the contents of the fetch result for admin user and api user is valid
+      // This means for instance checking for existence of a data.id field.
+      // If the user was not found, something else is returned of the form
+      //    data: {
+      //      "result": "ERR",
+      //      "message": "No user with id=000000 found.",
+      //      "code": 404,
+      //      "detail": null
+      //    }
+      const adminUser = adminUserFetchResult.data.id ? adminUserFetchResult.data : null
+      const apiUser = apiUserFetchResult.data.id ? apiUserFetchResult.data : null
 
       this.setState({
         ...state,

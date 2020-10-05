@@ -42,7 +42,8 @@ export async function createOrUpdateUser (url, userData, isNew, accessToken) {
   }
 
   // TODO: improve the UI feedback messages for this.
-  if (result.status === 'success' && result.data) {
+  // A successful call has the user record (with id) in the data field.
+  if (result.data.id) {
     return result.data
   } else {
     alert(`An error was encountered:\n${JSON.stringify(result)}`)
