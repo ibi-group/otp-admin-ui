@@ -12,7 +12,7 @@ import {
   AUTH0_SCOPE,
   DEFAULT_REFRESH_MILLIS
 } from '../util/constants'
-import { createOrUpdateUser, secureFetch } from '../util/middleware'
+import { createOrUpdateUser, secureFetch, secureFetchHandleErrors } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
@@ -45,42 +45,28 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
+  _fetchUsers = async () => {
+    const { accessToken } = this.props.auth
+    // TODO: Combine into a single fetch fromToken or use SWR
+    const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+    const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
+    this.setState({
+      adminUser: adminUserResult.data,
+      apiUser: apiUserResult.data,
+      isUserFetched: true
+    })
+  }
+
   async componentDidUpdate () {
     const { auth } = this.props
     const { accessToken, isAuthenticated } = auth
-    const state = this.state
+    const { isUserRequested } = this.state
 
-    if (isAuthenticated && accessToken && !state.isUserRequested) {
-      // Fetch and cache user data when the auth0 access token becomes available.
-
+    if (isAuthenticated && accessToken && !isUserRequested) {
       // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
-      this.setState({
-        ...state,
-        isUserRequested: true
-      })
-      // TODO: Combine into a single fetch fromToken or use SWR
-      const adminUserFetchResult = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, accessToken)
-      const apiUserFetchResult = await secureFetch(`${API_USER_URL}/fromtoken`, accessToken)
-
-      // Check that the contents of the fetch result for admin user and api user is valid
-      // This means for instance checking for existence of a data.id field.
-      // If the user was not found, something else is returned of the form
-      //    data: {
-      //      "result": "ERR",
-      //      "message": "No user with id=000000 found.",
-      //      "code": 404,
-      //      "detail": null
-      //    }
-      const adminUser = adminUserFetchResult.data.id ? adminUserFetchResult.data : null
-      const apiUser = apiUserFetchResult.data.id ? apiUserFetchResult.data : null
-
-      this.setState({
-        ...state,
-        adminUser,
-        apiUser,
-        isUserFetched: true,
-        isUserRequested: true
-      })
+      this.setState({ isUserRequested: true })
+      // Fetch and cache user data when the auth0 access token becomes available.
+      this._fetchUsers()
     }
   }
 

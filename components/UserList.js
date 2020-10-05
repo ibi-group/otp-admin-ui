@@ -7,7 +7,7 @@ import { useAuth } from 'use-auth0-hooks'
 import PageControls from './PageControls'
 import UserRow from './UserRow'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
-import { secureFetch } from '../util/middleware'
+import { secureFetch, secureFetchHandleErrors } from '../util/middleware'
 
 function _getUrl (type) {
   const selectedType = USER_TYPES.find(t => t.value === type)
@@ -59,7 +59,7 @@ function UserList ({ type }) {
     // Create user and re-fetch users.
     const adminUrl = _getUrl('admin')
     // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
-    await secureFetch(
+    await secureFetchHandleErrors(
       adminUrl,
       accessToken,
       'post',

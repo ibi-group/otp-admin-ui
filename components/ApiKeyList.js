@@ -3,7 +3,7 @@ import { Button, ListGroup } from 'react-bootstrap'
 import { withAuth } from 'use-auth0-hooks'
 
 import ApiKeyRow from './ApiKeyRow'
-import { secureFetch } from '../util/middleware'
+import { secureFetchHandleErrors } from '../util/middleware'
 import { API_USER_URL } from '../util/constants'
 
 // Max keys that an API user is allowed to create for themselves (an admin can
@@ -47,7 +47,7 @@ class ApiKeyList extends Component {
     let url = `${API_USER_URL}/${apiUser.id}/apikey`
     if (keyId) url += `/${keyId}`
     if (usagePlanId) url += `?usagePlanId=${usagePlanId}`
-    const result = await secureFetch(url, accessToken, method)
+    const result = await secureFetchHandleErrors(url, accessToken, method)
     if (result.status === 'error') {
       return window.alert(result.message)
     }
