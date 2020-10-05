@@ -32,6 +32,7 @@ function PageControls ({ limit, offset, result, setOffset, showSkipButtons = fal
             if (newOffset > lastOffset || newOffset < 0) return null
             return (
               <Pagination.Item
+                key={i}
                 active={itemIndex === pageIndex}
                 onClick={() => setOffset(newOffset)}
               >

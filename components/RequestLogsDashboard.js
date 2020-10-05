@@ -22,7 +22,7 @@ function RequestLogsDashboard ({ isAdmin }) {
     <div>
       <h2>Request Log Summary</h2>
       {isAdmin &&
-        <h5>
+        <p>
           <a
             className='push'
             target='_blank'
@@ -31,7 +31,7 @@ function RequestLogsDashboard ({ isAdmin }) {
           >
             <ExternalLinkAlt className='mr-1 mb-1' size={20} />Open AWS console
           </a>
-        </h5>
+        </p>
       }
       <div className='controls'>
         <Button

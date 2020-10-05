@@ -30,7 +30,8 @@ function UserList ({ type }) {
     if (!user) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
-  const url = `${_getUrl(type)}?offset=${offset}`
+  const limit = 10
+  const url = `${_getUrl(type)}?offset=${offset}&limit=${limit}`
   const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
@@ -72,7 +73,6 @@ function UserList ({ type }) {
   const result = useSWR(url)
   const { data, error } = result
   const users = data && data.data
-  const limit = 10
   return (
     <div>
       <h2 className='mb-4'>List of {selectedType.label}</h2>

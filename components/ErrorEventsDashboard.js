@@ -9,7 +9,7 @@ const ERROR_EVENTS_URL = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsum
 
 function ErrorEventsDashboard () {
   const [offset, setOffset] = useState(0)
-  const limit = 40
+  const limit = 25
   const url = `${ERROR_EVENTS_URL}?offset=${offset}&limit=${limit}`
   const result = useSWR(url)
   const { data: events } = result
@@ -19,7 +19,7 @@ function ErrorEventsDashboard () {
       <h2>
         Error Events Summary
       </h2>
-      <h5>
+      <p>
         <a
           className='push'
           target='_blank'
@@ -29,13 +29,13 @@ function ErrorEventsDashboard () {
           <ExternalLinkAlt className='mr-1 mb-1' size={20} />
           Open Bugsnag console
         </a>
-      </h5>
+      </p>
       <PageControls
         limit={limit}
         offset={offset}
+        result={result}
         setOffset={setOffset}
-        showSkipButtons
-        result={result} />
+        showSkipButtons />
       {hasEvents
         ? (
           <div>
