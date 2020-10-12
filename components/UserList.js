@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
 import { useAuth } from 'use-auth0-hooks'
 
-import FetchMessage from './FetchMessage'
+import PageControls from './PageControls'
 import UserRow from './UserRow'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
-import { secureFetch } from '../util/middleware'
+import { secureFetch, secureFetchHandleErrors } from '../util/middleware'
 
 function _getUrl (type) {
   const selectedType = USER_TYPES.find(t => t.value === type)
@@ -23,11 +24,14 @@ function UserList ({ type }) {
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
+  const [offset, setOffset] = useState(0)
   const router = useRouter()
   const onViewUser = (user) => {
     if (!user) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
+  const limit = 10
+  const url = `${_getUrl(type)}?offset=${offset}&limit=${limit}`
   const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
@@ -55,7 +59,7 @@ function UserList ({ type }) {
     // Create user and re-fetch users.
     const adminUrl = _getUrl('admin')
     // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
-    await secureFetch(
+    await secureFetchHandleErrors(
       adminUrl,
       accessToken,
       'post',
@@ -66,16 +70,19 @@ function UserList ({ type }) {
   const selectedType = USER_TYPES.find(t => t.value === type)
   if (!isAuthenticated) return null
   if (!selectedType) return <div>Page does not exist!</div>
-  const result = useSWR(_getUrl(type))
+  const result = useSWR(url)
   const { data, error } = result
   const users = data && data.data
   return (
     <div>
       <h2 className='mb-4'>List of {selectedType.label}</h2>
+      <PageControls
+        limit={limit}
+        offset={offset}
+        setOffset={setOffset}
+        showSkipButtons
+        result={result} />
       <div className='controls'>
-        <Button className='mr-3' onClick={() => mutate(_getUrl(type))}>
-          Fetch users
-        </Button>
         {/*
           Only permit user creation for admin users.
           Other users must be created through standard flows.
@@ -85,7 +92,6 @@ function UserList ({ type }) {
             Create user
           </Button>
         }
-        <FetchMessage result={result} />
       </div>
       {
         users && (

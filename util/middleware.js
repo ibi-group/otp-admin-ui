@@ -19,9 +19,37 @@ export async function secureFetch (url, accessToken, method = 'get', options = {
     headers,
     ...options
   })
+  const json = await res.json()
+  return json
+}
+
+/**
+ * Alternative to secureFetch that adds error handling.
+ */
+export async function secureFetchHandleErrors (url, accessToken, method = 'get', options = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
+    },
+    ...options
+  })
+
+  if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
+    const result = await res.json()
+    let message = `Error: ${result.message}`
+    if (result.detail) message += `  (${result.detail})`
+
+    return {
+      status: 'error',
+      message
+    }
+  }
+  const data = await res.json()
   return {
-    data: await res.json(),
-    timestamp: new Date()
+    status: 'success',
+    data
   }
 }
 
@@ -45,8 +73,8 @@ export async function createOrUpdateUser (url, userData, isNew, accessToken) {
 
   // TODO: improve the UI feedback messages for this.
   // A successful call has the user record (with id) in the data field.
-  if (result.data.id) {
-    return result.data
+  if (result.id) {
+    return result
   } else {
     alert(`An error was encountered:\n${JSON.stringify(result)}`)
     return false
