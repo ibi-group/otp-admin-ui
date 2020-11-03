@@ -19,7 +19,7 @@ function _getUrl (type) {
  * This component renders a list of users (can be any subtype of otp-middleware's
  * AbstractUser).
  */
-function UserList ({ type }) {
+function UserList ({ summaryView, type }) {
   const { accessToken, isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
@@ -27,7 +27,7 @@ function UserList ({ type }) {
   const [offset, setOffset] = useState(0)
   const router = useRouter()
   const onViewUser = (user) => {
-    if (!user) router.push(`/manage?type=${type}`)
+    if (!user || !user.id) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
   const limit = 10
@@ -73,6 +73,18 @@ function UserList ({ type }) {
   const result = useSWR(url)
   const { data, error } = result
   const users = data && data.data
+  if (summaryView) {
+    const total = data ? data.total : 0
+    return (
+      <div style={{display: 'inline-block', margin: '10px', textAlign: 'center'}}>
+        <div style={{fontSize: 'xxx-large'}}>{total}</div>
+        <div>{selectedType.label}</div>
+        <Button onClick={onViewUser} size='sm' variant='outline-primary'>
+          View
+        </Button>
+      </div>
+    )
+  }
   return (
     <div>
       <h2 className='mb-4'>List of {selectedType.label}</h2>
