@@ -9,14 +9,46 @@ if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
-export function secureFetch (url, accessToken, method = 'get', options = {}) {
+export async function secureFetch (url, accessToken, method = 'get', options = {}) {
   const headers = {
     Authorization: `Bearer ${accessToken}`
   }
   if (process.env.API_KEY) headers['x-api-key'] = process.env.API_KEY
-  return fetch(url, {
+  const res = await fetch(url, {
     method,
     headers,
     ...options
-  }).then(res => res.json())
+  })
+  const json = await res.json()
+  return json
+}
+
+/**
+ * Alternative to secureFetch that adds error handling.
+ */
+export async function secureFetchHandleErrors (url, accessToken, method = 'get', options = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
+    },
+    ...options
+  })
+
+  if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
+    const result = await res.json()
+    let message = `Error: ${result.message}`
+    if (result.detail) message += `  (${result.detail})`
+
+    return {
+      status: 'error',
+      message
+    }
+  }
+  const data = await res.json()
+  return {
+    status: 'success',
+    data
+  }
 }

@@ -1,30 +1,48 @@
-import useSWR from 'swr'
 import { useAuth0 } from '@auth0/auth0-react'
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
+import { Sync } from '@styled-icons/fa-solid/Sync'
+import { Button } from 'react-bootstrap'
+import useSWR, { mutate } from 'swr'
 
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
 
+const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
+
 function RequestLogsDashboard ({ isAdmin }) {
   const auth = useAuth0()
-  const { data: logs, error } = useSWR(`${process.env.API_BASE_URL}/api/secure/logs`)
+  const result = useSWR(REQUEST_LOGS_URL)
+  const { isValidating } = result
   if (!auth.isAuthenticated) return null
   return (
     <div>
       <h2>Request Log Summary</h2>
-      <div className='controls'>
-        <FetchMessage data={logs} error={error} />
-        {isAdmin &&
+      {isAdmin &&
+        <p>
           <a
             className='push'
             target='_blank'
             rel='noopener noreferrer'
             href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
           >
-            Open AWS console
+            <ExternalLinkAlt className='mr-1 mb-1' size={20} />Open AWS console
           </a>
-        }
+        </p>
+      }
+      <div className='controls'>
+        <Button
+          disabled={isValidating}
+          className='mr-3'
+          onClick={() => mutate(REQUEST_LOGS_URL)}
+        >
+          <Sync size={20} />
+        </Button>
+        <FetchMessage result={result} />
       </div>
-      <ApiKeyUsage isAdmin={isAdmin} logs={logs} logsError={error} />
+      <ApiKeyUsage
+        isAdmin={isAdmin}
+        logs={result.data}
+        logsError={result.error} />
       <style jsx>{`
         .controls {
           align-items: center;
@@ -45,15 +63,6 @@ function RequestLogsDashboard ({ isAdmin }) {
         li {
           list-style: none;
           margin: 5px 0;
-        }
-
-        a {
-          text-decoration: none;
-          color: blue;
-        }
-
-        a:hover {
-          opacity: 0.6;
         }
       `}
       </style>

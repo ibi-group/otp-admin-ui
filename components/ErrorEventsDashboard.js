@@ -1,34 +1,44 @@
+import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 import moment from 'moment'
+import { useState } from 'react'
 import useSWR from 'swr'
 
-import FetchMessage from './FetchMessage'
+import PageControls from './PageControls'
+
+const ERROR_EVENTS_URL = `${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`
 
 function ErrorEventsDashboard () {
-  const { data: events, error } = useSWR(`${process.env.API_BASE_URL}/api/admin/bugsnag/eventsummary`)
-  const hasEvents = events && events.length > 0
-  const MAX_EVENTS_TO_DISPLAY = 100
+  const [offset, setOffset] = useState(0)
+  const limit = 25
+  const url = `${ERROR_EVENTS_URL}?offset=${offset}&limit=${limit}`
+  const result = useSWR(url)
+  const { data: events } = result
+  const hasEvents = events && events.data && events.data.length > 0
   return (
     <div>
-      <h2>Error Events Summary</h2>
-      <div className='controls'>
-        <FetchMessage data={events} error={error} />
+      <h2>
+        Error Events Summary
+      </h2>
+      <p>
         <a
           className='push'
           target='_blank'
           rel='noopener noreferrer'
           href='https://app.bugsnag.com/'
         >
+          <ExternalLinkAlt className='mr-1 mb-1' size={20} />
           Open Bugsnag console
         </a>
-      </div>
+      </p>
+      <PageControls
+        limit={limit}
+        offset={offset}
+        result={result}
+        setOffset={setOffset}
+        showSkipButtons />
       {hasEvents
         ? (
           <div>
-            {error && <pre>Error loading events: {error}</pre>}
-            <p>
-              {events.length} error events recorded over the last two weeks
-              {events.length > MAX_EVENTS_TO_DISPLAY && ` (showing first ${MAX_EVENTS_TO_DISPLAY})`}
-            </p>
             <table>
               <thead>
                 <tr>
@@ -42,44 +52,56 @@ function ErrorEventsDashboard () {
                   should split up the errors according to the project they are
                   assigned to.
                 */}
-                {events
+                {events.data
                   .sort((a, b) => moment(b.received) - moment(a.received))
-                  // FIXME: Add pagination to server/UI.
-                  .filter((event, index) => index <= MAX_EVENTS_TO_DISPLAY)
                   .map((event, eventIndex) => {
                     // TODO: these fields are subject to change pending backend
                     // changes.
                     return (
                       <tr key={eventIndex}>
-                        <td>{event.projectName}</td>
-                        <td>
+                        <td className='component'>{event.projectName}</td>
+                        <td className='details'>
                           {event.exceptions.map((e, i) =>
-                            <span key={i}>{e.errorClass}: {e.message}</span>)
+                            <span key={i}><strong>{e.errorClass}</strong>: {e.message}</span>)
                           }
                         </td>
-                        <td>{moment(event.received).format('D MMM HH:mm')}</td>
+                        <td className='date'>{moment(event.received).format('D MMM h:mm a')}</td>
                       </tr>
                     )
                   })}
               </tbody>
             </table>
+            <PageControls
+              limit={limit}
+              offset={offset}
+              setOffset={setOffset}
+              showSkipButtons
+              result={result} />
           </div>
         )
         : 'No errors reported in the last two weeks.'
       }
       <style jsx>{`
-        .controls {
-          align-items: center;
-          display: flex;
-        }
-        .fetchMessage {
-          margin-left: 5px;
-        }
         .push {
           margin-left: auto;
         }
         td {
           padding-right: 10px;
+        }
+        td.component {
+          vertical-align: top;
+          font-size: x-small;
+          white-space: nowrap;
+        }
+        td.details {
+           overflow: hidden;
+           text-overflow: ellipsis;
+           display: -webkit-box;
+           -webkit-line-clamp: 2; /* number of lines to show */
+           -webkit-box-orient: vertical;
+        }
+        td.date {
+          white-space: nowrap;
         }
       `}
       </style>

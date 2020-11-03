@@ -19,6 +19,9 @@ export const useFetchData = (url, method = 'get', options) => {
   return [state, callAPI]
 }
 
+// Create a useApi hook for accessing protected APIs with an access token. Source:
+// https://github.com/auth0/auth0-react/blob/master/EXAMPLES.md#4-create-a-useapi-hook-for-accessing-protected-apis-with-an-access-token
+// FIXME: This is not working currently.
 export const useApi = (url, method = 'get', options = {}) => {
   const { getAccessTokenSilently } = useAuth0()
   const [state, setState] = useState({
@@ -63,7 +66,7 @@ export const useApi = (url, method = 'get', options = {}) => {
   return [{
     ...state,
     refresh: () => setRefreshIndex(refreshIndex + 1)
-  }, ]
+  } ]
 }
 
 /**

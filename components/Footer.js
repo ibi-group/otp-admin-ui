@@ -155,25 +155,6 @@ export default function Footer (props) {
           padding: 1.25rem;
           min-width: 12.5rem;
         }
-
-        /* Footer main | Newsletter form */
-        form {
-          display: flex;
-          flex-wrap: wrap;
-        }
-        input[type='email'] {
-          border: 0;
-          padding: 0.625rem;
-          margin-top: 0.3125rem;
-        }
-        input[type='submit'] {
-          background-color: #00d188;
-          color: #fff;
-          cursor: pointer;
-          border: 0;
-          padding: 0.625rem 0.9375rem;
-          margin-top: 0.3125rem;
-        }
         /* Footer legal */
         .ft-legal {
           padding: 0.9375rem 1.875rem;

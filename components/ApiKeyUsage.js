@@ -64,7 +64,7 @@ class ApiKeyUsage extends Component {
       )
     }
     return (
-      <div>
+      <div className='mt-3'>
         {logsError && <pre>Error loading logs: {logsError}</pre>}
         <p>All requests made over the last 30 days</p>
         <div>
