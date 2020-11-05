@@ -3,6 +3,8 @@ import { Tab, Tabs } from 'react-bootstrap'
 
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
+import UserList from './UserList'
+import { USER_TYPES } from '../util/constants'
 
 export default function AdminUserDashboard (props) {
   const { push, query: { dashboard } } = useRouter()
@@ -16,9 +18,12 @@ export default function AdminUserDashboard (props) {
         variant='pills'
       >
         <Tab eventKey='/' title='Home'>
-          <p>
-            Please select a category above.
-          </p>
+          <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+            {USER_TYPES.map(item => (
+              <UserList key={item.value} summaryView type={item.value} />
+            ))}
+          </div>
+          <RequestLogsDashboard isAdmin summaryView />
         </Tab>
         <Tab eventKey='errors' title='Errors'>
           <ErrorEventsDashboard />

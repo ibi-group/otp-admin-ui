@@ -3,7 +3,7 @@ import { Tab, Tabs } from 'react-bootstrap'
 import { useAuth } from 'use-auth0-hooks'
 
 import UserList from '../components/UserList'
-import { AUTH0_SCOPE } from '../util/constants'
+import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
 
 export default function Manage (props) {
   const { isAuthenticated, isLoading } = useAuth({
@@ -36,15 +36,11 @@ export default function Manage (props) {
         onSelect={(key) => push(key === '/' ? path : `${path}?type=${key}`)}
         variant='pills'
       >
-        <Tab eventKey='api' title='API Users'>
-          <UserList type={'api'} />
-        </Tab>
-        <Tab eventKey='admin' title='Admin Users'>
-          <UserList type={'admin'} />
-        </Tab>
-        <Tab eventKey='otp' title='OTP Users'>
-          <UserList type={'otp'} />
-        </Tab>
+        {USER_TYPES.map(item => (
+          <Tab key={item.value} eventKey={item.value} title={item.label}>
+            <UserList type={item.value} />
+          </Tab>
+        ))}
       </Tabs>
       <style jsx>{`
           * {
