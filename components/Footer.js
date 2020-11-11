@@ -55,6 +55,14 @@ export default function Footer (props) {
                 API documentation
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                href={process.env.OTP_DEVGROUP_URL}
+                external
+              >
+                OpenTripPlanner Developers Google Group
+              </NavLink>
+            </li>
           </ul>
         </div>
         <div className='ft-main-item'>
