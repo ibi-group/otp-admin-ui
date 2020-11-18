@@ -55,6 +55,14 @@ export default function Footer (props) {
                 API documentation
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                href={process.env.OTP_FORUM_URL}
+                external
+              >
+                OTP Developers Forum
+              </NavLink>
+            </li>
           </ul>
         </div>
         <div className='ft-main-item'>
