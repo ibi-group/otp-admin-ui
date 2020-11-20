@@ -7,7 +7,7 @@ import * as yup from 'yup'
 
 import { AUTH0_SCOPE } from '../util/constants'
 
-// The validation schema for the form fields.
+// The validation schema for the ApiUser fields.
 const validationSchema = yup.object({
   appName: yup.string().required('Please enter your application name.'),
   appPurpose: yup.string(),

@@ -8,9 +8,7 @@ import ApiUserForm from './ApiUserForm'
 /**
  * Modal showing user details for various user types (OTP, Admin, API).
  */
-const UserDetails = (props) => {
-  const { onViewUser, show, type, user } = props
-
+const UserDetails = ({ onUpdateUser, onViewUser, show, type, user }) => {
   const hideUser = () => onViewUser(null, type)
   const showUser = () => onViewUser(user, type)
 
@@ -39,7 +37,7 @@ const UserDetails = (props) => {
             </>
           )}
           {type === 'admin' && (
-            <AdminUserForm adminUser={user} />
+            <AdminUserForm adminUser={user} onUpdateUser={onUpdateUser} />
           )}
         </Modal.Body>
         <Modal.Footer>

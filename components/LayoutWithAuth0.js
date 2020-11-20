@@ -12,7 +12,11 @@ import {
   AUTH0_SCOPE,
   DEFAULT_REFRESH_MILLIS
 } from '../util/constants'
-import { createOrUpdateUser, secureFetch, secureFetchHandleErrors } from '../util/middleware'
+import {
+  getUserUrl,
+  secureFetch,
+  secureFetchHandleErrors
+} from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
@@ -29,17 +33,19 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
-  createUser = async (apiUser) => {
+  createApiUser = async (apiUser) => {
     const { auth, router } = this.props
     const { accessToken } = auth
-    const newApiUser = await createOrUpdateUser(
-      API_USER_URL,
-      apiUser,
-      true,
-      accessToken
+    const result = await secureFetchHandleErrors(
+      getUserUrl('api'),
+      accessToken,
+      'POST',
+      { body: JSON.stringify(apiUser) }
     )
-    if (newApiUser) {
-      this.setState({apiUser: newApiUser})
+    if (result.status === 'error') {
+      window.alert(result.message)
+    } else {
+      this.setState({apiUser: result})
       // TODO: Push to a success page.
       router.push('/?newApiAccount=true')
     }
@@ -55,6 +61,21 @@ class LayoutWithAuth0 extends Component {
       apiUser: apiUserResult.data,
       isUserFetched: true
     })
+  }
+
+  updateUser = async ({user, type, isSelf}) => {
+    const { accessToken } = this.props.auth
+    const result = await secureFetchHandleErrors(
+      `${getUserUrl(type)}/${user.id}`,
+      accessToken,
+      'PUT',
+      { body: JSON.stringify(user) }
+    )
+    // Ensure user object gets updated at top level if updating self.
+    if (isSelf) this._fetchUsers()
+    if (result.status === 'error') {
+      window.alert(result.message)
+    }
   }
 
   async componentDidUpdate () {
@@ -91,8 +112,9 @@ class LayoutWithAuth0 extends Component {
       // TODO: find a better way to pass props to children.
       const extraProps = {
         ...this.state,
-        createUser: this.createUser,
-        handleSignup
+        createUser: this.createApiUser,
+        handleSignup,
+        updateUser: this.updateUser
       }
       contents = renderChildrenWithProps(children, extraProps)
     }

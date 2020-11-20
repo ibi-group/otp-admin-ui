@@ -1,25 +1,19 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
-import useSWR, { mutate } from 'swr'
+import useSWR from 'swr'
 import { useAuth } from 'use-auth0-hooks'
 
 import PageControls from './PageControls'
 import UserRow from './UserRow'
 import { AUTH0_SCOPE, USER_TYPES } from '../util/constants'
-import { secureFetch, secureFetchHandleErrors } from '../util/middleware'
-
-function _getUrl (type) {
-  const selectedType = USER_TYPES.find(t => t.value === type)
-  if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
-  return selectedType.url
-}
+import { getUserUrl, secureFetch } from '../util/middleware'
 
 /**
  * This component renders a list of users (can be any subtype of otp-middleware's
  * AbstractUser).
  */
-function UserList ({ summaryView, type }) {
+function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   const { accessToken, isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
@@ -31,7 +25,13 @@ function UserList ({ summaryView, type }) {
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
   const limit = 10
-  const url = `${_getUrl(type)}?offset=${offset}&limit=${limit}`
+  const url = `${getUserUrl(type)}?offset=${offset}&limit=${limit}`
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!isAuthenticated) return null
+  if (!selectedType) return <div>Page does not exist!</div>
+  const getAllResult = useSWR(url)
+  const { data, error, mutate: mutateList } = getAllResult
+  // Handlers
   const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
@@ -42,36 +42,36 @@ function UserList ({ summaryView, type }) {
       return
     }
     // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
-    const result = await secureFetch(
-      `${_getUrl(type)}/${user.id}`,
+    const deleteResult = await secureFetch(
+      `${getUserUrl(type)}/${user.id}`,
       accessToken,
       'delete'
     )
-    mutate(_getUrl(type))
-    if (result.code >= 400) {
-      window.alert(result.message)
+    mutateList()
+    if (deleteResult.code >= 400) {
+      window.alert(deleteResult.message)
     }
   }
-  const onCreateAdminUser = async () => {
+  const onUpdateUser = async (args) => {
+    await updateUser(args)
+    mutateList()
+  }
+  const onCreateAdminUser = async (errorMessage = '') => {
     const email = window.prompt(`Enter an email address for admin user.`)
-    // TODO: Validate user.
-    if (!email) return
     // Create user and re-fetch users.
-    const adminUrl = _getUrl('admin')
+    const adminUrl = getUserUrl('admin')
     // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
-    await secureFetchHandleErrors(
+    const createResult = await secureFetch(
       adminUrl,
       accessToken,
       'post',
       { body: JSON.stringify({ email }) }
     )
-    mutate(adminUrl)
+    mutateList()
+    if (createResult.code >= 400) {
+      window.alert(createResult.message)
+    }
   }
-  const selectedType = USER_TYPES.find(t => t.value === type)
-  if (!isAuthenticated) return null
-  if (!selectedType) return <div>Page does not exist!</div>
-  const result = useSWR(url)
-  const { data, error } = result
   const users = data && data.data
   if (summaryView) {
     const total = data ? data.total : 0
@@ -93,7 +93,7 @@ function UserList ({ summaryView, type }) {
         offset={offset}
         setOffset={setOffset}
         showSkipButtons
-        result={result} />
+        result={getAllResult} />
       <div className='controls'>
         {/*
           Only permit user creation for admin users.
@@ -117,6 +117,7 @@ function UserList ({ summaryView, type }) {
                     activeId={router.query.userId}
                     type={type}
                     user={user}
+                    onUpdateUser={onUpdateUser}
                     onViewUser={onViewUser}
                     onDeleteUser={onDeleteUser}
                   />

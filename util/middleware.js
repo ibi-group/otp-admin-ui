@@ -1,4 +1,12 @@
+import {USER_TYPES} from './constants'
+
 if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
+
+export function getUserUrl (type) {
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
+  return selectedType.url
+}
 
 /**
  * This convenience method wraps a fetch call to the specified URL
@@ -50,49 +58,5 @@ export async function secureFetchHandleErrors (url, accessToken, method = 'get',
   return {
     status: 'success',
     data
-  }
-}
-
-export async function addUser (url, token, data) {
-  const requestUrl = `${url}`
-  return secureFetch(requestUrl, token, 'POST', {
-    body: JSON.stringify(data)
-  })
-}
-
-/**
- * Updates (or creates) a user entry in the middleware.
- */
-export async function createOrUpdateUser (url, userData, isNew, accessToken) {
-  let result
-  if (isNew) {
-    result = await addUser(url, accessToken, userData)
-  } else {
-    result = await updateUser(url, accessToken, userData)
-  }
-
-  // TODO: improve the UI feedback messages for this.
-  // A successful call has the user record (with id) in the data field.
-  if (result.id) {
-    return result
-  } else {
-    alert(`An error was encountered:\n${JSON.stringify(result)}`)
-    return false
-  }
-}
-
-export async function updateUser (url, token, data) {
-  const { id } = data // Middleware ID, NOT auth0 (or similar) id.
-  const requestUrl = `${url}/${id}`
-
-  if (id) {
-    return secureFetch(requestUrl, token, 'PUT', {
-      body: JSON.stringify(data)
-    })
-  } else {
-    return {
-      status: 'error',
-      message: 'Corrupted state: User ID not available for exiting user.'
-    }
   }
 }
