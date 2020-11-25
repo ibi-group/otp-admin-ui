@@ -13,7 +13,7 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  * This component renders a list of users (can be any subtype of otp-middleware's
  * AbstractUser).
  */
-function UserList ({ fetchUsers, summaryView, type, updateUser }) {
+function UserList ({ summaryView, type, updateUser, ...props }) {
   const { accessToken, isAuthenticated } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE

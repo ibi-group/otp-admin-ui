@@ -5,7 +5,6 @@ import { Component } from 'react'
 import { SWRConfig } from 'swr'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
-import { useApi } from '../hooks/use-api'
 import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
@@ -27,6 +26,7 @@ class LayoutWithAuth0 extends Component {
     super()
 
     this.state = {
+      // Allows to fetch the Auth0 access token once and pass it where needed.
       accessToken: null,
       adminUser: null,
       apiUser: null,
@@ -119,7 +119,7 @@ class LayoutWithAuth0 extends Component {
   render () {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser } = this.state
+    const { accessToken, adminUser } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () => loginWithRedirect({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
@@ -132,8 +132,6 @@ class LayoutWithAuth0 extends Component {
     if (user && !user.email_verified) {
       // If user is logged in, but email is not verified, force user to verify.
       contents = <VerifyEmailScreen />
-    //} else if (this.loggedInUserIsUnfetched()) {
-    //  contents = <h1>Loading...</h1>
     } else {
       // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
@@ -149,8 +147,8 @@ class LayoutWithAuth0 extends Component {
     return (
       <SWRConfig
         value={{
-          fetcher: (url, method, ...props) => useApi(url, method, props),
-          refreshInterval: 30000
+          fetcher: (url, method, ...props) => secureFetch(url, accessToken, method, props),
+          refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >
         <div>

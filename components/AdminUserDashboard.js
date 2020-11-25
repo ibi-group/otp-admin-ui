@@ -26,7 +26,7 @@ export default function AdminUserDashboard (props) {
           <RequestLogsDashboard isAdmin summaryView />
         </Tab>
         <Tab eventKey='errors' title='Errors'>
-          {/*<ErrorEventsDashboard />*/}
+          <ErrorEventsDashboard />
         </Tab>
         <Tab eventKey='requests' title='Request logs'>
           <RequestLogsDashboard isAdmin />
