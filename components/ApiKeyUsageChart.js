@@ -157,13 +157,12 @@ class ApiKeyUsageChart extends Component {
           xDomain={[timestamp - 2 * ONE_DAY_MILLIS, timestamp + 30 * ONE_DAY_MILLIS]}
           // Round up max y value to the nearest 10
           yDomain={[0, maxY]}
-          xType='time'
-          width={300}
+          width={600}
           height={300}
         >
           <VerticalGridLines />
           <HorizontalGridLines />
-          <XAxis />
+          <XAxis tickFormat={(d) => moment(d).format('MMM DD')} />
           <YAxis />
           <VerticalRectSeries
             data={CHART_DATA}

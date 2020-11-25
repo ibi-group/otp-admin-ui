@@ -12,7 +12,7 @@ class ApiKeyUsage extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      aggregatedView: false
+      aggregatedView: props.summaryView
     }
   }
 
@@ -24,7 +24,7 @@ class ApiKeyUsage extends Component {
   }
 
   render () {
-    const { isAdmin, logs, logsError } = this.props
+    const { isAdmin, logs, logsError, summaryView } = this.props
     const { aggregatedView } = this.state
     const hasLogs = logs && logs.length > 0
     if (!hasLogs) {
@@ -68,8 +68,8 @@ class ApiKeyUsage extends Component {
         {logsError && <pre>Error loading logs: {logsError}</pre>}
         <p>All requests made over the last 30 days</p>
         <div>
-          {isAdmin &&
-            <Button onClick={this._toggleAggregatedView}>
+          {isAdmin && !summaryView &&
+            <Button className='mb-3' onClick={this._toggleAggregatedView}>
               Show {aggregatedView ? 'individual keys' : 'aggregated view'}
             </Button>
           }

@@ -9,40 +9,49 @@ import FetchMessage from './FetchMessage'
 
 const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
 
-function RequestLogsDashboard ({ isAdmin }) {
-  const auth = useAuth0()
+function RequestLogsDashboard ({ isAdmin, summaryView }) {
+  const auth = useAuth0({ // Does not take args...
+    audience: process.env.AUTH0_AUDIENCE,
+    scope: AUTH0_SCOPE
+  })
   const result = useSWR(REQUEST_LOGS_URL)
   const { isValidating } = result
   if (!auth.isAuthenticated) return null
   return (
     <div>
-      <h2>Request Log Summary</h2>
-      {isAdmin &&
-        <p>
-          <a
-            className='push'
-            target='_blank'
-            rel='noopener noreferrer'
-            href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
-          >
-            <ExternalLinkAlt className='mr-1 mb-1' size={20} />Open AWS console
-          </a>
-        </p>
+      {summaryView
+        ? null
+        : <>
+          <h2>Request Log Summary</h2>
+          {isAdmin &&
+            <p>
+              <a
+                className='push'
+                target='_blank'
+                rel='noopener noreferrer'
+                href='https://console.aws.amazon.com/apigateway/home?region=us-east-1#/usage-plans'
+              >
+                <ExternalLinkAlt className='mr-1 mb-1' size={20} />Open AWS console
+              </a>
+            </p>
+          }
+          <div className='controls'>
+            <Button
+              disabled={isValidating}
+              className='mr-3'
+              onClick={() => mutate(REQUEST_LOGS_URL)}
+            >
+              <Sync size={20} />
+            </Button>
+            <FetchMessage result={result} />
+          </div>
+        </>
       }
-      <div className='controls'>
-        <Button
-          disabled={isValidating}
-          className='mr-3'
-          onClick={() => mutate(REQUEST_LOGS_URL)}
-        >
-          <Sync size={20} />
-        </Button>
-        <FetchMessage result={result} />
-      </div>
       <ApiKeyUsage
         isAdmin={isAdmin}
         logs={result.data}
-        logsError={result.error} />
+        logsError={result.error}
+        summaryView={summaryView} />
       <style jsx>{`
         .controls {
           align-items: center;
