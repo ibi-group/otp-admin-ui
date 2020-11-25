@@ -1,6 +1,7 @@
 import { withAuth0 } from '@auth0/auth0-react'
 import Head from 'next/head'
 import { withRouter } from 'next/router'
+import { Component } from 'react'
 import { SWRConfig } from 'swr'
 
 import VerifyEmailScreen from '../components/verify-email-screen'
@@ -26,6 +27,7 @@ class LayoutWithAuth0 extends Component {
     super()
 
     this.state = {
+      accessToken: null,
       adminUser: null,
       apiUser: null,
       isUserFetched: false,
@@ -33,9 +35,31 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
+  /**
+   * Determines whether an auth0 token should be fetched.
+   * @returns true if the logged-in user has passed Auth0 authentication
+   *   and accessToken has not been set in the component state; false otherwise.
+   */
+  acccessTokenIsUnfetched = () => {
+    const { auth0 } = this.props
+    const { accessToken } = this.state
+    return auth0 && auth0.isAuthenticated && !accessToken
+  }
+
+  /**
+   * Determines whether user data should be fetched.
+   * @returns true if the logged-in user has passed Auth0 authentication
+   *   and isUserRequested has not been set in the component state; false otherwise.
+   */
+  loggedInUserIsUnfetched = () => {
+    const { auth0 } = this.props
+    const { isUserRequested } = this.state
+    return auth0 && auth0.isAuthenticated && !isUserRequested
+  }
+
   createApiUser = async (apiUser) => {
-    const { auth, router } = this.props
-    const { accessToken } = auth
+    const { router } = this.props
+    const { accessToken } = this.state
     const result = await secureFetchHandleErrors(
       getUserUrl('api'),
       accessToken,
@@ -52,7 +76,7 @@ class LayoutWithAuth0 extends Component {
   }
 
   _fetchUsers = async () => {
-    const { accessToken } = this.props.auth
+    const { accessToken } = this.state
     // TODO: Combine into a single fetch fromToken or use SWR
     const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
     const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
@@ -64,7 +88,7 @@ class LayoutWithAuth0 extends Component {
   }
 
   updateUser = async ({user, type, isSelf}) => {
-    const { accessToken } = this.props.auth
+    const { accessToken } = this.state
     const result = await secureFetchHandleErrors(
       `${getUserUrl(type)}/${user.id}`,
       accessToken,
@@ -79,11 +103,12 @@ class LayoutWithAuth0 extends Component {
   }
 
   async componentDidUpdate () {
-    const { auth } = this.props
-    const { accessToken, isAuthenticated } = auth
-    const { isUserRequested } = this.state
+    const { auth0 } = this.props
 
-    if (isAuthenticated && accessToken && !isUserRequested) {
+    if (this.acccessTokenIsUnfetched()) {
+      const accessToken = await auth0.getAccessTokenSilently()
+      this.setState({ accessToken })
+    } else if (this.loggedInUserIsUnfetched()) {
       // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
       this.setState({ isUserRequested: true })
       // Fetch and cache user data when the auth0 access token becomes available.
@@ -107,6 +132,8 @@ class LayoutWithAuth0 extends Component {
     if (user && !user.email_verified) {
       // If user is logged in, but email is not verified, force user to verify.
       contents = <VerifyEmailScreen />
+    //} else if (this.loggedInUserIsUnfetched()) {
+    //  contents = <h1>Loading...</h1>
     } else {
       // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
@@ -118,47 +145,47 @@ class LayoutWithAuth0 extends Component {
       }
       contents = renderChildrenWithProps(children, extraProps)
     }
-    contents = renderChildrenWithProps(children, extraProps)
+  
+    return (
+      <SWRConfig
+        value={{
+          fetcher: (url, method, ...props) => useApi(url, method, props),
+          refreshInterval: 30000
+        }}
+      >
+        <div>
+          <Head>
+            <title>{process.env.SITE_TITLE}</title>
+          </Head>
+          <NavBar
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            handleSignup={handleSignup} />
+          <main>
+            <div className='container'>
+              {contents}
+            </div>
+          </main>
+          <Footer />
+          <style jsx>{`
+            .container {
+              max-width: 42rem;
+              min-height: 500px;
+              margin: 1.5rem auto;
+            }
+          `}
+          </style>
+          <style jsx global>{`
+            body {
+              margin: 0;
+              color: #333;
+            }
+          `}
+          </style>
+        </div>
+      </SWRConfig>
+    )
   }
-  return (
-    <SWRConfig
-      value={{
-        fetcher: (url, method, ...props) => useApi(url, method, props),
-        refreshInterval: 30000
-      }}
-    >
-      <div>
-        <Head>
-          <title>{process.env.SITE_TITLE}</title>
-        </Head>
-        <NavBar
-          handleLogin={handleLogin}
-          handleLogout={handleLogout}
-          handleSignup={handleSignup} />
-        <main>
-          <div className='container'>
-            {contents}
-          </div>
-        </main>
-        <Footer />
-        <style jsx>{`
-          .container {
-            max-width: 42rem;
-            min-height: 500px;
-            margin: 1.5rem auto;
-          }
-        `}
-        </style>
-        <style jsx global>{`
-          body {
-            margin: 0;
-            color: #333;
-          }
-        `}
-        </style>
-      </div>
-    </SWRConfig>
-  )
 }
 
-export default withRouter(withAuth0(LayoutwithAuth0))
+export default withRouter(withAuth0(LayoutWithAuth0))
