@@ -75,7 +75,7 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
-  _fetchUsers = async () => {
+  fetchUsers = async () => {
     const { accessToken } = this.state
     // TODO: Combine into a single fetch fromToken or use SWR
     const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
@@ -96,7 +96,7 @@ class LayoutWithAuth0 extends Component {
       { body: JSON.stringify(user) }
     )
     // Ensure user object gets updated at top level if updating self.
-    if (isSelf) this._fetchUsers()
+    if (isSelf) this.fetchUsers()
     if (result.status === 'error') {
       window.alert(result.message)
     }
@@ -112,7 +112,7 @@ class LayoutWithAuth0 extends Component {
       // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
       this.setState({ isUserRequested: true })
       // Fetch and cache user data when the auth0 access token becomes available.
-      this._fetchUsers()
+      this.fetchUsers()
     }
   }
 
