@@ -29,7 +29,7 @@ export default function NavBar (props) {
             isAuthenticated ? (
               <>
                 <li>
-                  <NavLink pathname={pathname} href='/profile'>
+                  <NavLink pathname={pathname} href='/account'>
                     My Account
                   </NavLink>
                 </li>

@@ -1,14 +1,44 @@
+import Select from 'react-select'
+
+const subscriptionOptions = [
+  {
+    value: 'NEW_ERROR',
+    label: 'New errors'
+  }
+]
+
 /**
  * Form showing details for a specific Admin User.
- *
- * TODO: this is currently barebones, but it matches the otp-middleware level
- * of detail for now.
  */
-const AdminUserForm = ({ adminUser }) => {
+const AdminUserForm = ({ adminUser, onUpdateUser, isSelf }) => {
+  const handleUpdateSubscriptions = (options) => {
+    const subscriptions = options ? options.map(o => o.value) : []
+    onUpdateUser({
+      user: {...adminUser, subscriptions},
+      type: 'admin',
+      isSelf
+    })
+  }
+  const currentSubscriptions = adminUser.subscriptions
+    ? adminUser.subscriptions
+      .map(v => subscriptionOptions.find(o => o.value === v))
+      .filter(o => o)
+    : []
   return (
     <div>
       <p>Account type: ADMIN</p>
       <p>Email: {adminUser.email}</p>
+      <label htmlFor='subscriptions'>Email subscriptions</label>
+      <Select
+        defaultValue={currentSubscriptions}
+        disabled={!onUpdateUser}
+        isMulti
+        label='Subscriptions'
+        name='subscriptions'
+        id='subscriptions'
+        options={subscriptionOptions}
+        onChange={handleUpdateSubscriptions}
+      />
     </div>
   )
 }

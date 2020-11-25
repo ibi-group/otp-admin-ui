@@ -6,9 +6,15 @@ import UserDetails from './UserDetails'
 /**
  * Renders a row in UserList for a specific user.
  */
-const UserRow = ({ activeId, onDeleteUser, onViewUser, type, user }) => {
+const UserRow = ({
+  activeId,
+  onDeleteUser,
+  onUpdateUser,
+  onViewUser,
+  type,
+  user
+}) => {
   const handleDeleteUser = event => onDeleteUser(user, type)
-
   return (
     <ListGroup.Item as='li'>
       <span className='align-middle'>
@@ -24,10 +30,12 @@ const UserRow = ({ activeId, onDeleteUser, onViewUser, type, user }) => {
         Delete
       </Button>
       <UserDetails
-        user={user}
-        show={user.id === activeId}
+        onUpdateUser={onUpdateUser}
         onViewUser={onViewUser}
-        type={type} />
+        show={user.id === activeId}
+        type={type}
+        user={user}
+      />
     </ListGroup.Item>
   )
 }

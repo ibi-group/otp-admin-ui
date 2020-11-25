@@ -1,4 +1,12 @@
+import {USER_TYPES} from './constants'
+
 if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
+
+export function getUserUrl (type) {
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
+  return selectedType.url
+}
 
 /**
  * This convenience method wraps a fetch call to the specified URL

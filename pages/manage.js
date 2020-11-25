@@ -38,7 +38,11 @@ export default function Manage (props) {
       >
         {USER_TYPES.map(item => (
           <Tab key={item.value} eventKey={item.value} title={item.label}>
-            <UserList type={item.value} />
+            <UserList
+              type={item.value}
+              fetchUsers={props.fetchUsers}
+              updateUser={props.updateUser}
+            />
           </Tab>
         ))}
       </Tabs>
