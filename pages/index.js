@@ -10,13 +10,11 @@ import { ADMIN_USER_URL, API_USER_URL } from '../util/constants'
 
 export default function Index (props) {
   const {
-    adminUser,
-    apiUser,
     handleSignup
   } = props
-  //const { data: adminUser } = useSWR(`${ADMIN_USER_URL}/fromtoken`)
-  //const { data: apiUser } = useSWR(`${API_USER_URL}/fromtoken`)
-  console.log(adminUser, apiUser)
+  const adminUser = useSWR(`${ADMIN_USER_URL}/fromtoken`)
+  const apiUser = useSWR(`${API_USER_URL}/fromtoken`)
+
   const { push, query } = useRouter()
   const { isAuthenticated } = useAuth0()
 

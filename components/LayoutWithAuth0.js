@@ -4,7 +4,7 @@ import { withRouter } from 'next/router'
 import { Component } from 'react'
 import { SWRConfig } from 'swr'
 
-import VerifyEmailScreen from '../components/verify-email-screen'
+import VerifyEmailScreen from './verify-email-screen'
 import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
@@ -49,12 +49,12 @@ class LayoutWithAuth0 extends Component {
   /**
    * Determines whether user data should be fetched.
    * @returns true if the logged-in user has passed Auth0 authentication
-   *   and isUserRequested has not been set in the component state; false otherwise.
+   *   and isUserFetched has not been set in the component state; false otherwise.
    */
   loggedInUserIsUnfetched = () => {
     const { auth0 } = this.props
-    const { isUserRequested } = this.state
-    return auth0 && auth0.isAuthenticated && !isUserRequested
+    const { isUserFetched } = this.state
+    return auth0 && auth0.isAuthenticated && !isUserFetched
   }
 
   createApiUser = async (apiUser) => {
@@ -76,15 +76,24 @@ class LayoutWithAuth0 extends Component {
   }
 
   fetchUsers = async () => {
-    const { accessToken } = this.state
-    // TODO: Combine into a single fetch fromToken or use SWR
-    const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
-    const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
-    this.setState({
-      adminUser: adminUserResult.data,
-      apiUser: apiUserResult.data,
-      isUserFetched: true
-    })
+    const { accessToken, isUserRequested } = this.state
+    if (!isUserRequested) {
+      console.log('Fetching users')
+      // Set requested flag to avoid multiple requests
+      // TODO: useEffect?
+      this.setState({ isUserRequested: true })
+
+      // TODO: Combine into a single fetch fromToken or use SWR
+      const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+      const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
+      this.setState({
+        adminUser: adminUserResult.data,
+        apiUser: apiUserResult.data,
+        isUserFetched: true,
+        isUserRequested: false
+      })
+    }
+
   }
 
   updateUser = async ({user, type, isSelf}) => {
@@ -109,8 +118,6 @@ class LayoutWithAuth0 extends Component {
       const accessToken = await auth0.getAccessTokenSilently()
       this.setState({ accessToken })
     } else if (this.loggedInUserIsUnfetched()) {
-      // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
-      this.setState({ isUserRequested: true })
       // Fetch and cache user data when the auth0 access token becomes available.
       this.fetchUsers()
     }
@@ -141,9 +148,53 @@ class LayoutWithAuth0 extends Component {
         handleSignup,
         updateUser: this.updateUser
       }
-      contents = renderChildrenWithProps(children, extraProps)
+
+
+      if (this.acccessTokenIsUnfetched() || this.loggedInUserIsUnfetched()) {
+        contents = <h1>Loading...</h1>
+      } else {
+        contents = renderChildrenWithProps(children, extraProps)
+      }
     }
-  
+
+    const pageStructure = (
+      <div>
+        <Head>
+          <title>{process.env.SITE_TITLE}</title>
+        </Head>
+        <NavBar
+          handleLogin={handleLogin}
+          handleLogout={handleLogout}
+          handleSignup={handleSignup} />
+        <main>
+          <div className='container'>
+            {contents}
+          </div>
+        </main>
+        <Footer />
+        <style jsx>{`
+          .container {
+            max-width: 42rem;
+            min-height: 500px;
+            margin: 1.5rem auto;
+          }
+        `}
+        </style>
+        <style jsx global>{`
+          body {
+            margin: 0;
+            color: #333;
+          }
+        `}
+        </style>
+      </div>
+    )
+
+    // FIXME: can this be removed?
+    if (this.loggedInUserIsUnfetched()) {
+      return pageStructure
+    }
+
     return (
       <SWRConfig
         value={{
@@ -151,36 +202,7 @@ class LayoutWithAuth0 extends Component {
           refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >
-        <div>
-          <Head>
-            <title>{process.env.SITE_TITLE}</title>
-          </Head>
-          <NavBar
-            handleLogin={handleLogin}
-            handleLogout={handleLogout}
-            handleSignup={handleSignup} />
-          <main>
-            <div className='container'>
-              {contents}
-            </div>
-          </main>
-          <Footer />
-          <style jsx>{`
-            .container {
-              max-width: 42rem;
-              min-height: 500px;
-              margin: 1.5rem auto;
-            }
-          `}
-          </style>
-          <style jsx global>{`
-            body {
-              margin: 0;
-              color: #333;
-            }
-          `}
-          </style>
-        </div>
+        {pageStructure}
       </SWRConfig>
     )
   }
