@@ -15,7 +15,8 @@ import { secureFetch } from '../util/middleware'
  */
 class VerifyEmailScreen extends Component {
   resendVerificationEmail = () => {
-    const { accessToken } = this.props.auth
+    const { getAccessTokenSilently } = this.props.auth0
+    const accessToken = getAccessTokenSilently()
     if (!accessToken) {
       console.warn('No access token found.')
       return

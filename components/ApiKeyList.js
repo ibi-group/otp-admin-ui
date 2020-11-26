@@ -38,12 +38,14 @@ class ApiKeyList extends Component {
   _deleteKey = (apiKey) => this._makeKeyRequest({method: 'delete', keyId: apiKey.keyId})
 
   _makeKeyRequest = async ({method, keyId, usagePlanId}) => {
-    const { apiUser, auth } = this.props
+    const { apiUser, auth0 } = this.props
     if (!apiUser) {
       console.warn('Cannot delete API key without userId.')
       return
     }
-    const { accessToken } = auth
+    const { getAccessTokenSilently } = auth0
+    const accessToken = await getAccessTokenSilently()
+
     let url = `${API_USER_URL}/${apiUser.id}/apikey`
     if (keyId) url += `/${keyId}`
     if (usagePlanId) url += `?usagePlanId=${usagePlanId}`
