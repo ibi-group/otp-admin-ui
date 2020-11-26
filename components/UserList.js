@@ -1,8 +1,8 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
 import useSWR from 'swr'
-import { useAuth0 } from '@auth0/auth0-react'
 
 import PageControls from './PageControls'
 import UserRow from './UserRow'
@@ -14,7 +14,7 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  * AbstractUser).
  */
 function UserList ({ summaryView, type, updateUser, ...props }) {
-  const { accessToken, isAuthenticated } = useAuth0({
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
@@ -32,7 +32,7 @@ function UserList ({ summaryView, type, updateUser, ...props }) {
   const getAllResult = useSWR(url)
   const { data, error, mutate: mutateList } = getAllResult
   // Handlers
-  const onDeleteUser = async (user, type) => {
+  const onDeleteUser = async (user, type) => {    
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {
@@ -41,7 +41,9 @@ function UserList ({ summaryView, type, updateUser, ...props }) {
     if (!window.confirm(message)) {
       return
     }
-    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
+    // Note: should not useSWR because SWR caches requests and polls at regular intervals.
+    // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
+    const accessToken = await getAccessTokenSilently()
     const deleteResult = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
       accessToken,
@@ -60,7 +62,9 @@ function UserList ({ summaryView, type, updateUser, ...props }) {
     const email = window.prompt(`Enter an email address for admin user.`)
     // Create user and re-fetch users.
     const adminUrl = getUserUrl('admin')
-    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
+    // Note: should not useSWR because SWR caches requests and polls at regular intervals.
+    // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
+    const accessToken = await getAccessTokenSilently()
     const createResult = await secureFetch(
       adminUrl,
       accessToken,

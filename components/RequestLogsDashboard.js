@@ -6,14 +6,15 @@ import useSWR, { mutate } from 'swr'
 
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
+import { AUTH0_SCOPE } from '../util/constants'
 
 const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
 
 function RequestLogsDashboard ({ isAdmin, summaryView }) {
-  const auth = useAuth0() //{ // Does not take args...
-  //  audience: process.env.AUTH0_AUDIENCE,
-  //  scope: AUTH0_SCOPE
-  //})
+  const auth = useAuth0({
+    audience: process.env.AUTH0_AUDIENCE,
+    scope: AUTH0_SCOPE
+  })
   const result = useSWR(REQUEST_LOGS_URL)
   const { isValidating } = result
   if (!auth.isAuthenticated) return null
