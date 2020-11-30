@@ -26,7 +26,6 @@ class LayoutWithAuth0 extends Component {
     super()
 
     this.state = {
-      // Allows to fetch the Auth0 access token once and pass it where needed.
       accessToken: null,
       adminUser: null,
       apiUser: null,
@@ -78,7 +77,6 @@ class LayoutWithAuth0 extends Component {
   fetchUsers = async () => {
     const { accessToken, isUserRequested } = this.state
     if (!isUserRequested) {
-      console.log('Fetching users')
       // Set requested flag to avoid multiple requests
       // TODO: useEffect?
       this.setState({ isUserRequested: true })
@@ -157,44 +155,6 @@ class LayoutWithAuth0 extends Component {
       }
     }
 
-    const pageStructure = (
-      <div>
-        <Head>
-          <title>{process.env.SITE_TITLE}</title>
-        </Head>
-        <NavBar
-          handleLogin={handleLogin}
-          handleLogout={handleLogout}
-          handleSignup={handleSignup} />
-        <main>
-          <div className='container'>
-            {contents}
-          </div>
-        </main>
-        <Footer />
-        <style jsx>{`
-          .container {
-            max-width: 42rem;
-            min-height: 500px;
-            margin: 1.5rem auto;
-          }
-        `}
-        </style>
-        <style jsx global>{`
-          body {
-            margin: 0;
-            color: #333;
-          }
-        `}
-        </style>
-      </div>
-    )
-
-    // FIXME: can this be removed?
-    if (this.loggedInUserIsUnfetched()) {
-      return pageStructure
-    }
-
     return (
       <SWRConfig
         value={{
@@ -202,10 +162,44 @@ class LayoutWithAuth0 extends Component {
           refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >
-        {pageStructure}
+        <div>
+          <Head>
+            <title>{process.env.SITE_TITLE}</title>
+          </Head>
+          <NavBar
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            handleSignup={handleSignup} />
+          <main>
+            <div className='container'>
+              {contents}
+            </div>
+          </main>
+          <Footer />
+          <style jsx>{`
+            .container {
+              max-width: 42rem;
+              min-height: 500px;
+              margin: 1.5rem auto;
+            }
+          `}
+          </style>
+          <style jsx global>{`
+            body {
+              margin: 0;
+              color: #333;
+            }
+          `}
+          </style>
+        </div>
       </SWRConfig>
     )
   }
 }
 
-export default withRouter(withAuth0(LayoutWithAuth0))
+export default withRouter(
+  withAuth0(LayoutWithAuth0, {
+    audience: process.env.AUTH0_AUDIENCE,
+    scope: AUTH0_SCOPE
+  })
+)
