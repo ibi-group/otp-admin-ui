@@ -32,7 +32,7 @@ function UserList ({ summaryView, type, updateUser, ...props }) {
   const getAllResult = useSWR(url)
   const { data, error, mutate: mutateList } = getAllResult
   // Handlers
-  const onDeleteUser = async (user, type) => {    
+  const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {

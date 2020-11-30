@@ -91,7 +91,6 @@ class LayoutWithAuth0 extends Component {
         isUserRequested: false
       })
     }
-
   }
 
   updateUser = async ({user, type, isSelf}) => {
@@ -124,7 +123,7 @@ class LayoutWithAuth0 extends Component {
   render () {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { accessToken, adminUser } = this.state
+    const { accessToken, adminUser, apiUser } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () => loginWithRedirect({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
@@ -141,12 +140,12 @@ class LayoutWithAuth0 extends Component {
       // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
       const extraProps = {
-        ...this.state,
+        adminUser,
+        apiUser,
         createUser: this.createApiUser,
         handleSignup,
         updateUser: this.updateUser
       }
-
 
       if (this.acccessTokenIsUnfetched() || this.loggedInUserIsUnfetched()) {
         contents = <h1>Loading...</h1>

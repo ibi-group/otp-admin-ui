@@ -1,19 +1,18 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 
 import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
-import { ADMIN_USER_URL, API_USER_URL } from '../util/constants'
 
 export default function Index (props) {
   const {
+    adminUser,
+    apiUser,
+    createUser,
     handleSignup
   } = props
-  const adminUser = useSWR(`${ADMIN_USER_URL}/fromtoken`)
-  const apiUser = useSWR(`${API_USER_URL}/fromtoken`)
 
   const { push, query } = useRouter()
   const { isAuthenticated } = useAuth0()
@@ -28,7 +27,7 @@ export default function Index (props) {
     // New API user sign up will have both adminUser and apiUser to null,
     // or apiUser will have the terms not accepted.
     // For these users, display the API setup component.
-    return <ApiUserForm isCreating />
+    return <ApiUserForm createUser={createUser} />
   }
   if (adminUser) return <AdminUserDashboard />
   return (

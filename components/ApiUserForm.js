@@ -73,13 +73,14 @@ function createBlankApiUser () {
  */
 class ApiUserForm extends Component {
   handleCreateAccount = async apiUserData => {
-    const { auth, createUser } = this.props
-    if (auth.user) {
+    const { auth0, createUser } = this.props
+    const { user: auth0User } = auth0
+    if (auth0User) {
       const apiUser = clone(apiUserData)
 
       // Add required attributes for middleware storage.
-      apiUser.auth0UserId = auth.user.sub
-      apiUser.email = auth.user.email
+      apiUser.auth0UserId = auth0User.sub
+      apiUser.email = auth0User.email
 
       createUser(apiUser)
     } else {
