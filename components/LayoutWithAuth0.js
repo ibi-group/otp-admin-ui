@@ -68,7 +68,8 @@ class LayoutWithAuth0 extends Component {
     if (result.status === 'error') {
       window.alert(result.message)
     } else {
-      this.setState({apiUser: result})
+      // Refresh users.
+      await this.fetchUsers()
       // TODO: Push to a success page.
       router.push('/?newApiAccount=true')
     }
@@ -77,9 +78,12 @@ class LayoutWithAuth0 extends Component {
   fetchUsers = async () => {
     const { accessToken, isUserRequested } = this.state
     if (!isUserRequested) {
-      // Set requested flag to avoid multiple requests
+      // Set requested flag to avoid multiple requests, and void the previous user fetched state.
       // TODO: useEffect?
-      this.setState({ isUserRequested: true })
+      this.setState({
+        isUserFetched: false,
+        isUserRequested: true
+      })
 
       // TODO: Combine into a single fetch fromToken or use SWR
       const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
