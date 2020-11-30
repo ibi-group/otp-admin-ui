@@ -1,7 +1,7 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { withRouter } from 'next/router'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
-import { withAuth0 } from '@auth0/auth0-react'
 
 import { API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { secureFetch } from '../util/middleware'

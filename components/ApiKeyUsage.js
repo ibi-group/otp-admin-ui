@@ -1,7 +1,7 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import clone from 'clone'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
-import { withAuth0 } from '@auth0/auth0-react'
 
 import ApiKeyUsageChart from './ApiKeyUsageChart'
 

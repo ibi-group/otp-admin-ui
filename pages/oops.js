@@ -1,6 +1,6 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import React from 'react'
 import { useRouter } from 'next/router'
-import { useAuth0 } from '@auth0/auth0-react'
 
 import { logout } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'

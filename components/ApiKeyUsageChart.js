@@ -1,3 +1,4 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { Key } from '@styled-icons/fa-solid/Key'
 import clone from 'clone'
 import moment from 'moment'
@@ -11,7 +12,6 @@ import {
   HorizontalGridLines,
   VerticalRectSeries
 } from 'react-vis'
-import { withAuth0 } from '@auth0/auth0-react'
 
 /**
  * Renders a chart showing API Key usage (requests over time) for a particular

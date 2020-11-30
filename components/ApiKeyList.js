@@ -1,6 +1,6 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { Component } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
-import { withAuth0 } from '@auth0/auth0-react'
 
 import ApiKeyRow from './ApiKeyRow'
 import { secureFetchHandleErrors } from '../util/middleware'
