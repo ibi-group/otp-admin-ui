@@ -28,7 +28,8 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   if (!selectedType) return <div>Page does not exist!</div>
   // Fetch user data.
   const limit = 10
-  const getAllResult = useSWR(`${getUserUrl(type)}?${stringify({limit, offset})}`)
+  const url = `${getUserUrl(type)}?${stringify({limit, offset})}`
+  const getAllResult = useSWR(url)
   const { data, error, mutate: mutateList } = getAllResult
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.

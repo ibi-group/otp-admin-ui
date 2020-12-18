@@ -13,6 +13,8 @@ import {
 } from 'react-vis'
 import { withAuth } from 'use-auth0-hooks'
 
+import { AUTH0_SCOPE } from '../util/constants'
+
 /**
  * Renders a chart showing API Key usage (requests over time) for a particular
  * API key.
@@ -188,5 +190,5 @@ class ApiKeyUsageChart extends Component {
 
 export default withAuth(ApiKeyUsageChart, {
   audience: process.env.AUTH0_AUDIENCE,
-  scope: process.env.AUTH0_SCOPE
+  scope: AUTH0_SCOPE
 })
