@@ -73,7 +73,7 @@ function createBlankApiUser () {
  */
 class ApiUserForm extends Component {
   handleCreateAccount = async apiUserData => {
-    const { auth, createUser } = this.props
+    const { auth, createApiUser } = this.props
     if (auth.user) {
       const apiUser = clone(apiUserData)
 
@@ -81,14 +81,14 @@ class ApiUserForm extends Component {
       apiUser.auth0UserId = auth.user.sub
       apiUser.email = auth.user.email
 
-      createUser(apiUser)
+      createApiUser(apiUser)
     } else {
       alert('Could not save your data (Auth0 id was not available).')
     }
   }
 
   render () {
-    const { createUser } = this.props
+    const { createApiUser } = this.props
     // If the ApiUser already exists, it is passed from props.
     // Otherwise, it is a new ApiUser, and a blank one is created.
     const apiUser = this.props.apiUser || createBlankApiUser()
@@ -99,7 +99,7 @@ class ApiUserForm extends Component {
     // All field validation errors are also shown when the user clicks Create Account.
     return (
       <div>
-        {createUser && <h1>Sign up for API access</h1>}
+        {createApiUser && <h1>Sign up for API access</h1>}
         <Formik
           validateOnChange={false}
           validateOnBlur
@@ -130,7 +130,7 @@ class ApiUserForm extends Component {
                                     <Form.Label>{field.title}</Form.Label>
                                     <Field
                                       as={Form.Control}
-                                      disabled={!createUser}
+                                      disabled={!createApiUser}
                                       isInvalid={touched[fieldName] && !!errors[fieldName]}
                                       name={fieldName}
                                       // onBlur, onChange, and value are passed automatically.
@@ -154,7 +154,7 @@ class ApiUserForm extends Component {
                 <Form.Group>
                   <Field
                     as={Form.Check}
-                    disabled={!createUser}
+                    disabled={!createApiUser}
                     feedback={errors.hasConsentedToTerms}
                     isInvalid={touched.hasConsentedToTerms && !!errors.hasConsentedToTerms}
                     label={
@@ -169,7 +169,7 @@ class ApiUserForm extends Component {
                   />
                 </Form.Group>
               </div>
-              {createUser &&
+              {createApiUser &&
               <Button type='submit' variant='primary'>
                 Create account
               </Button>
