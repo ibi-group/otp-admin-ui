@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import { stringify } from 'qs'
 import { useState } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
 import useSWR from 'swr'
@@ -14,24 +15,27 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  * AbstractUser).
  */
 function UserList ({ fetchUsers, summaryView, type, updateUser }) {
+  // Set up hooks, state.
   const { accessToken, isAuthenticated } = useAuth({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
   const [offset, setOffset] = useState(0)
   const router = useRouter()
+  // Ensure user is authenticated and type from query param is valid.
+  const selectedType = USER_TYPES.find(t => t.value === type)
+  if (!isAuthenticated) return null
+  if (!selectedType) return <div>Page does not exist!</div>
+  // Fetch user data.
+  const limit = 10
+  const getAllResult = useSWR(`${getUserUrl(type)}?${stringify({limit, offset})}`)
+  const { data, error, mutate: mutateList } = getAllResult
+  const users = data && data.data
+  // Set up on click handlers with mutates to trigger refresh on updates.
   const onViewUser = (user) => {
     if (!user || !user.id) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
-  const limit = 10
-  const url = `${getUserUrl(type)}?offset=${offset}&limit=${limit}`
-  const selectedType = USER_TYPES.find(t => t.value === type)
-  if (!isAuthenticated) return null
-  if (!selectedType) return <div>Page does not exist!</div>
-  const getAllResult = useSWR(url)
-  const { data, error, mutate: mutateList } = getAllResult
-  // Handlers
   const onDeleteUser = async (user, type) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
@@ -72,7 +76,7 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
       window.alert(createResult.message)
     }
   }
-  const users = data && data.data
+  // If in summary view, show a simple block with user count.
   if (summaryView) {
     const total = data ? data.total : 0
     return (
@@ -85,6 +89,7 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
       </div>
     )
   }
+  // Otherwise, show fill list of users with page controls.
   return (
     <div>
       <h2 className='mb-4'>List of {selectedType.label}</h2>
