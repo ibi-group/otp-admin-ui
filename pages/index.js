@@ -10,7 +10,7 @@ export default function Index (props) {
   const {
     adminUser,
     apiUser,
-    createUser,
+    createApiUser,
     handleSignup
   } = props
 
@@ -27,7 +27,7 @@ export default function Index (props) {
     // New API user sign up will have both adminUser and apiUser to null,
     // or apiUser will have the terms not accepted.
     // For these users, display the API setup component.
-    return <ApiUserForm createUser={createUser} />
+    return <ApiUserForm createApiUser={createApiUser} />
   }
   if (adminUser) return <AdminUserDashboard />
   return (

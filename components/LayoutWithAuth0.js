@@ -144,9 +144,10 @@ class LayoutWithAuth0 extends Component {
       // Otherwise, show component children.
       // TODO: find a better way to pass props to children.
       const extraProps = {
+        ...this.state,
         adminUser,
         apiUser,
-        createUser: this.createApiUser,
+        createApiUser: this.createApiUser,
         handleSignup,
         updateUser: this.updateUser
       }

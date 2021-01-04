@@ -1,3 +1,4 @@
+import Form from 'react-bootstrap/Form'
 import Select from 'react-select'
 
 const subscriptionOptions = [
@@ -28,7 +29,7 @@ const AdminUserForm = ({ adminUser, onUpdateUser, isSelf }) => {
     <div>
       <p>Account type: ADMIN</p>
       <p>Email: {adminUser.email}</p>
-      <label htmlFor='subscriptions'>Email subscriptions</label>
+      <Form.Label htmlFor='subscriptions'>Email subscriptions</Form.Label>
       <Select
         defaultValue={currentSubscriptions}
         disabled={!onUpdateUser}

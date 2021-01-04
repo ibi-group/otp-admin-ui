@@ -4,7 +4,7 @@ import { Button, ListGroup } from 'react-bootstrap'
 
 import ApiKeyRow from './ApiKeyRow'
 import { secureFetchHandleErrors } from '../util/middleware'
-import { API_USER_URL } from '../util/constants'
+import { AUTH0_SCOPE, API_USER_URL } from '../util/constants'
 
 // Max keys that an API user is allowed to create for themselves (an admin can
 // create more)
@@ -111,5 +111,5 @@ class ApiKeyList extends Component {
 
 export default withAuth0(ApiKeyList, {
   audience: process.env.AUTH0_AUDIENCE,
-  scope: process.env.AUTH0_SCOPE
+  scope: AUTH0_SCOPE
 })
