@@ -6,7 +6,6 @@ import NavLink from './NavLink'
 export default function NavBar (props) {
   const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth0()
-  // FIXME: Fetch adminUser?
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
 
   return (

@@ -171,6 +171,7 @@ class LayoutWithAuth0 extends Component {
             <title>{process.env.SITE_TITLE}</title>
           </Head>
           <NavBar
+            adminUser={adminUser}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
             handleSignup={handleSignup} />
