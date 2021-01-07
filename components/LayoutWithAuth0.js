@@ -116,6 +116,8 @@ class LayoutWithAuth0 extends Component {
     const { auth0 } = this.props
 
     if (this.acccessTokenIsUnfetched()) {
+      // FIXME: Consolidate code for getting and passing access tokens around.
+      // See for instance: https://github.com/auth0/auth0-react/blob/master/EXAMPLES.md#4-create-a-useapi-hook-for-accessing-protected-apis-with-an-access-token
       const accessToken = await auth0.getAccessTokenSilently()
       this.setState({ accessToken })
     } else if (this.loggedInUserIsUnfetched()) {
