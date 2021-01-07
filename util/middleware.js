@@ -1,4 +1,4 @@
-import {USER_TYPES} from './constants'
+import { USER_TYPES } from './constants'
 
 if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
 
@@ -10,15 +10,19 @@ export function getUserUrl (type) {
 
 /**
  * This convenience method wraps a fetch call to the specified URL
- * with the token and api key added (if provided) to the HTTP request header.
+ * with the auth0 object and api key added (if provided) to the HTTP request header.
  * @param {string} url The URL to call.
- * @param {string} accessToken If non-null, the Authorization token to add to request header.
+ * @param {string} auth0 the auth0 object used to obtain an accessToken for secure APIs.
  * @param {string} apiKey If non-null, the API key to add to the Authorization header.
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
-export async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
+async function secureFetchCore (url, auth0, method = 'get', options = {}) {
+  const { getAccessTokenSilently } = auth0
+  const accessToken = await getAccessTokenSilently()
+  // TODO: Handle errors fetching tokens.
+
+  return fetch(url, {
     method,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -26,6 +30,13 @@ export async function secureFetch (url, accessToken, method = 'get', options = {
     },
     ...options
   })
+}
+
+/**
+ * Wraps secureFetchCore above, returning the result as JSON.
+ */
+export async function secureFetch (url, auth0, method = 'get', options = {}) {
+  const res = await secureFetchCore(url, auth0, method, options)
   const json = await res.json()
   return json
 }
@@ -33,15 +44,8 @@ export async function secureFetch (url, accessToken, method = 'get', options = {
 /**
  * Alternative to secureFetch that adds error handling.
  */
-export async function secureFetchHandleErrors (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
-    ...options
-  })
+export async function secureFetchHandleErrors (url, auth0, method = 'get', options = {}) {
+  const res = await secureFetchCore(url, auth0, method, options)
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result = await res.json()

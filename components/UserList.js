@@ -16,10 +16,11 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  */
 function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   // Set up hooks, state.
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0({
+  const auth0 = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
+  const { isAuthenticated } = auth0
   const [offset, setOffset] = useState(0)
   const router = useRouter()
   // Ensure user is authenticated and type from query param is valid.
@@ -48,10 +49,9 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     }
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const accessToken = await getAccessTokenSilently()
     const deleteResult = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
-      accessToken,
+      auth0,
       'delete'
     )
     mutateList()
@@ -69,10 +69,9 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     const adminUrl = getUserUrl('admin')
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const accessToken = await getAccessTokenSilently()
     const createResult = await secureFetch(
       adminUrl,
-      accessToken,
+      auth0,
       'post',
       { body: JSON.stringify({ email }) }
     )

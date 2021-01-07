@@ -43,13 +43,11 @@ class ApiKeyList extends Component {
       console.warn('Cannot delete API key without userId.')
       return
     }
-    const { getAccessTokenSilently } = auth0
-    const accessToken = await getAccessTokenSilently()
 
     let url = `${API_USER_URL}/${apiUser.id}/apikey`
     if (keyId) url += `/${keyId}`
     if (usagePlanId) url += `?usagePlanId=${usagePlanId}`
-    const result = await secureFetchHandleErrors(url, accessToken, method)
+    const result = await secureFetchHandleErrors(url, auth0, method)
     if (result.status === 'error') {
       return window.alert(result.message)
     }
