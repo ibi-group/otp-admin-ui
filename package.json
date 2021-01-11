@@ -7,7 +7,8 @@
     "build": "next build",
     "dev": "next",
     "deploy": "vercel",
-    "lint": "mastarm lint components pages --quiet"
+    "lint": "mastarm lint components pages util --quiet",
+    "lint-docs": "documentation lint {components,pages,util}/**/*.js"
   },
   "dependencies": {
     "bootstrap": "^4.5.0",
