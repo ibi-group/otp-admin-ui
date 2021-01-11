@@ -25,8 +25,9 @@ jobs:
         run: yarn lint
       - name: Lint docs
         run: yarn lint-docs
-      - name: Run tests with coverage
-        run: yarn cover
+      # TODO: Add jest tests
+      # - name: Run tests with coverage
+      #   run: yarn cover
       - name: Build example project
         run: yarn build
 
