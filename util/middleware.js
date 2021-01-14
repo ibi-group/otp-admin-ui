@@ -13,7 +13,6 @@ export function getUserUrl (type) {
  * with the token and api key added (if provided) to the HTTP request header.
  * @param {string} url The URL to call.
  * @param {string} accessToken If non-null, the Authorization token to add to request header.
- * @param {string} apiKey If non-null, the API key to add to the Authorization header.
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
