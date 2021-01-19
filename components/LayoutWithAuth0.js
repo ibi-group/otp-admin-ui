@@ -1,7 +1,7 @@
 import { withAuth0 } from '@auth0/auth0-react'
 import Head from 'next/head'
 import { withRouter } from 'next/router'
-import { Component } from 'react'
+import React, { Component } from 'react'
 import { SWRConfig } from 'swr'
 
 import VerifyEmailScreen from './verify-email-screen'
