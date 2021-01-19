@@ -13,7 +13,6 @@ export function getUserUrl (type) {
  * with the auth0 object and api key added (if provided) to the HTTP request header.
  * @param {string} url The URL to call.
  * @param {string} auth0 the auth0 object used to obtain an accessToken for secure APIs.
- * @param {string} apiKey If non-null, the API key to add to the Authorization header.
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
