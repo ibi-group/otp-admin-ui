@@ -11,6 +11,8 @@ export function getUserUrl (type) {
 /**
  * This convenience method wraps a fetch call to the specified URL
  * with the auth0 object and api key added (if provided) to the HTTP request header.
+ * In case of an error obtaining a token, this method returns a response that
+ * mimics the fetch response for an unauthorized request (HTTP 401).
  * @param {string} url The URL to call.
  * @param {string} auth0 the auth0 object used to obtain an accessToken for secure APIs.
  * @param {string} method The HTTP method to execute.
@@ -23,22 +25,25 @@ async function secureFetchCore (url, auth0, method = 'get', options = {}) {
     accessToken = await getAccessTokenSilently()
   } catch (error) {
     // Log occurrences of errors obtaining a token.
-    console.error('Error obtaining access token. Fetching without Authorization header.', error)
-  }
+    console.error('Error obtaining access token.', error)
 
-  const headers = {
-    'x-api-key': process.env.API_KEY
-  }
-  // Only add the Authorization header if a token was obtained.
-  // If the token is missing, let the APIs at the specified url return
-  // an error response that is handled in the secureFetch methods below.
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`
+    // Return a response mimicking the 401-Unauthorized status, so that
+    // code that calls secureFetch and secureFetchHandleErrors can handle as needed.
+    return {
+      code: 401,
+      json: new Promise((resolve, reject) => {
+        resolve('{"message": "Error obtaining access token."}')
+      }),
+      status: 401
+    }
   }
 
   return fetch(url, {
     method,
-    headers,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
+    },
     ...options
   })
 }
