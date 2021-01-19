@@ -19,15 +19,27 @@ export function getUserUrl (type) {
  */
 async function secureFetchCore (url, auth0, method = 'get', options = {}) {
   const { getAccessTokenSilently } = auth0
-  const accessToken = await getAccessTokenSilently()
-  // TODO: Handle errors fetching tokens.
+  let accessToken
+  try {
+    accessToken = await getAccessTokenSilently()
+  } catch (error) {
+    // Log occurrences of errors obtaining a token.
+    console.error('Error obtaining access token. Fetching without Authorization header.', error)
+  }
+
+  const headers = {
+    'x-api-key': process.env.API_KEY
+  }
+  // Only add the Authorization header if a token was obtained.
+  // If the token is missing, let the APIs at the specified url return
+  // an error response that is handled in the secureFetch methods below.
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`
+  }
 
   return fetch(url, {
     method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
+    headers,
     ...options
   })
 }
