@@ -21,7 +21,7 @@ export default function Oops () {
     <div>
       <h1>Oops</h1>
       <p>
-        An error occured when signing in!
+        An error occurred when signing in!
       </p>
       <pre>
         {message || 'Unknown Error'}
