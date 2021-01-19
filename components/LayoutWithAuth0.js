@@ -1,7 +1,7 @@
 import { withAuth0 } from '@auth0/auth0-react'
 import Head from 'next/head'
 import { withRouter } from 'next/router'
-import { Component } from 'react'
+import React, { Component } from 'react'
 import { SWRConfig } from 'swr'
 
 import VerifyEmailScreen from './verify-email-screen'
@@ -21,6 +21,11 @@ import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
 
+/**
+ * @class
+ * @description This component manages the overall UI layout
+ * and forwards API access and logged-in user data to components it renders.
+ */
 class LayoutWithAuth0 extends Component {
   constructor () {
     super()
