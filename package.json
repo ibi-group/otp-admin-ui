@@ -8,7 +8,7 @@
     "dev": "next",
     "deploy": "vercel",
     "lint": "mastarm lint components pages --quiet",
-    "predev": "yarn install"
+    "predev": "yarn"
   },
   "dependencies": {
     "@auth0/auth0-react": "^1.0.0",
