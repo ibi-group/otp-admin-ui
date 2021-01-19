@@ -21,6 +21,13 @@ import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
 
+// Namespaces must now be specified for lint-docs
+// for classes with member functions that use JSDoc.
+/**
+ * @namespace LayoutWithAuth0
+ * @description This component manages the overall UI layout
+ * and forwards logged-in user data to the child content.
+ */
 class LayoutWithAuth0 extends Component {
   constructor () {
     super()
