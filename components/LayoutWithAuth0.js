@@ -1,10 +1,10 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import Head from 'next/head'
 import { withRouter } from 'next/router'
 import React, { Component } from 'react'
 import { SWRConfig } from 'swr'
-import { withAuth } from 'use-auth0-hooks'
 
-import VerifyEmailScreen from '../components/verify-email-screen'
+import VerifyEmailScreen from './verify-email-screen'
 import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
@@ -21,11 +21,17 @@ import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
 import NavBar from './NavBar'
 
+/**
+ * @class
+ * @description This component manages the overall UI layout
+ * and forwards API access and logged-in user data to components it renders.
+ */
 class LayoutWithAuth0 extends Component {
   constructor () {
     super()
 
     this.state = {
+      accessToken: null,
       adminUser: null,
       apiUser: null,
       isUserFetched: false,
@@ -33,9 +39,31 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
+  /**
+   * Determines whether an auth0 token should be fetched.
+   * @returns true if the logged-in user has passed Auth0 authentication
+   *   and accessToken has not been set in the component state; false otherwise.
+   */
+  acccessTokenIsUnfetched = () => {
+    const { auth0 } = this.props
+    const { accessToken } = this.state
+    return auth0 && auth0.isAuthenticated && !accessToken
+  }
+
+  /**
+   * Determines whether user data should be fetched.
+   * @returns true if the logged-in user has passed Auth0 authentication
+   *   and isUserFetched has not been set in the component state; false otherwise.
+   */
+  loggedInUserIsUnfetched = () => {
+    const { auth0 } = this.props
+    const { isUserFetched } = this.state
+    return auth0 && auth0.isAuthenticated && !isUserFetched
+  }
+
   createApiUser = async (apiUser) => {
-    const { auth, router } = this.props
-    const { accessToken } = auth
+    const { router } = this.props
+    const { accessToken } = this.state
     const result = await secureFetchHandleErrors(
       getUserUrl('api'),
       accessToken,
@@ -45,26 +73,37 @@ class LayoutWithAuth0 extends Component {
     if (result.status === 'error') {
       window.alert(result.message)
     } else {
-      this.setState({apiUser: result})
+      // Refresh users.
+      await this.fetchUsers()
       // TODO: Push to a success page.
       router.push('/?newApiAccount=true')
     }
   }
 
-  _fetchUsers = async () => {
-    const { accessToken } = this.props.auth
-    // TODO: Combine into a single fetch fromToken or use SWR
-    const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
-    const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
-    this.setState({
-      adminUser: adminUserResult.data,
-      apiUser: apiUserResult.data,
-      isUserFetched: true
-    })
+  fetchUsers = async () => {
+    const { accessToken, isUserRequested } = this.state
+    if (!isUserRequested) {
+      // Set requested flag to avoid multiple requests, and void the previous user fetched state.
+      // TODO: useEffect?
+      this.setState({
+        isUserFetched: false,
+        isUserRequested: true
+      })
+
+      // TODO: Combine into a single fetch fromToken or use SWR
+      const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
+      const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
+      this.setState({
+        adminUser: adminUserResult.data,
+        apiUser: apiUserResult.data,
+        isUserFetched: true,
+        isUserRequested: false
+      })
+    }
   }
 
   updateUser = async ({user, type, isSelf}) => {
-    const { accessToken } = this.props.auth
+    const { accessToken } = this.state
     const result = await secureFetchHandleErrors(
       `${getUserUrl(type)}/${user.id}`,
       accessToken,
@@ -72,33 +111,34 @@ class LayoutWithAuth0 extends Component {
       { body: JSON.stringify(user) }
     )
     // Ensure user object gets updated at top level if updating self.
-    if (isSelf) this._fetchUsers()
+    if (isSelf) this.fetchUsers()
     if (result.status === 'error') {
       window.alert(result.message)
     }
   }
 
   async componentDidUpdate () {
-    const { auth } = this.props
-    const { accessToken, isAuthenticated } = auth
-    const { isUserRequested } = this.state
+    const { auth0 } = this.props
 
-    if (isAuthenticated && accessToken && !isUserRequested) {
-      // Set a flag to prevent duplicate fetches while awaiting the calls below to return.
-      this.setState({ isUserRequested: true })
+    if (this.acccessTokenIsUnfetched()) {
+      // FIXME: Consolidate code for getting and passing access tokens around.
+      // See for instance: https://github.com/auth0/auth0-react/blob/master/EXAMPLES.md#4-create-a-useapi-hook-for-accessing-protected-apis-with-an-access-token
+      const accessToken = await auth0.getAccessTokenSilently()
+      this.setState({ accessToken })
+    } else if (this.loggedInUserIsUnfetched()) {
       // Fetch and cache user data when the auth0 access token becomes available.
-      this._fetchUsers()
+      this.fetchUsers()
     }
   }
 
   render () {
-    const { auth, children, router } = this.props
+    const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser } = this.state
-    const { accessToken, login, logout, user } = auth
-    const handleLogin = () => login({ appState: { returnTo: { pathname, query } } })
+    const { accessToken, adminUser, apiUser } = this.state
+    const { loginWithRedirect, logout, user } = auth0
+    const handleLogin = () => loginWithRedirect({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
-    const handleSignup = () => login({
+    const handleSignup = () => loginWithRedirect({
       appState: { returnTo: { pathname, query } },
       screen_hint: 'signup'
     })
@@ -112,12 +152,20 @@ class LayoutWithAuth0 extends Component {
       // TODO: find a better way to pass props to children.
       const extraProps = {
         ...this.state,
+        adminUser,
+        apiUser,
         createApiUser: this.createApiUser,
         handleSignup,
         updateUser: this.updateUser
       }
-      contents = renderChildrenWithProps(children, extraProps)
+
+      if (this.acccessTokenIsUnfetched() || this.loggedInUserIsUnfetched()) {
+        contents = <h1>Loading...</h1>
+      } else {
+        contents = renderChildrenWithProps(children, extraProps)
+      }
     }
+
     return (
       <SWRConfig
         value={{
@@ -162,7 +210,7 @@ class LayoutWithAuth0 extends Component {
 }
 
 export default withRouter(
-  withAuth(LayoutWithAuth0, {
+  withAuth0(LayoutWithAuth0, {
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })

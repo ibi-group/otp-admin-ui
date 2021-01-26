@@ -1,8 +1,8 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import clone from 'clone'
 import { Field, Formik } from 'formik'
 import { Component } from 'react'
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
 import * as yup from 'yup'
 
 import { AUTH0_SCOPE } from '../util/constants'
@@ -73,13 +73,14 @@ function createBlankApiUser () {
  */
 class ApiUserForm extends Component {
   handleCreateAccount = async apiUserData => {
-    const { auth, createApiUser } = this.props
-    if (auth.user) {
+    const { auth0, createApiUser } = this.props
+    const { user: auth0User } = auth0
+    if (auth0User) {
       const apiUser = clone(apiUserData)
 
       // Add required attributes for middleware storage.
-      apiUser.auth0UserId = auth.user.sub
-      apiUser.email = auth.user.email
+      apiUser.auth0UserId = auth0User.sub
+      apiUser.email = auth0User.email
 
       createApiUser(apiUser)
     } else {
@@ -156,6 +157,7 @@ class ApiUserForm extends Component {
                     as={Form.Check}
                     disabled={!createApiUser}
                     feedback={errors.hasConsentedToTerms}
+                    id='hasConsentedToTerms'
                     isInvalid={touched.hasConsentedToTerms && !!errors.hasConsentedToTerms}
                     label={
                       <>
@@ -182,7 +184,7 @@ class ApiUserForm extends Component {
   }
 }
 
-export default withAuth(ApiUserForm, {
+export default withAuth0(ApiUserForm, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })

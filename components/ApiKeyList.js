@@ -1,6 +1,6 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { Component } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
 
 import ApiKeyRow from './ApiKeyRow'
 import { secureFetchHandleErrors } from '../util/middleware'
@@ -38,12 +38,14 @@ class ApiKeyList extends Component {
   _deleteKey = (apiKey) => this._makeKeyRequest({method: 'delete', keyId: apiKey.keyId})
 
   _makeKeyRequest = async ({method, keyId, usagePlanId}) => {
-    const { apiUser, auth } = this.props
+    const { apiUser, auth0 } = this.props
     if (!apiUser) {
       console.warn('Cannot delete API key without userId.')
       return
     }
-    const { accessToken } = auth
+    const { getAccessTokenSilently } = auth0
+    const accessToken = await getAccessTokenSilently()
+
     let url = `${API_USER_URL}/${apiUser.id}/apikey`
     if (keyId) url += `/${keyId}`
     if (usagePlanId) url += `?usagePlanId=${usagePlanId}`
@@ -107,7 +109,7 @@ class ApiKeyList extends Component {
   }
 }
 
-export default withAuth(ApiKeyList, {
+export default withAuth0(ApiKeyList, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })

@@ -1,8 +1,8 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
-import { useAuth } from 'use-auth0-hooks'
 
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
@@ -11,7 +11,7 @@ import { AUTH0_SCOPE } from '../util/constants'
 const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
 
 function RequestLogsDashboard ({ isAdmin, summaryView }) {
-  const auth = useAuth({
+  const auth = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })

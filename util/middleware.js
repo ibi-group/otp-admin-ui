@@ -17,13 +17,12 @@ export function getUserUrl (type) {
  * @param {*} options Extra fetch options to pass to fetch.
  */
 export async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const headers = {
-    Authorization: `Bearer ${accessToken}`
-  }
-  if (process.env.API_KEY) headers['x-api-key'] = process.env.API_KEY
   const res = await fetch(url, {
     method,
-    headers,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-api-key': process.env.API_KEY
+    },
     ...options
   })
   const json = await res.json()

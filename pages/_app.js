@@ -1,6 +1,6 @@
+import { Auth0Provider } from '@auth0/auth0-react'
 import App from 'next/app'
 import Router from 'next/router'
-import { Auth0Provider } from 'use-auth0-hooks'
 
 import LayoutWithAuth0 from '../components/LayoutWithAuth0'
 import { getAuthRedirectUri } from '../util/auth'

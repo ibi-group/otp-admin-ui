@@ -8,9 +8,11 @@
     "dev": "next",
     "deploy": "vercel",
     "lint": "mastarm lint components pages util --quiet",
-    "lint-docs": "documentation lint {components,pages,util}/**/*.js"
+    "lint-docs": "documentation lint {components,pages,util}/**/*.js",
+    "predev": "yarn"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^1.0.0",
     "bootstrap": "^4.5.0",
     "clone": "^2.1.2",
     "dotenv": "^8.2.0",
@@ -28,7 +30,6 @@
     "styled-components": "^5.0.1",
     "styled-icons": "^10.2.1",
     "swr": "^0.3.2",
-    "use-auth0-hooks": "^0.7.0",
     "yup": "^0.29.3"
   },
   "devDependencies": {

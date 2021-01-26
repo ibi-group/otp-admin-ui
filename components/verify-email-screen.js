@@ -1,7 +1,7 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { withRouter } from 'next/router'
 import { Component } from 'react'
 import { Button } from 'react-bootstrap'
-import { withAuth } from 'use-auth0-hooks'
 
 import { API_USER_URL, AUTH0_SCOPE } from '../util/constants'
 import { secureFetch } from '../util/middleware'
@@ -14,8 +14,9 @@ import { secureFetch } from '../util/middleware'
  * is to simply reload the page.)
  */
 class VerifyEmailScreen extends Component {
-  resendVerificationEmail = () => {
-    const { accessToken } = this.props.auth
+  resendVerificationEmail = async () => {
+    const { getAccessTokenSilently } = this.props.auth0
+    const accessToken = await getAccessTokenSilently()
     if (!accessToken) {
       console.warn('No access token found.')
       return
@@ -61,7 +62,7 @@ class VerifyEmailScreen extends Component {
   }
 }
 
-export default withRouter(withAuth(VerifyEmailScreen, {
+export default withRouter(withAuth0(VerifyEmailScreen, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 }))

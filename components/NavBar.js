@@ -1,12 +1,13 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
-import { useAuth } from 'use-auth0-hooks'
 
 import NavLink from './NavLink'
 
 export default function NavBar (props) {
   const { pathname } = useRouter()
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth0()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
+
   return (
     <header>
       <nav>

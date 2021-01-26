@@ -1,5 +1,5 @@
+import { withAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import { Component } from 'react'
-import { withAuth, withLoginRequired } from 'use-auth0-hooks'
 
 import AdminUserForm from '../components/AdminUserForm'
 import ApiUserForm from '../components/ApiUserForm'
@@ -27,8 +27,8 @@ class Account extends Component {
   }
 }
 
-export default withLoginRequired(
-  withAuth(Account, {
+export default withAuthenticationRequired(
+  withAuth0(Account, {
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })

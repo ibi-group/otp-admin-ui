@@ -1,9 +1,9 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
 import { stringify } from 'qs'
 import { useState } from 'react'
 import { Button, ListGroup } from 'react-bootstrap'
 import useSWR from 'swr'
-import { useAuth } from 'use-auth0-hooks'
 
 import PageControls from './PageControls'
 import UserRow from './UserRow'
@@ -16,7 +16,7 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  */
 function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   // Set up hooks, state.
-  const { accessToken, isAuthenticated } = useAuth({
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
@@ -46,7 +46,9 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     if (!window.confirm(message)) {
       return
     }
-    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
+    // Note: should not useSWR because SWR caches requests and polls at regular intervals.
+    // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
+    const accessToken = await getAccessTokenSilently()
     const deleteResult = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
       accessToken,
@@ -65,7 +67,9 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     const email = window.prompt(`Enter an email address for admin user.`)
     // Create user and re-fetch users.
     const adminUrl = getUserUrl('admin')
-    // TODO: Can we replace with useSWR (might only be possible for fetching/GET)?
+    // Note: should not useSWR because SWR caches requests and polls at regular intervals.
+    // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
+    const accessToken = await getAccessTokenSilently()
     const createResult = await secureFetch(
       adminUrl,
       accessToken,

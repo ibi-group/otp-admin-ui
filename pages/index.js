@@ -1,35 +1,26 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
-import { useAuth } from 'use-auth0-hooks'
 
 import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
-import { AUTH0_SCOPE } from '../util/constants'
 
 export default function Index (props) {
   const {
     adminUser,
     apiUser,
     createApiUser,
-    handleSignup,
-    isUserFetched
+    handleSignup
   } = props
+
   const { push, query } = useRouter()
-  const { isAuthenticated } = useAuth({
-    audience: process.env.AUTH0_AUDIENCE,
-    scope: AUTH0_SCOPE
-  })
+  const { isAuthenticated } = useAuth0()
 
   if (!isAuthenticated) {
     return (
       <WelcomeScreen handleSignup={handleSignup} />
     )
-  }
-
-  // FIXME: isLoading appears to be broken in useAuth.
-  if (!isUserFetched) {
-    return <div>Loading...</div>
   }
 
   if (!adminUser && (!apiUser || !apiUser.hasConsentedToTerms)) {

@@ -1,3 +1,4 @@
+import { withAuth0 } from '@auth0/auth0-react'
 import { Key } from '@styled-icons/fa-solid/Key'
 import clone from 'clone'
 import moment from 'moment'
@@ -11,7 +12,6 @@ import {
   HorizontalGridLines,
   VerticalRectSeries
 } from 'react-vis'
-import { withAuth } from 'use-auth0-hooks'
 
 import { AUTH0_SCOPE } from '../util/constants'
 
@@ -188,7 +188,7 @@ class ApiKeyUsageChart extends Component {
   }
 }
 
-export default withAuth(ApiKeyUsageChart, {
+export default withAuth0(ApiKeyUsageChart, {
   audience: process.env.AUTH0_AUDIENCE,
   scope: AUTH0_SCOPE
 })
