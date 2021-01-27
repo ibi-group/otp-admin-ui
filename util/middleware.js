@@ -9,7 +9,7 @@ export function getUserUrl (type) {
 }
 
 /**
- * This convenience method wraps a fetch call to the specified URL
+ * This method wraps a fetch call to the specified URL
  * with the auth0 object and api key added (if provided) to the HTTP request header.
  * In case of an error obtaining a token, this method returns a response that
  * mimics the fetch response for an unauthorized request (HTTP 401).
@@ -18,7 +18,7 @@ export function getUserUrl (type) {
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
  */
-async function secureFetchCore (url, auth0, method = 'get', options = {}) {
+async function secureFetchInternal (url, auth0, method = 'get', options = {}) {
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {
@@ -49,10 +49,10 @@ async function secureFetchCore (url, auth0, method = 'get', options = {}) {
 }
 
 /**
- * Wraps secureFetchCore above, returning the result as JSON.
+ * Wraps secureFetchInternal above, returning the result as JSON.
  */
 export async function secureFetch (url, auth0, method = 'get', options = {}) {
-  const res = await secureFetchCore(url, auth0, method, options)
+  const res = await secureFetchInternal(url, auth0, method, options)
   const json = await res.json()
   return json
 }
@@ -61,7 +61,7 @@ export async function secureFetch (url, auth0, method = 'get', options = {}) {
  * Alternative to secureFetch that adds error handling.
  */
 export async function secureFetchHandleErrors (url, auth0, method = 'get', options = {}) {
-  const res = await secureFetchCore(url, auth0, method, options)
+  const res = await secureFetchInternal(url, auth0, method, options)
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result = await res.json()
