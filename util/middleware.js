@@ -22,6 +22,9 @@ async function secureFetchInternal (url, auth0, method = 'get', options = {}) {
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {
+    // Get the Auth0 access token.
+    // Note: repeated calls to getAccessTokenSilently use cached data if available
+    // and do not generate extra web requests to Auth0.
     accessToken = await getAccessTokenSilently()
   } catch (error) {
     // Log occurrences of errors obtaining a token.
