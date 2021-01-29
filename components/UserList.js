@@ -31,7 +31,8 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   const limit = 10
   const url = `${getUserUrl(type)}?${stringify({limit, offset})}`
   const getAllResult = useSWR(url)
-  const { data, error, mutate: mutateList } = getAllResult
+  const { data: topData = {}, error, mutate: mutateList } = getAllResult
+  const { data } = topData
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.
   const onViewUser = (user) => {
@@ -55,7 +56,7 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
       'delete'
     )
     mutateList()
-    if (deleteResult.code >= 400) {
+    if (deleteResult.error) {
       window.alert(deleteResult.message)
     }
   }
@@ -76,7 +77,7 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
       { body: JSON.stringify({ email }) }
     )
     mutateList()
-    if (createResult.code >= 400) {
+    if (createResult.error) {
       window.alert(createResult.message)
     }
   }

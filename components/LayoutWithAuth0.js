@@ -14,8 +14,7 @@ import {
 } from '../util/constants'
 import {
   getUserUrl,
-  secureFetch,
-  secureFetchHandleErrors
+  secureFetch
 } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
@@ -51,7 +50,7 @@ class LayoutWithAuth0 extends Component {
 
   createApiUser = async (apiUser) => {
     const { auth0, router } = this.props
-    const result = await secureFetchHandleErrors(
+    const result = await secureFetch(
       getUserUrl('api'),
       auth0,
       'POST',
@@ -79,8 +78,8 @@ class LayoutWithAuth0 extends Component {
       })
 
       // TODO: Combine into a single fetch fromToken or use SWR
-      const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, auth0)
-      const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, auth0)
+      const adminUserResult = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, auth0)
+      const apiUserResult = await secureFetch(`${API_USER_URL}/fromtoken`, auth0)
       this.setState({
         adminUser: adminUserResult.data,
         apiUser: apiUserResult.data,
@@ -92,7 +91,7 @@ class LayoutWithAuth0 extends Component {
 
   updateUser = async ({user, type, isSelf}) => {
     const { auth0 } = this.props
-    const result = await secureFetchHandleErrors(
+    const result = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
       auth0,
       'PUT',

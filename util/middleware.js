@@ -9,39 +9,35 @@ export function getUserUrl (type) {
 }
 
 /**
- * This method wraps a fetch call to the specified URL
- * with the auth0 object and api key added (if provided) to the HTTP request header.
- * In case of an error obtaining a token, this method returns a response that
- * mimics the fetch response for an unauthorized request (HTTP 401).
+ * This method obtains an Auth0 token and passes it as header, along with the app's API key,
+ * to the fetch method using the provided URL and parameters.
  * @param {string} url The URL to call.
  * @param {string} auth0 the auth0 object used to obtain an accessToken for secure APIs.
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
+ * @returns An object with the operation's status and data or error.
  */
-async function secureFetchInternal (url, auth0, method = 'get', options = {}) {
+export async function secureFetch (url, auth0, method = 'get', options = {}) {
+  console.log(`Received call to secureFetch with params`, url, method, options)
+
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {
     // Get the Auth0 access token.
-    // Note: repeated calls to getAccessTokenSilently use cached data if available
-    // and do not generate extra web requests to Auth0.
+    // Note: repeated calls do not generate extra web requests to Auth0
+    // (the cached token is used first if available).
     accessToken = await getAccessTokenSilently()
   } catch (error) {
     // Log occurrences of errors obtaining a token.
     console.error('Error obtaining access token.', error)
 
-    // Return a response mimicking the 401-Unauthorized status, so that
-    // code that calls secureFetch and secureFetchHandleErrors can handle as needed.
     return {
-      code: 401,
-      json: new Promise((resolve, reject) => {
-        resolve('{"message": "Error obtaining access token."}')
-      }),
-      status: 401
+      status: 'error',
+      message: 'Error obtaining access token'
     }
   }
 
-  return fetch(url, {
+  const res = await fetch(url, {
     method,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -49,22 +45,6 @@ async function secureFetchInternal (url, auth0, method = 'get', options = {}) {
     },
     ...options
   })
-}
-
-/**
- * Wraps secureFetchInternal above, returning the result as JSON.
- */
-export async function secureFetch (url, auth0, method = 'get', options = {}) {
-  const res = await secureFetchInternal(url, auth0, method, options)
-  const json = await res.json()
-  return json
-}
-
-/**
- * Alternative to secureFetch that adds error handling.
- */
-export async function secureFetchHandleErrors (url, auth0, method = 'get', options = {}) {
-  const res = await secureFetchInternal(url, auth0, method, options)
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result = await res.json()
