@@ -16,7 +16,8 @@ function RequestLogsDashboard ({ isAdmin, summaryView }) {
     scope: AUTH0_SCOPE
   })
   const result = useSWR(REQUEST_LOGS_URL)
-  const { isValidating } = result
+  const { data: swrData = {} } = result
+  const { isValidating } = swrData
   if (!auth.isAuthenticated) return null
   return (
     <div>

@@ -31,8 +31,8 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   const limit = 10
   const url = `${getUserUrl(type)}?${stringify({limit, offset})}`
   const getAllResult = useSWR(url)
-  const { data: topData = {}, error, mutate: mutateList } = getAllResult
-  const { data } = topData
+  const { data: swrData = {}, error, mutate: mutateList } = getAllResult
+  const { data } = swrData
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.
   const onViewUser = (user) => {

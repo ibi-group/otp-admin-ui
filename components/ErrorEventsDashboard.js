@@ -12,7 +12,8 @@ function ErrorEventsDashboard () {
   const limit = 25
   const url = `${ERROR_EVENTS_URL}?offset=${offset}&limit=${limit}`
   const result = useSWR(url)
-  const { data: events } = result
+  const { data: swrData = {} } = result
+  const { data: events } = swrData
   const hasEvents = events && events.data && events.data.length > 0
   return (
     <div>
