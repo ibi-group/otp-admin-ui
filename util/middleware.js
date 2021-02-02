@@ -1,4 +1,4 @@
-import { USER_TYPES } from './constants'
+import {USER_TYPES} from './constants'
 
 if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
 
@@ -18,8 +18,6 @@ export function getUserUrl (type) {
  * @returns An object with the operation's status and data or error.
  */
 export async function secureFetch (url, auth0, method = 'get', options = {}) {
-  console.log(`Received call to secureFetch with params`, url, method, options)
-
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {
