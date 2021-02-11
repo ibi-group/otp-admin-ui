@@ -16,10 +16,11 @@ import { getUserUrl, secureFetch } from '../util/middleware'
  */
 function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   // Set up hooks, state.
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0({
+  const auth0 = useAuth0({
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE
   })
+  const { isAuthenticated } = auth0
   const [offset, setOffset] = useState(0)
   const router = useRouter()
   // Ensure user is authenticated and type from query param is valid.
@@ -30,7 +31,8 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
   const limit = 10
   const url = `${getUserUrl(type)}?${stringify({limit, offset})}`
   const getAllResult = useSWR(url)
-  const { data, error, mutate: mutateList } = getAllResult
+  const { data: swrData = {}, error, mutate: mutateList } = getAllResult
+  const { data } = swrData
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.
   const onViewUser = (user) => {
@@ -48,14 +50,13 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     }
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const accessToken = await getAccessTokenSilently()
     const deleteResult = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
-      accessToken,
+      auth0,
       'delete'
     )
     mutateList()
-    if (deleteResult.code >= 400) {
+    if (deleteResult.error) {
       window.alert(deleteResult.message)
     }
   }
@@ -69,15 +70,14 @@ function UserList ({ fetchUsers, summaryView, type, updateUser }) {
     const adminUrl = getUserUrl('admin')
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const accessToken = await getAccessTokenSilently()
     const createResult = await secureFetch(
       adminUrl,
-      accessToken,
+      auth0,
       'post',
       { body: JSON.stringify({ email }) }
     )
     mutateList()
-    if (createResult.code >= 400) {
+    if (createResult.error) {
       window.alert(createResult.message)
     }
   }

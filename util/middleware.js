@@ -9,30 +9,32 @@ export function getUserUrl (type) {
 }
 
 /**
- * This convenience method wraps a fetch call to the specified URL
- * with the token and api key added (if provided) to the HTTP request header.
+ * This method obtains an Auth0 token and passes it as header, along with the app's API key,
+ * to the fetch method using the provided URL and parameters.
  * @param {string} url The URL to call.
- * @param {string} accessToken If non-null, the Authorization token to add to request header.
+ * @param {string} auth0 the auth0 object used to obtain an accessToken for secure APIs.
  * @param {string} method The HTTP method to execute.
  * @param {*} options Extra fetch options to pass to fetch.
+ * @returns An object with the operation's status and data or error.
  */
-export async function secureFetch (url, accessToken, method = 'get', options = {}) {
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'x-api-key': process.env.API_KEY
-    },
-    ...options
-  })
-  const json = await res.json()
-  return json
-}
+export async function secureFetch (url, auth0, method = 'get', options = {}) {
+  const { getAccessTokenSilently } = auth0
+  let accessToken
+  try {
+    // Get the Auth0 access token.
+    // Note: repeated calls do not generate extra web requests to Auth0
+    // (the cached token is used first if available).
+    accessToken = await getAccessTokenSilently()
+  } catch (error) {
+    // Log occurrences of errors obtaining a token.
+    console.error('Error obtaining access token.', error)
 
-/**
- * Alternative to secureFetch that adds error handling.
- */
-export async function secureFetchHandleErrors (url, accessToken, method = 'get', options = {}) {
+    return {
+      status: 'error',
+      message: 'Error obtaining access token'
+    }
+  }
+
   const res = await fetch(url, {
     method,
     headers: {

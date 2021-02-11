@@ -14,8 +14,7 @@ import {
 } from '../util/constants'
 import {
   getUserUrl,
-  secureFetch,
-  secureFetchHandleErrors
+  secureFetch
 } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
 import Footer from './Footer'
@@ -31,23 +30,11 @@ class LayoutWithAuth0 extends Component {
     super()
 
     this.state = {
-      accessToken: null,
       adminUser: null,
       apiUser: null,
       isUserFetched: false,
       isUserRequested: false
     }
-  }
-
-  /**
-   * Determines whether an auth0 token should be fetched.
-   * @returns true if the logged-in user has passed Auth0 authentication
-   *   and accessToken has not been set in the component state; false otherwise.
-   */
-  acccessTokenIsUnfetched = () => {
-    const { auth0 } = this.props
-    const { accessToken } = this.state
-    return auth0 && auth0.isAuthenticated && !accessToken
   }
 
   /**
@@ -62,11 +49,10 @@ class LayoutWithAuth0 extends Component {
   }
 
   createApiUser = async (apiUser) => {
-    const { router } = this.props
-    const { accessToken } = this.state
-    const result = await secureFetchHandleErrors(
+    const { auth0, router } = this.props
+    const result = await secureFetch(
       getUserUrl('api'),
-      accessToken,
+      auth0,
       'POST',
       { body: JSON.stringify(apiUser) }
     )
@@ -81,7 +67,8 @@ class LayoutWithAuth0 extends Component {
   }
 
   fetchUsers = async () => {
-    const { accessToken, isUserRequested } = this.state
+    const { auth0 } = this.props
+    const { isUserRequested } = this.state
     if (!isUserRequested) {
       // Set requested flag to avoid multiple requests, and void the previous user fetched state.
       // TODO: useEffect?
@@ -91,8 +78,8 @@ class LayoutWithAuth0 extends Component {
       })
 
       // TODO: Combine into a single fetch fromToken or use SWR
-      const adminUserResult = await secureFetchHandleErrors(`${ADMIN_USER_URL}/fromtoken`, accessToken)
-      const apiUserResult = await secureFetchHandleErrors(`${API_USER_URL}/fromtoken`, accessToken)
+      const adminUserResult = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, auth0)
+      const apiUserResult = await secureFetch(`${API_USER_URL}/fromtoken`, auth0)
       this.setState({
         adminUser: adminUserResult.data,
         apiUser: apiUserResult.data,
@@ -103,10 +90,10 @@ class LayoutWithAuth0 extends Component {
   }
 
   updateUser = async ({user, type, isSelf}) => {
-    const { accessToken } = this.state
-    const result = await secureFetchHandleErrors(
+    const { auth0 } = this.props
+    const result = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
-      accessToken,
+      auth0,
       'PUT',
       { body: JSON.stringify(user) }
     )
@@ -117,15 +104,8 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
-  async componentDidUpdate () {
-    const { auth0 } = this.props
-
-    if (this.acccessTokenIsUnfetched()) {
-      // FIXME: Consolidate code for getting and passing access tokens around.
-      // See for instance: https://github.com/auth0/auth0-react/blob/master/EXAMPLES.md#4-create-a-useapi-hook-for-accessing-protected-apis-with-an-access-token
-      const accessToken = await auth0.getAccessTokenSilently()
-      this.setState({ accessToken })
-    } else if (this.loggedInUserIsUnfetched()) {
+  componentDidUpdate () {
+    if (this.loggedInUserIsUnfetched()) {
       // Fetch and cache user data when the auth0 access token becomes available.
       this.fetchUsers()
     }
@@ -134,7 +114,7 @@ class LayoutWithAuth0 extends Component {
   render () {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { accessToken, adminUser, apiUser } = this.state
+    const { adminUser, apiUser } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () => loginWithRedirect({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
@@ -159,7 +139,7 @@ class LayoutWithAuth0 extends Component {
         updateUser: this.updateUser
       }
 
-      if (this.acccessTokenIsUnfetched() || this.loggedInUserIsUnfetched()) {
+      if (this.loggedInUserIsUnfetched()) {
         contents = <h1>Loading...</h1>
       } else {
         contents = renderChildrenWithProps(children, extraProps)
@@ -169,7 +149,7 @@ class LayoutWithAuth0 extends Component {
     return (
       <SWRConfig
         value={{
-          fetcher: (url, method, ...props) => secureFetch(url, accessToken, method, props),
+          fetcher: (url, method, ...props) => secureFetch(url, auth0, method, props),
           refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >

@@ -2,7 +2,8 @@ import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button, Pagination } from 'react-bootstrap'
 
 function PageControls ({ limit, offset, result, setOffset, showSkipButtons = false, url }) {
-  const { data: records, error, isValidating, mutate } = result
+  const { data: swrData = {}, error, isValidating, mutate } = result
+  const { records } = swrData
   const hasRecords = records && records.data && records.data.length > 0
   const lastOffset = hasRecords ? records.total - (records.total % limit) : 0
   const pageIndex = (offset / limit) + 1
