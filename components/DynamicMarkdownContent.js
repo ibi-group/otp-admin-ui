@@ -16,7 +16,7 @@ export default function DynamicMarkdownContent ({ title, url }) {
         .then(res => res.text())
         .then(setMarkdown)
         .catch(() => setMarkdown(ERROR_MESSAGE))
-    }    
+    }
   })
 
   return (
