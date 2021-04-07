@@ -28,10 +28,12 @@ module.exports = (phase, { defaultConfig }) => {
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
     OTP_UI_URL: process.env.OTP_UI_URL,
     OTP_FORUM_URL: process.env.OTP_FORUM_URL,
+    PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL,
     SITE_LOGO: process.env.SITE_LOGO,
     SITE_TITLE: process.env.SITE_TITLE,
     STATUS_PAGE_URL: process.env.STATUS_PAGE_URL,
-    SUPPORT_EMAIL: process.env.SUPPORT_EMAIL
+    SUPPORT_EMAIL: process.env.SUPPORT_EMAIL,
+    TERMS_CONDITIONS_URL: process.env.TERMS_CONDITIONS_URL
   }
   // Return config with environment variables and webpack configuration.
   return {

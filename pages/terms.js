@@ -1,12 +1,10 @@
-import MarkdownContent from '../components/MarkdownContent'
-
-import terms from '../public/terms.md'
+import DynamicMarkdownContent from '../components/DynamicMarkdownContent'
 
 export default function Terms () {
   return (
-    <MarkdownContent
+    <DynamicMarkdownContent
       title='Terms & Conditions'
-      markdown={terms}
+      url={process.env.TERMS_CONDITIONS_URL}
     />
   )
 }

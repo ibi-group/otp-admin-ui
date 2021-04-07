@@ -1,12 +1,10 @@
-import MarkdownContent from '../components/MarkdownContent'
+import DynamicMarkdownContent from '../components/DynamicMarkdownContent'
 
-import privacy from '../public/privacy.md'
-
-export default function FAQ () {
+export default function Privacy () {
   return (
-    <MarkdownContent
+    <DynamicMarkdownContent
       title='Privacy Policy'
-      markdown={privacy}
+      url={process.env.PRIVACY_POLICY_URL}
     />
   )
 }

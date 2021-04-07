@@ -5,6 +5,10 @@ import NavLink from './NavLink'
  * Derived from https://codepen.io/tutsplus/pen/yWrEgW
  */
 export default function Footer (props) {
+  // Embed markdown content for terms and privacy.
+  const isPrivacyMarkdown = process.env.PRIVACY_POLICY_URL.endsWith('.md')
+  const isTermsMarkdown = process.env.TERMS_CONDITIONS_URL.endsWith('.md')
+
   return (
     <footer>
       <section className='ft-main'>
@@ -89,15 +93,17 @@ export default function Footer (props) {
         <ul className='ft-legal-list'>
           <li>
             <NavLink
-              // FIXME: Broken link
-              href='/terms'>
+              href={isPrivacyMarkdown
+                ? '/terms'
+                : process.env.TERMS_CONDITIONS_URL}>
               Terms &amp; Conditions
             </NavLink>
           </li>
           <li>
             <NavLink
-              // FIXME: Broken link
-              href='/privacy'>
+              href={isPrivacyMarkdown
+                ? '/privacy'
+                : process.env.PRIVACY_POLICY_URL}>
               Privacy Policy
             </NavLink>
           </li>
