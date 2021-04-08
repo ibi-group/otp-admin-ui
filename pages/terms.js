@@ -1,10 +1,12 @@
-import DynamicMarkdownContent from '../components/DynamicMarkdownContent'
+import { createGetStaticProps, createMarkdownContent } from '../components/createMarkdownContent'
 
-export default function Terms () {
-  return (
-    <DynamicMarkdownContent
-      title='Terms & Conditions'
-      url={process.env.TERMS_CONDITIONS_URL}
-    />
-  )
-}
+/**
+ * getStaticProps function for statically embedding markdown.
+ * (see https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation).
+ */
+export const getStaticProps = createGetStaticProps(process.env.TERMS_CONDITIONS_URL)
+
+/**
+ * Component that renders the terms and conditions.
+ */
+export default createMarkdownContent('Terms & Conditions')
