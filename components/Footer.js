@@ -1,3 +1,5 @@
+import { getTermsAndPrivacyPaths } from '../util/ui'
+
 import NavLink from './NavLink'
 
 /**
@@ -7,11 +9,7 @@ import NavLink from './NavLink'
 export default function Footer (props) {
   // Embed content for terms and privacy if URL points to a markdown document.
   // Embed also if either is not defined (shows an error message instead of a non-working link).
-  const privacyUrl = process.env.PRIVACY_POLICY_URL
-  const termsUrl = process.env.TERMS_CONDITIONS_URL
-  const isPrivacyMarkdown = !privacyUrl || privacyUrl.endsWith('.md')
-  const isTermsMarkdown = !termsUrl || termsUrl.endsWith('.md')
-
+  const { privacyPath, termsPath } = getTermsAndPrivacyPaths()
   return (
     <footer>
       <section className='ft-main'>
@@ -96,13 +94,13 @@ export default function Footer (props) {
         <ul className='ft-legal-list'>
           <li>
             <NavLink
-              href={isTermsMarkdown ? '/terms' : termsUrl}>
+              href={termsPath}>
               Terms &amp; Conditions
             </NavLink>
           </li>
           <li>
             <NavLink
-              href={isPrivacyMarkdown ? '/privacy' : privacyUrl}>
+              href={privacyPath}>
               Privacy Policy
             </NavLink>
           </li>
