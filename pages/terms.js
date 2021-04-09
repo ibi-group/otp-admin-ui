@@ -1,7 +1,7 @@
 import MarkdownContent, { fetchMarkdown } from '../components/MarkdownContent'
 
 /**
- * getStaticProps (async) function for statically embedding markdown.
+ * getStaticProps function for statically embedding markdown.
  * (see https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation).
  */
 export async function getStaticProps () {
