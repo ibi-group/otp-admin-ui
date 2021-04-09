@@ -1,20 +1,17 @@
 import MarkdownContent from './MarkdownContent'
 
 const EMPTY_CONTENTS = 'No contents provided.'
-const ERROR_MESSAGE = 'Error fetching contents.'
 
 /**
  * Fetch contents to be statically embedded by next.js at deployment time.
+ * If a URL is specified and cannot be fetched, i.e. fetch throws an exception,
+ * then the yarn build process will fail (and notifications will be sent by GitHub).
  */
 async function getContentProps (url) {
   let contents = EMPTY_CONTENTS
   if (url) {
-    try {
-      const res = await fetch(url)
-      contents = await res.text()
-    } catch (error) {
-      contents = ERROR_MESSAGE
-    }
+    const res = await fetch(url)
+    contents = await res.text()
   }
 
   return {
