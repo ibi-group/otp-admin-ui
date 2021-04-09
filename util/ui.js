@@ -19,7 +19,7 @@ export function renderChildrenWithProps (children, newProps) {
   return childrenWithProps
 }
 
-export function isMarkdown(url) {
+export function isMarkdown (url) {
   return url && url.endsWith('.md')
 }
 
