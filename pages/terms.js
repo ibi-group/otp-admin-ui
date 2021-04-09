@@ -1,12 +1,21 @@
-import { createGetStaticProps, createMarkdownContent } from '../components/createMarkdownContent'
+import MarkdownContent, { getContentProps } from '../components/MarkdownContent'
 
 /**
- * getStaticProps function for statically embedding markdown.
+ * getStaticProps (async) function for statically embedding markdown.
  * (see https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation).
  */
-export const getStaticProps = createGetStaticProps(process.env.TERMS_CONDITIONS_URL)
+export function getStaticProps () {
+  return getContentProps(process.env.TERMS_CONDITIONS_URL)
+}
 
 /**
  * Component that renders the terms and conditions.
  */
-export default createMarkdownContent('Terms & Conditions')
+export default function Terms ({ markdown }) {
+  return (
+    <MarkdownContent
+      markdown={markdown}
+      title={'Terms & Conditions'}
+    />
+  )
+}
