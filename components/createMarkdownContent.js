@@ -5,13 +5,18 @@ const EMPTY_CONTENTS = 'No contents provided.'
 /**
  * Fetch contents to be statically embedded by next.js at deployment time.
  * If a URL is specified and cannot be fetched, i.e. fetch throws an exception,
- * then the yarn build process will fail (and notifications will be sent by GitHub).
+ * or the result of fetch is other than 'ok', then the yarn build process will fail.
  */
 async function getContentProps (url) {
   let contents = EMPTY_CONTENTS
   if (url) {
     const res = await fetch(url)
-    contents = await res.text()
+    if (res.ok) {
+      contents = await res.text()
+    } else {
+      // Throw an error and fail the build.
+      throw new Error(`The document could not be fetched at '${url}'.`)
+    }
   }
 
   return {
