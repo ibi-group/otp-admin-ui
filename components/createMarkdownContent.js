@@ -1,15 +1,17 @@
+import { isMarkdown } from '../util/ui'
+
 import MarkdownContent from './MarkdownContent'
 
 const EMPTY_CONTENTS = 'No contents provided.'
 
 /**
- * Fetch contents to be statically embedded by next.js at deployment time.
+ * Fetch markdown (*.md) contents to be statically embedded by next.js at deployment time.
  * If a URL is specified and cannot be fetched, i.e. fetch throws an exception,
  * or the result of fetch is other than 'ok', then the yarn build process will fail.
  */
 async function getContentProps (url) {
   let contents = EMPTY_CONTENTS
-  if (url) {
+  if (isMarkdown(url)) {
     const res = await fetch(url)
     if (res.ok) {
       contents = await res.text()
