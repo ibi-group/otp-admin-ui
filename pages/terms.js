@@ -1,11 +1,14 @@
-import MarkdownContent, { getContentProps } from '../components/MarkdownContent'
+import MarkdownContent, { fetchMarkdown } from '../components/MarkdownContent'
 
 /**
  * getStaticProps (async) function for statically embedding markdown.
  * (see https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation).
  */
-export function getStaticProps () {
-  return getContentProps(process.env.TERMS_CONDITIONS_URL)
+export async function getStaticProps () {
+  const markdown = await fetchMarkdown(process.env.TERMS_CONDITIONS_URL)
+  return {
+    props: { markdown }
+  }
 }
 
 /**
