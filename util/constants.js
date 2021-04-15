@@ -1,4 +1,5 @@
-export const AUTH0_SCOPE = 'admin-user,api-user'
+// Auth0 scopes must now be separated by spaces (not commas).
+export const AUTH0_SCOPE = 'admin-user api-user'
 
 export const ADMIN_USER_URL = `${process.env.API_BASE_URL}/api/admin/user`
 export const API_USER_URL = `${process.env.API_BASE_URL}/api/secure/application`
