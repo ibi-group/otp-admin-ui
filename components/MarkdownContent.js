@@ -1,5 +1,33 @@
 import Markdown from 'react-markdown'
 
+import { isMarkdown } from '../util/ui'
+
+const EMPTY_CONTENTS = 'No contents provided.'
+
+/**
+ * Fetch markdown (*.md) contents to be statically embedded by next.js at deployment time
+ * for pages such as Privacy, Terms that use MarkdownContent.
+ * @param url The URL to fetch. If null or not a markdown document, EMPTY_CONTENTS will be shown.
+ *            If a URL to a markdown document is specified and cannot be fetched,
+ *            i.e. fetch throws an error or the result is not OK,
+ *            then the yarn build process will fail.
+ * @returns The fetched markdown content, or EMPTY_CONTENTS otherwise.
+ */
+export async function fetchMarkdown (url) {
+  let markdown = EMPTY_CONTENTS
+  if (isMarkdown(url)) {
+    const res = await fetch(url)
+    if (res.ok) {
+      markdown = await res.text()
+    } else {
+      // Throw an error and fail the build.
+      throw new Error(`The document could not be fetched at '${url}'.`)
+    }
+  }
+
+  return markdown
+}
+
 export default function MarkdownContent (props) {
   return (
     <div>

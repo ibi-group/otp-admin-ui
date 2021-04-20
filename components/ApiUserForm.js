@@ -6,6 +6,7 @@ import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import * as yup from 'yup'
 
 import { AUTH0_SCOPE } from '../util/constants'
+import { getTermsAndPrivacyPaths } from '../util/ui'
 
 // The validation schema for the ApiUser fields.
 const validationSchema = yup.object({
@@ -93,6 +94,7 @@ class ApiUserForm extends Component {
     // If the ApiUser already exists, it is passed from props.
     // Otherwise, it is a new ApiUser, and a blank one is created.
     const apiUser = this.props.apiUser || createBlankApiUser()
+    const { privacyPath, termsPath } = getTermsAndPrivacyPaths()
 
     // We display validation for a particular field on blur (after the user finishes typing in it),
     // so it is not too disruptive to the user.
@@ -162,7 +164,8 @@ class ApiUserForm extends Component {
                     label={
                       <>
                         I have read and consent to the{' '}
-                        <a href='/' target='_blank' rel='noopener noreferrer'>Terms of Service</a>{' '}
+                        <a href={termsPath} target='_blank' rel='noopener noreferrer'>Terms of Service</a> and {' '}
+                        <a href={privacyPath} target='_blank' rel='noopener noreferrer'>Privacy Policy</a>{' '}
                         for using the {process.env.API_NAME}.
                       </>
                     }

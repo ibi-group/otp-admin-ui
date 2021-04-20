@@ -1,12 +1,24 @@
-import MarkdownContent from '../components/MarkdownContent'
+import MarkdownContent, { fetchMarkdown } from '../components/MarkdownContent'
 
-import privacy from '../public/privacy.md'
+/**
+ * getStaticProps function for statically embedding markdown.
+ * (see https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation).
+ */
+export async function getStaticProps () {
+  const markdown = await fetchMarkdown(process.env.PRIVACY_POLICY_URL)
+  return {
+    props: { markdown }
+  }
+}
 
-export default function FAQ () {
+/**
+ * Component that renders the privacy policy page.
+ */
+export default function Privacy ({ markdown }) {
   return (
     <MarkdownContent
-      title='Privacy Policy'
-      markdown={privacy}
+      markdown={markdown}
+      title={'Privacy Policy'}
     />
   )
 }
