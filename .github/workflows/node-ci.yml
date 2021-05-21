@@ -30,3 +30,9 @@ jobs:
       #   run: yarn cover
       - name: Build example project
         run: yarn build
+
+      # at this point, the build is successful
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn semantic-release
