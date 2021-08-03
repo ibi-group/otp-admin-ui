@@ -4,7 +4,7 @@ import { Button, Pagination } from 'react-bootstrap'
 function PageControls ({ limit, offset, result, setOffset, showSkipButtons = false, url }) {
   const { data: swrData = {}, error, isValidating, mutate } = result
   const { data: responseList } = swrData
-  const hasRecords = responseList && responseList.data && responseList.data.length > 0
+  const hasRecords = responseList?.data?.length > 0
   const lastOffset = hasRecords ? responseList.total - (responseList.total % limit) : 0
   const pageIndex = (offset / limit) + 1
   const onFirstPage = offset <= 0
