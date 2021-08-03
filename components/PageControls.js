@@ -1,11 +1,20 @@
 import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button, Pagination } from 'react-bootstrap'
 
+function CurrentPage ({responseList}) {
+  const {data, offset, total} = responseList
+  return (
+    <span>
+      Showing {offset + 1} - {offset + data.length} of {total}
+    </span>
+  )
+}
+
 function PageControls ({ limit, offset, result, setOffset, showSkipButtons = false, url }) {
   const { data: swrData = {}, error, isValidating, mutate } = result
-  const { records } = swrData
-  const hasRecords = records && records.data && records.data.length > 0
-  const lastOffset = hasRecords ? records.total - (records.total % limit) : 0
+  const { data: responseList } = swrData
+  const hasRecords = responseList?.data?.length > 0
+  const lastOffset = hasRecords ? responseList.total - (responseList.total % limit) : 0
   const pageIndex = (offset / limit) + 1
   const onFirstPage = offset <= 0
   const onLastPage = offset === lastOffset
@@ -18,11 +27,7 @@ function PageControls ({ limit, offset, result, setOffset, showSkipButtons = fal
           <Button disabled={isValidating} onClick={() => mutate()}>
             <Sync size={20} />
           </Button>
-          {hasRecords &&
-            <span>
-              Showing {records.offset + 1} - {records.offset + records.data.length} of {records.total}
-            </span>
-          }
+          {hasRecords && <CurrentPage responseList={responseList} />}
         </span>
         <Pagination className='float-right'>
           <Pagination.First disabled={onFirstPage} onClick={() => setOffset(0)} />
