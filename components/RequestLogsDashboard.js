@@ -51,7 +51,7 @@ function RequestLogsDashboard ({ isAdmin, summaryView }) {
       }
       <ApiKeyUsage
         isAdmin={isAdmin}
-        logs={result.data}
+        logs={result.data?.data}
         logsError={result.error}
         summaryView={summaryView} />
       <style jsx>{`
