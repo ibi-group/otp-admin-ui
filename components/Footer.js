@@ -75,16 +75,9 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update link
-                href='/'>
+                target='_blank'
+                href={`mailto:${process.env.SUPPORT_EMAIL}?subject=${process.env.SITE_TITLE} Support Request`}>
                 Help
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                // FIXME: Update link
-                href='/'>
-                Request access to API
               </NavLink>
             </li>
           </ul>
@@ -92,12 +85,6 @@ export default function Footer (props) {
       </section>
       <section className='ft-legal'>
         <ul className='ft-legal-list'>
-          <li>
-            <NavLink
-              href={termsPath}>
-              Terms &amp; Conditions
-            </NavLink>
-          </li>
           <li>
             <NavLink
               href={privacyPath}>

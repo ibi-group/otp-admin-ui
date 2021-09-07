@@ -1,8 +1,9 @@
 import { withAuth0 } from '@auth0/auth0-react'
 import { Component } from 'react'
-import { Button, ListGroup } from 'react-bootstrap'
+import { Alert, Button, ListGroup } from 'react-bootstrap'
 
 import ApiKeyRow from './ApiKeyRow'
+import EmailForApiKeyMessage from './EmailForApiKeyMessage'
 import { secureFetch } from '../util/middleware'
 import { AUTH0_SCOPE, API_USER_URL } from '../util/constants'
 
@@ -64,8 +65,6 @@ class ApiKeyList extends Component {
     const {apiUser} = this.state
     const {apiKeys} = apiUser
     const keyLimitReached = !isAdmin && apiKeys.length >= API_KEY_LIMIT
-    // FIXME: env variable not working.
-    const supportEmail = process.env.SUPPORT_EMAIL || 'help@example.com'
     return (
       <div className='mb-5'>
         <ListGroup>
@@ -89,16 +88,14 @@ class ApiKeyList extends Component {
             Create new key
           </Button>
           {keyLimitReached
-            ? <div className='small mt-3 align-middle'>
+            ? <Alert variant='warning' className='mt-3'>
+              <Alert.Heading>API Key Limit Reached!</Alert.Heading>
               <p>
                 Default API key limit reached (max = {API_KEY_LIMIT})! Cannot
                 create more keys for your account.
               </p>
-              <p>
-                Email <a target='_blank' href={`mailto:${supportEmail}`}>{supportEmail}</a>{' '}
-                to increase your request limits or additional API keys.
-              </p>
-            </div>
+              <EmailForApiKeyMessage />
+            </Alert>
             : null
           }
         </div>

@@ -2,6 +2,7 @@ import { Component } from 'react'
 import { Alert, Button } from 'react-bootstrap'
 
 import ApiKeyList from './ApiKeyList'
+import EmailForApiKeyMessage from './EmailForApiKeyMessage'
 import RequestLogsDashboard from './RequestLogsDashboard'
 import {OTP_PLAN_URL} from '../util/constants'
 
@@ -34,9 +35,15 @@ class ApiUserDashboard extends Component {
         }
         <h3>{apiUser.appName} API Keys</h3>
         <Alert variant='info'>
-          Note: copy/paste the API key values below for use in
-          the <code>x-api-key</code> header when making any request to the RMCE
-          API.
+          <Alert.Heading>
+            API Key Instructions
+          </Alert.Heading>
+          <p>
+            Below you will find your API keys to make requests to the trip planner.
+            These keys should only be used for testing because the request limit
+            is heavily restricted.
+          </p>
+          <EmailForApiKeyMessage />
         </Alert>
         <ApiKeyList apiUser={apiUser} />
         <div className='mb-5'>
@@ -50,6 +57,12 @@ class ApiUserDashboard extends Component {
               <pre>
                 {`curl -H 'x-api-key: ${sampleKey}' '${samplePlanUrl}'`}
               </pre>
+              <p>
+                <strong>Note:</strong>{' '}
+                copy/paste the API key values below for use in
+                the <code>x-api-key</code> header when making any request to the
+                RMCE API.
+              </p>
             </div>
             : null
           }
