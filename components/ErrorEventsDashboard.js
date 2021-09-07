@@ -62,8 +62,11 @@ function ErrorEventsDashboard () {
                       <tr key={eventIndex}>
                         <td className='component'>{event.projectName}</td>
                         <td className='details'>
-                          {event.exceptions.map((e, i) =>
-                            <span key={i}><strong>{e.errorClass}</strong>: {e.message}</span>)
+                          {event.exceptions
+                            ? event.exceptions.map((e, i) => (
+                              <span key={i}><strong>{e.errorClass}</strong>: {e.message}</span>
+                            ))
+                            : <>No exception information.</>
                           }
                         </td>
                         <td className='date'>{moment(event.received).format('D MMM h:mm a')}</td>
