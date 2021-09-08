@@ -9,7 +9,7 @@ import NavLink from './NavLink'
 export default function Footer (props) {
   // Embed content for terms and privacy if URL points to a markdown document.
   // Embed also if either is not defined (shows an error message instead of a non-working link).
-  const { privacyPath, termsPath } = getTermsAndPrivacyPaths()
+  const { privacyPath } = getTermsAndPrivacyPaths()
   return (
     <footer>
       <section className='ft-main'>
