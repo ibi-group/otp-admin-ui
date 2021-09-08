@@ -26,7 +26,7 @@ export default class ApiKeyRow extends Component {
     return (
       <ListGroup.Item as='li'>
         <Key size={20} style={{marginRight: 10}} />
-        {apiKey.keyId}{' '}
+        {apiKey.name} ({apiKey.keyId}){' '}
         {isAdmin &&
           <Button
             className='float-right'
