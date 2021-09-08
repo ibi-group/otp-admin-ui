@@ -99,11 +99,14 @@ class ApiKeyUsageChart extends Component {
 
   _getKeyInfo = () => {
     const {id} = this.props
+    if (!id) return null
     const apiUser = this._getApiUser()
-    const keyLabel = apiUser ? `${apiUser.name} (${id})` : id
+    const keyName = apiUser?.apiKeys?.find(key => key.id === id) || id
     return (
       <p>
-        <span><Key size={20} style={{marginRight: 10}} />{keyLabel}</span>
+        <span><Key size={20} style={{marginRight: 10}} />
+          {keyName ? `${keyName} (${id})` : id}
+        </span>
         {apiUser &&
           <small>
             <Button
