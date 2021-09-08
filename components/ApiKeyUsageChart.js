@@ -97,6 +97,28 @@ class ApiKeyUsageChart extends Component {
     return requestData
   }
 
+  _getKeyInfo = () => {
+    const {id} = this.props
+    const apiUser = this._getApiUser()
+    const keyLabel = apiUser ? `${apiUser.name} (${id})` : id
+    return (
+      <p>
+        <span><Key size={20} style={{marginRight: 10}} />{keyLabel}</span>
+        {apiUser &&
+          <small>
+            <Button
+              onClick={this._viewApiKey}
+              size='sm'
+              variant='link'
+            >
+              click to view key
+            </Button>
+          </small>
+        }
+      </p>
+    )
+  }
+
   _getApiUser = () => this.props.aggregatedView
     ? null
     : this.props.plan.apiUsers[this.props.id]
@@ -121,7 +143,6 @@ class ApiKeyUsageChart extends Component {
       console.warn('Cannot show non-aggregated view if id prop is undefined.')
       return null
     }
-    const apiUser = this._getApiUser()
     // Render the # of requests per API key on each day beginning
     // with the start date.
     const requestData = this._getRequestData()
@@ -141,20 +162,7 @@ class ApiKeyUsageChart extends Component {
     return (
       <div className='usage-list' style={{display: 'inline-block'}}>
         {this._getChartTitle()}
-        <p>
-          {id && <span><Key size={20} style={{marginRight: 10}} />{id}</span>}
-          {apiUser &&
-            <small>
-              <Button
-                onClick={this._viewApiKey}
-                size='sm'
-                variant='link'
-              >
-                click to view key
-              </Button>
-            </small>
-          }
-        </p>
+        {this._getKeyInfo()}
         <XYPlot
           xDomain={[timestamp - 2 * ONE_DAY_MILLIS, timestamp + 30 * ONE_DAY_MILLIS]}
           // Round up max y value to the nearest 10
