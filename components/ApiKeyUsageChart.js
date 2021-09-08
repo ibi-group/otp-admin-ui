@@ -101,7 +101,7 @@ class ApiKeyUsageChart extends Component {
     const {id} = this.props
     if (!id) return null
     const apiUser = this._getApiUser()
-    const keyName = apiUser?.apiKeys?.find(key => key.id === id)?.name
+    const keyName = apiUser?.apiKeys?.find(key => key.keyId === id)?.name
     return (
       <p>
         <span><Key size={20} style={{marginRight: 10}} />
