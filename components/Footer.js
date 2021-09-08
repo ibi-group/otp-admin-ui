@@ -9,7 +9,7 @@ import NavLink from './NavLink'
 export default function Footer (props) {
   // Embed content for terms and privacy if URL points to a markdown document.
   // Embed also if either is not defined (shows an error message instead of a non-working link).
-  const { privacyPath, termsPath } = getTermsAndPrivacyPaths()
+  const { privacyPath } = getTermsAndPrivacyPaths()
   return (
     <footer>
       <section className='ft-main'>
@@ -18,16 +18,6 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update content at link OR perhaps replace with some
-                // Quick Start/Getting Started docs that could help out a new
-                // API user.
-                href='/about'>
-                About this app
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                // FIXME: Update content at link
                 href='/faq'>
                 FAQ
               </NavLink>
@@ -75,16 +65,9 @@ export default function Footer (props) {
           <ul>
             <li>
               <NavLink
-                // FIXME: Update link
-                href='/'>
+                target='_blank'
+                href={`mailto:${process.env.SUPPORT_EMAIL}?subject=${process.env.SITE_TITLE} Support Request`}>
                 Help
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                // FIXME: Update link
-                href='/'>
-                Request access to API
               </NavLink>
             </li>
           </ul>
@@ -92,12 +75,6 @@ export default function Footer (props) {
       </section>
       <section className='ft-legal'>
         <ul className='ft-legal-list'>
-          <li>
-            <NavLink
-              href={termsPath}>
-              Terms &amp; Conditions
-            </NavLink>
-          </li>
           <li>
             <NavLink
               href={privacyPath}>
