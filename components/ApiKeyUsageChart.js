@@ -31,7 +31,7 @@ class ApiKeyUsageChart extends Component {
     this.setState({value: null})
   }
 
-  _getChartTitle = () => {
+  _renderChartTitle = () => {
     const { aggregatedView, isAdmin } = this.props
     // Do not show chart title for non-admin users.
     if (!isAdmin) return null
@@ -97,14 +97,15 @@ class ApiKeyUsageChart extends Component {
     return requestData
   }
 
-  _getKeyInfo = () => {
+  _renderKeyInfo = () => {
     const {id} = this.props
     if (!id) return null
     const apiUser = this._getApiUser()
     const keyName = apiUser?.apiKeys?.find(key => key.keyId === id)?.name
     return (
       <p>
-        <span><Key size={20} style={{marginRight: 10}} />
+        <span>
+          <Key size={20} style={{marginRight: 10}} />
           {keyName ? `${keyName} (${id})` : id}
         </span>
         {apiUser &&
@@ -164,8 +165,8 @@ class ApiKeyUsageChart extends Component {
     const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
       <div className='usage-list' style={{display: 'inline-block'}}>
-        {this._getChartTitle()}
-        {this._getKeyInfo()}
+        {this._renderChartTitle()}
+        {this._renderKeyInfo()}
         <XYPlot
           xDomain={[timestamp - 2 * ONE_DAY_MILLIS, timestamp + 30 * ONE_DAY_MILLIS]}
           // Round up max y value to the nearest 10
