@@ -10,7 +10,8 @@ export const OTP_PLAN_URL = `${process.env.API_BASE_URL}/otp/routers/default/pla
 export const DEFAULT_REFRESH_MILLIS = 30000
 
 export const USER_TYPES = [
-  {value: 'api', label: 'API Users', url: API_USER_URL},
-  {value: 'admin', label: 'Admin Users', url: ADMIN_USER_URL},
-  {value: 'otp', label: 'OTP Users', url: OTP_USER_URL}
+  { label: 'API Users', url: API_USER_URL, value: 'api' },
+  { label: 'Admin Users', url: ADMIN_USER_URL, value: 'admin' },
+  { label: 'OTP Users', url: OTP_USER_URL, value: 'otp' }
 ]
+export type USER_TYPE = 'api' | 'admin' | 'otp'

@@ -1,9 +1,10 @@
-import {USER_TYPES} from './constants'
+import { USER_TYPES } from './constants'
+import type { USER_TYPE } from './constants'
 
-if (typeof (fetch) === 'undefined') require('isomorphic-fetch')
+if (typeof fetch === 'undefined') require('isomorphic-fetch')
 
-export function getUserUrl (type) {
-  const selectedType = USER_TYPES.find(t => t.value === type)
+export function getUserUrl(type: USER_TYPE): string {
+  const selectedType = USER_TYPES.find((t) => t.value === type)
   if (!selectedType) throw new Error(`Type: ${type} does not exist!`)
   return selectedType.url
 }
@@ -17,7 +18,13 @@ export function getUserUrl (type) {
  * @param {*} options Extra fetch options to pass to fetch.
  * @returns An object with the operation's status and data or error.
  */
-export async function secureFetch (url, auth0, method = 'get', options = {}) {
+export async function secureFetch(
+  url: string,
+  auth0: { getAccessTokenSilently: () => Promise<string> },
+  method: FetchOptions['method'] = 'GET',
+  // TODO: import fetch options type
+  options: RequestInit & FetchOptions = {}
+): Promise<{ data?: any; message?: string; status?: string }> {
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {
@@ -30,33 +37,34 @@ export async function secureFetch (url, auth0, method = 'get', options = {}) {
     console.error('Error obtaining access token.', error)
 
     return {
-      status: 'error',
-      message: 'Error obtaining access token'
+      message: 'Error obtaining access token',
+      status: 'error'
     }
   }
 
   const res = await fetch(url, {
-    method,
     headers: {
       Authorization: `Bearer ${accessToken}`,
       'x-api-key': process.env.API_KEY
     },
+    method,
     ...options
   })
 
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
-    const result = await res.json()
+    const result: JSON & { message?: string; detail?: string } =
+      await res.json()
     let message = `Error: ${result.message}`
     if (result.detail) message += `  (${result.detail})`
 
     return {
-      status: 'error',
-      message
+      message,
+      status: 'error'
     }
   }
   const data = await res.json()
   return {
-    status: 'success',
-    data
+    data,
+    status: 'success'
   }
 }

@@ -7,8 +7,11 @@ import { Children, isValidElement, cloneElement } from 'react'
  * @param children the child elements to modify.
  * @param newProps the props to add.
  */
-export function renderChildrenWithProps (children, newProps) {
-  const childrenWithProps = Children.map(children, child => {
+export function renderChildrenWithProps(
+  children: JSX.Element[],
+  newProps: any
+): JSX.Element[] {
+  const childrenWithProps = Children.map(children, (child) => {
     // Checking isValidElement is the safe way and avoids a TS error too.
     if (isValidElement(child)) {
       return cloneElement(child, { ...newProps })
@@ -19,8 +22,8 @@ export function renderChildrenWithProps (children, newProps) {
   return childrenWithProps
 }
 
-export function isMarkdown (url) {
-  return url && url.endsWith('.md')
+export function isMarkdown(url: string): boolean {
+  return url ? url.endsWith('.md') : false
 }
 
 /**
@@ -28,7 +31,10 @@ export function isMarkdown (url) {
  * to our page with that document embedded) depending on
  * whether the URLs for these documents points to markdown (*.md) or not.
  */
-export function getTermsAndPrivacyPaths () {
+export function getTermsAndPrivacyPaths(): {
+  privacyPath: string
+  termsPath: string
+} {
   const privacyUrl = process.env.PRIVACY_POLICY_URL
   const termsUrl = process.env.TERMS_CONDITIONS_URL
   const embedPrivacy = !privacyUrl || isMarkdown(privacyUrl)
