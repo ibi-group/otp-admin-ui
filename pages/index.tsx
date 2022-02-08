@@ -6,12 +6,13 @@ import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
+import type { ApiUser } from '../types/user'
 
 export default function Index(props: {
-  adminUser: any
-  apiUser: any
-  createApiUser: () => void
-  handleSignup: any
+  adminUser: boolean
+  apiUser: ApiUser
+  createApiUser: (apiUser: string) => ApiUser
+  handleSignup: () => void
 }): JSX.Element {
   const { adminUser, apiUser, createApiUser, handleSignup } = props
 
