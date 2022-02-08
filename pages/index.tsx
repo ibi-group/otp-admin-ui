@@ -1,3 +1,4 @@
+import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
 
@@ -6,21 +7,19 @@ import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
 
-export default function Index (props) {
-  const {
-    adminUser,
-    apiUser,
-    createApiUser,
-    handleSignup
-  } = props
+export default function Index(props: {
+  adminUser: any
+  apiUser: any
+  createApiUser: () => void
+  handleSignup: any
+}): JSX.Element {
+  const { adminUser, apiUser, createApiUser, handleSignup } = props
 
   const { push, query } = useRouter()
   const { isAuthenticated } = useAuth0()
 
   if (!isAuthenticated) {
-    return (
-      <WelcomeScreen handleSignup={handleSignup} />
-    )
+    return <WelcomeScreen handleSignup={handleSignup} />
   }
 
   if (!adminUser && (!apiUser || !apiUser.hasConsentedToTerms)) {
@@ -34,7 +33,7 @@ export default function Index (props) {
     <ApiUserDashboard
       apiUser={apiUser}
       clearWelcome={() => push('/')}
-      // If an API user has just been created, show welcome message.
-      showWelcome={query && query.newApiAccount} />
+      showWelcome={query && query.newApiAccount} // If an API user has just been created, show welcome message.
+    />
   )
 }
