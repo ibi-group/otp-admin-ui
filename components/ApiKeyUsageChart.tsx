@@ -1,8 +1,8 @@
-import { withAuth0 } from '@auth0/auth0-react'
+import React, { Component } from 'react'
+import { withAuth0, WithAuth0Props } from '@auth0/auth0-react'
 import { Key } from '@styled-icons/fa-solid/Key'
 import clone from 'clone'
 import moment from 'moment'
-import { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import {
   XYPlot,
@@ -10,25 +10,33 @@ import {
   YAxis,
   VerticalGridLines,
   HorizontalGridLines,
-  VerticalRectSeries
+  VerticalRectSeries,
+  RectSeriesPoint,
+  RVValueEventHandler
 } from 'react-vis'
 
-import { AUTH0_SCOPE } from '../util/constants'
+import { GraphValue, Requests, Plan } from '../types/graph'
 
+export type Props = {
+  aggregatedView?: boolean
+  isAdmin?: boolean
+  id?: string
+  plan: Plan | null
+} & WithAuth0Props
 /**
  * Renders a chart showing API Key usage (requests over time) for a particular
  * API key.
  */
-class ApiKeyUsageChart extends Component {
-  constructor (props) {
+class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
+  constructor(props: Props) {
     super(props)
     this.state = {
       value: null
     }
   }
 
-  _clearValue = (data, event) => {
-    this.setState({value: null})
+  handleClearValue = () => {
+    this.setState({ value: null })
   }
 
   _renderChartTitle = () => {
@@ -40,39 +48,42 @@ class ApiKeyUsageChart extends Component {
     // console and used them in otp-react-redux). I think it might be more
     // appropriate to handle this on the server side (e.g., filtering out keys
     // if they don't match user accounts), but that's TBD.
-    const defaultTitle = aggregatedView ? 'Total Requests' : 'Unknown Application'
+    const defaultTitle = aggregatedView
+      ? 'Total Requests'
+      : 'Unknown Application'
     const defaultUser = aggregatedView ? 'All users' : '[no user]'
     const apiUser = this._getApiUser()
     return (
       <>
         <h3>
-          {apiUser
-            ? <>
-              {apiUser.appName}{' '}
-              (<a
-                target='_blank'
-                rel='noopener noreferrer'
-                href={apiUser.appUrl}>link</a>)
+          {apiUser ? (
+            <>
+              {apiUser.appName} (
+              <a
+                href={apiUser.appUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                link
+              </a>
+              )
             </>
-            : defaultTitle
-          }
+          ) : (
+            defaultTitle
+          )}
         </h3>
-        <p>
-          {apiUser
-            ? `by ${apiUser.email}`
-            : defaultUser
-          }
-        </p>
+        <p>{apiUser ? `by ${apiUser.email}` : defaultUser}</p>
       </>
     )
   }
 
   _getRequestData = () => {
     const { aggregatedView, id, plan } = this.props
-    let requestData
+    if (!plan) return
+    let requestData: Requests | undefined
     // Track keys encountered to ensure we're not duplicating keys that are
     // assigned to more than one usage plan.
-    const keysEncountered = []
+    const keysEncountered: string[] = []
     if (aggregatedView) {
       // Sum up all requests for keys.
       const keyIds = Object.keys(plan.result.items)
@@ -83,66 +94,79 @@ class ApiKeyUsageChart extends Component {
           if (!requestData) {
             requestData = requestsForKey
           } else {
+            // @ts-expect-error assuming array length is 2
             requestData = requestData.map((value, valIndex) => {
-              const copy = {...value}
+              // @ts-expect-error convert array to object
+              const copy = { ...value }
+              // @ts-expect-error assuming array length is >0
               copy[0] += requestsForKey[valIndex][0]
               return copy
             })
           }
         }
       })
-    } else {
+    } else if (id) {
       requestData = plan.result.items[id]
     }
     return requestData
   }
 
   _renderKeyInfo = () => {
-    const {id} = this.props
+    const { id } = this.props
     if (!id) return null
     const apiUser = this._getApiUser()
-    const keyName = apiUser?.apiKeys?.find(key => key.keyId === id)?.name
+    const keyName = apiUser?.apiKeys?.find(
+      (key: { keyId: string }) => key.keyId === id
+    )?.name
     return (
       <p>
         <span>
-          <Key size={20} style={{marginRight: 10}} />
+          <Key size={20} style={{ marginRight: 10 }} />
           {keyName ? `${keyName} (${id})` : id}
         </span>
-        {apiUser &&
+        {apiUser && (
           <small>
-            <Button
-              onClick={this._viewApiKey}
-              size='sm'
-              variant='link'
-            >
+            <Button onClick={this.handleViewApiKey} size="sm" variant="link">
               click to view key
             </Button>
           </small>
-        }
+        )}
       </p>
     )
   }
 
-  _getApiUser = () => this.props.aggregatedView
-    ? null
-    : this.props.plan.apiUsers[this.props.id]
+  _getApiUser = () =>
+    this.props.aggregatedView
+      ? null
+      : (this.props.id && this.props?.plan?.apiUsers?.[this.props.id]) || null
 
-  _setValue = (data, event) => {
-    this.setState({value: data})
+  handleSetValue: RVValueEventHandler<RectSeriesPoint> = (
+    data: RectSeriesPoint
+  ) => {
+    this.setState({ value: data })
   }
 
-  _viewApiKey = () => {
+  handleViewApiKey = () => {
     const { id, plan } = this.props
-    const userForKey = plan.apiUsers[id]
-    const key = userForKey.apiKeys.find(key => key.keyId === id)
+    if (!id || !plan) return
+    const userForKey = plan.apiUsers?.[id]
+    const key = userForKey?.apiKeys.find(
+      (key: { keyId: string }) => key.keyId === id
+    )
+
+    if (!key) {
+      window.alert('Could not find API key!')
+      return
+    }
+
     window.prompt('Copy and paste the API key to use in requests', key.value)
   }
 
-  render () {
+  render() {
     const { aggregatedView, id, plan } = this.props
     const { value } = this.state
     const ONE_DAY_MILLIS = 86400000
-    const startDate = moment(plan.result.startDate)
+    const startDate = moment(plan?.result.startDate)
     if (!aggregatedView && !id) {
       console.warn('Cannot show non-aggregated view if id prop is undefined.')
       return null
@@ -153,26 +177,29 @@ class ApiKeyUsageChart extends Component {
     const timestamp = startDate.valueOf()
     let rangeMax = 0
     // Format request data for chart component.
-    const CHART_DATA = requestData
-      .map((value, i) => {
+    const CHART_DATA: RectSeriesPoint[] =
+      requestData?.map((value, i) => {
         if (i > 0) startDate.add(1, 'days')
         const begin = startDate.valueOf()
+        // @ts-ignore TYPESCRIPT TODO: what is going on here?
         const y = value[0]
         const end = begin + ONE_DAY_MILLIS
         if (y > rangeMax) rangeMax = y
-        return ({x0: begin, x: end, y})
-      })
+        return { x: end, x0: begin, y, y0: 0 }
+      }) || []
     const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
-      <div className='usage-list' style={{display: 'inline-block'}}>
+      <div className="usage-list" style={{ display: 'inline-block' }}>
         {this._renderChartTitle()}
         {this._renderKeyInfo()}
         <XYPlot
-          xDomain={[timestamp - 2 * ONE_DAY_MILLIS, timestamp + 30 * ONE_DAY_MILLIS]}
-          // Round up max y value to the nearest 10
-          yDomain={[0, maxY]}
-          width={600}
           height={300}
+          width={600} // Round up max y value to the nearest 10
+          xDomain={[
+            timestamp - 2 * ONE_DAY_MILLIS,
+            timestamp + 30 * ONE_DAY_MILLIS
+          ]}
+          yDomain={[0, maxY]}
         >
           <VerticalGridLines />
           <HorizontalGridLines />
@@ -180,27 +207,23 @@ class ApiKeyUsageChart extends Component {
           <YAxis />
           <VerticalRectSeries
             data={CHART_DATA}
-            // Update value on mouse over/out.
-            onValueMouseOut={this._clearValue}
-            onValueMouseOver={this._setValue}
-            style={{stroke: '#fff'}} />
+            onValueMouseOut={this.handleClearValue} // Update value on mouse over/out.
+            onValueMouseOver={this.handleSetValue}
+            style={{ stroke: '#fff' }}
+          />
         </XYPlot>
-        <p style={{textAlign: 'center'}}>
-          {value
-            ? <>
+        <p style={{ textAlign: 'center' }}>
+          {value ? (
+            <>
               {moment(value.x).format('MMM DD')}: {value.y} requests
             </>
-            : <>
-              [Hover over bars to see values.]
-            </>
-          }
+          ) : (
+            <>[Hover over bars to see values.]</>
+          )}
         </p>
       </div>
     )
   }
 }
 
-export default withAuth0(ApiKeyUsageChart, {
-  audience: process.env.AUTH0_AUDIENCE,
-  scope: AUTH0_SCOPE
-})
+export default withAuth0(ApiKeyUsageChart)

@@ -8,7 +8,7 @@ import { Children, isValidElement, cloneElement } from 'react'
  * @param newProps the props to add.
  */
 export function renderChildrenWithProps(
-  children: JSX.Element[],
+  children: JSX.Element[] | JSX.Element,
   newProps: any
 ): JSX.Element[] {
   const childrenWithProps = Children.map(children, (child) => {

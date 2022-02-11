@@ -1,37 +1,53 @@
-import { withAuth0 } from '@auth0/auth0-react'
+import {
+  Auth0ContextInterface,
+  withAuth0,
+  WithAuth0Props
+} from '@auth0/auth0-react'
 import Head from 'next/head'
-import { withRouter } from 'next/router'
+import { Router, withRouter } from 'next/router'
 import React, { Component } from 'react'
 import { SWRConfig } from 'swr'
 
-import VerifyEmailScreen from './verify-email-screen'
 import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
   API_USER_URL,
   AUTH0_SCOPE,
-  DEFAULT_REFRESH_MILLIS
+  DEFAULT_REFRESH_MILLIS,
+  USER_TYPE
 } from '../util/constants'
-import {
-  getUserUrl,
-  secureFetch
-} from '../util/middleware'
+import { getUserUrl, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
+import { ApiUser } from '../types/user'
+
+import VerifyEmailScreen from './verify-email-screen'
 import Footer from './Footer'
 import NavBar from './NavBar'
+
+type Props = {
+  auth0: WithAuth0Props & Auth0ContextInterface
+  children: JSX.Element
+  router: Router
+}
+type State = {
+  adminUser: boolean
+  isUserFetched?: boolean
+  isUserRequested?: boolean
+  apiUser?: ApiUser
+}
 
 /**
  * @class
  * @description This component manages the overall UI layout
  * and forwards API access and logged-in user data to components it renders.
  */
-class LayoutWithAuth0 extends Component {
-  constructor () {
-    super()
+class LayoutWithAuth0 extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
 
     this.state = {
-      adminUser: null,
-      apiUser: null,
+      adminUser: false,
+      apiUser: undefined,
       isUserFetched: false,
       isUserRequested: false
     }
@@ -48,14 +64,11 @@ class LayoutWithAuth0 extends Component {
     return auth0 && auth0.isAuthenticated && !isUserFetched
   }
 
-  createApiUser = async (apiUser) => {
+  createApiUser = async (apiUser: ApiUser) => {
     const { auth0, router } = this.props
-    const result = await secureFetch(
-      getUserUrl('api'),
-      auth0,
-      'POST',
-      { body: JSON.stringify(apiUser) }
-    )
+    const result = await secureFetch(getUserUrl('api'), auth0, 'POST', {
+      body: JSON.stringify(apiUser)
+    })
     if (result.status === 'error') {
       window.alert(result.message)
     } else {
@@ -78,8 +91,14 @@ class LayoutWithAuth0 extends Component {
       })
 
       // TODO: Combine into a single fetch fromToken or use SWR
-      const adminUserResult = await secureFetch(`${ADMIN_USER_URL}/fromtoken`, auth0)
-      const apiUserResult = await secureFetch(`${API_USER_URL}/fromtoken`, auth0)
+      const adminUserResult = await secureFetch(
+        `${ADMIN_USER_URL}/fromtoken`,
+        auth0
+      )
+      const apiUserResult = await secureFetch(
+        `${API_USER_URL}/fromtoken`,
+        auth0
+      )
       this.setState({
         adminUser: adminUserResult.data,
         apiUser: apiUserResult.data,
@@ -89,7 +108,15 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
-  updateUser = async ({user, type, isSelf}) => {
+  updateUser = async ({
+    isSelf,
+    type,
+    user
+  }: {
+    isSelf?: boolean
+    type: USER_TYPE
+    user: ApiUser
+  }) => {
     const { auth0 } = this.props
     const result = await secureFetch(
       `${getUserUrl(type)}/${user.id}`,
@@ -104,24 +131,26 @@ class LayoutWithAuth0 extends Component {
     }
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     if (this.loggedInUserIsUnfetched()) {
       // Fetch and cache user data when the auth0 access token becomes available.
       this.fetchUsers()
     }
   }
 
-  render () {
+  render() {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
     const { adminUser, apiUser } = this.state
     const { loginWithRedirect, logout, user } = auth0
-    const handleLogin = () => loginWithRedirect({ appState: { returnTo: { pathname, query } } })
+    const handleLogin = () =>
+      loginWithRedirect({ appState: { returnTo: { pathname, query } } })
     const handleLogout = () => logout({ returnTo: getAuthRedirectUri() })
-    const handleSignup = () => loginWithRedirect({
-      appState: { returnTo: { pathname, query } },
-      screen_hint: 'signup'
-    })
+    const handleSignup = () =>
+      loginWithRedirect({
+        appState: { returnTo: { pathname, query } },
+        screen_hint: 'signup'
+      })
 
     let contents
     if (user && !user.email_verified) {
@@ -149,7 +178,10 @@ class LayoutWithAuth0 extends Component {
     return (
       <SWRConfig
         value={{
-          fetcher: (url, method, ...props) => secureFetch(url, auth0, method, props),
+          fetcher: (url, method, ...props) =>
+            // FIXME
+            // @ts-ignore
+            secureFetch(url, auth0, method, props),
           refreshInterval: DEFAULT_REFRESH_MILLIS
         }}
       >
@@ -161,27 +193,28 @@ class LayoutWithAuth0 extends Component {
             adminUser={adminUser}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
-            handleSignup={handleSignup} />
+            handleSignup={handleSignup}
+          />
           <main>
-            <div className='container'>
-              {contents}
-            </div>
+            <div className="container">{contents}</div>
           </main>
           <Footer />
-          <style jsx>{`
-            .container {
-              max-width: 42rem;
-              min-height: 500px;
-              margin: 1.5rem auto;
-            }
-          `}
+          <style jsx>
+            {`
+              .container {
+                max-width: 42rem;
+                min-height: 500px;
+                margin: 1.5rem auto;
+              }
+            `}
           </style>
-          <style jsx global>{`
-            body {
-              margin: 0;
-              color: #333;
-            }
-          `}
+          <style global jsx>
+            {`
+              body {
+                margin: 0;
+                color: #333;
+              }
+            `}
           </style>
         </div>
       </SWRConfig>
@@ -190,6 +223,7 @@ class LayoutWithAuth0 extends Component {
 }
 
 export default withRouter(
+  // @ts-ignore
   withAuth0(LayoutWithAuth0, {
     audience: process.env.AUTH0_AUDIENCE,
     scope: AUTH0_SCOPE

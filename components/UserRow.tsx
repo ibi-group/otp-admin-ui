@@ -1,5 +1,9 @@
+import React from 'react'
 import { User } from '@styled-icons/fa-solid/User'
 import { Button, ListGroup } from 'react-bootstrap'
+
+import { ApiUser, OnDeleteUser, OnUpdateUser, OnViewUser } from '../types/user'
+import { USER_TYPE } from '../util/constants'
 
 import UserDetails from './UserDetails'
 
@@ -13,19 +17,26 @@ const UserRow = ({
   onViewUser,
   type,
   user
-}) => {
-  const handleDeleteUser = event => onDeleteUser(user, type)
+}: {
+  activeId?: string
+  onDeleteUser: OnDeleteUser
+  onUpdateUser: OnUpdateUser
+  onViewUser: OnViewUser
+  type: USER_TYPE
+  user: ApiUser
+}): JSX.Element => {
+  const handleDeleteUser = () => onDeleteUser(user, type)
   return (
-    <ListGroup.Item as='li'>
-      <span className='align-middle'>
-        <User size={20} style={{marginRight: 10}} />
+    <ListGroup.Item as="li">
+      <span className="align-middle">
+        <User size={20} style={{ marginRight: 10 }} />
         {user.email}
       </span>
       <Button
-        className='float-right'
-        variant='link'
-        size='sm'
+        className="float-right"
         onClick={handleDeleteUser}
+        size="sm"
+        variant="link"
       >
         Delete
       </Button>

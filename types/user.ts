@@ -1,3 +1,5 @@
+import { USER_TYPE } from '../util/constants'
+
 export type ApiKey = {
   keyId: string
   name: string
@@ -14,7 +16,18 @@ export type ApiUser = {
   email: string
   hasConsentedToTerms: boolean
   id: string
-  isDatatoolsUser: boolean
+  isDataToolsUser: boolean
   lastUpdated: number
   name: string
 }
+
+export type HandleSignup = () => void
+
+export type OnDeleteUser = (user: ApiUser, type: USER_TYPE) => void
+export type OnUpdateUserArgs = {
+  isSelf?: boolean
+  type: USER_TYPE
+  user: ApiUser
+}
+export type OnUpdateUser = (args: OnUpdateUserArgs) => Promise<void>
+export type OnViewUser = (user?: ApiUser | null, type?: USER_TYPE) => void

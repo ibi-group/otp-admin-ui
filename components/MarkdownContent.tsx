@@ -1,3 +1,4 @@
+import React from 'react'
 import Markdown from 'react-markdown'
 
 import { isMarkdown } from '../util/ui'
@@ -13,7 +14,7 @@ const EMPTY_CONTENTS = 'No contents provided.'
  *            then the yarn build process will fail.
  * @returns The fetched markdown content, or EMPTY_CONTENTS otherwise.
  */
-export async function fetchMarkdown (url) {
+export async function fetchMarkdown(url: string): Promise<string> {
   let markdown = EMPTY_CONTENTS
   if (isMarkdown(url)) {
     const res = await fetch(url)
@@ -28,33 +29,37 @@ export async function fetchMarkdown (url) {
   return markdown
 }
 
-export default function MarkdownContent (props) {
+export default function MarkdownContent(props: {
+  title?: string
+  markdown: string
+}): JSX.Element {
   return (
     <div>
       <h1>{props.title || 'Page Title'}</h1>
-      <div className='markdown'>
+      <div className="markdown">
         <Markdown source={props.markdown} />
       </div>
-      <style jsx global>{`
-        * {
-          font-family: 'Arial';
-        }
+      <style global jsx>
+        {`
+          * {
+            font-family: 'Arial';
+          }
 
-        .markdown a {
-          text-decoration: none;
-          color: blue;
-        }
+          .markdown a {
+            text-decoration: none;
+            color: blue;
+          }
 
-        .markdown a:hover {
-          opacity: 0.6;
-        }
+          .markdown a:hover {
+            opacity: 0.6;
+          }
 
-        .markdown h3 {
-          margin: 0;
-          padding: 0;
-          text-transform: uppercase;
-        }
-      `}
+          .markdown h3 {
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+          }
+        `}
       </style>
     </div>
   )

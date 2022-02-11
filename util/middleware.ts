@@ -1,3 +1,5 @@
+import { Auth0ContextInterface, WithAuth0Props } from '@auth0/auth0-react'
+
 import { USER_TYPES } from './constants'
 import type { USER_TYPE } from './constants'
 
@@ -20,11 +22,11 @@ export function getUserUrl(type: USER_TYPE): string {
  */
 export async function secureFetch(
   url: string,
-  auth0: { getAccessTokenSilently: () => Promise<string> },
+  auth0: Auth0ContextInterface,
   method: FetchOptions['method'] = 'GET',
   // TODO: import fetch options type
   options: RequestInit & FetchOptions = {}
-): Promise<{ data?: any; message?: string; status?: string }> {
+): Promise<{ data?: any; message?: string; status?: string; error?: string }> {
   const { getAccessTokenSilently } = auth0
   let accessToken
   try {

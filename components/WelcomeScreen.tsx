@@ -1,6 +1,13 @@
+import React from 'react'
 import { Button, Jumbotron } from 'react-bootstrap'
 
-const WelcomeScreen = ({ handleSignup }) => (
+import { HandleSignup } from '../types/user'
+
+const WelcomeScreen = ({
+  handleSignup
+}: {
+  handleSignup: HandleSignup
+}): JSX.Element => (
   <>
     <Jumbotron>
       <h1>Welcome to the {process.env.SITE_TITLE}!</h1>
@@ -9,15 +16,13 @@ const WelcomeScreen = ({ handleSignup }) => (
         {process.env.API_NAME}.
       </p>
       <p>
-        <Button
-          className='mr-3'
-          onClick={handleSignup}
-          variant='primary'>
+        <Button className="mr-3" onClick={handleSignup} variant="primary">
           Sign up for API access
         </Button>
         <Button
           href={process.env.API_DOCUMENTATION_URL}
-          variant='outline-primary'>
+          variant="outline-primary"
+        >
           View API documentation
         </Button>
       </p>
