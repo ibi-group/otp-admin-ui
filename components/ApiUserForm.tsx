@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-curly-spacing */
 import React, { Component } from 'react'
 import { Auth0ContextInterface, withAuth0 } from '@auth0/auth0-react'
 import clone from 'clone'
@@ -7,7 +6,6 @@ import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
 import * as yup from 'yup'
 
 import { ApiUser } from '../types/user'
-import { AUTH0_SCOPE } from '../util/constants'
 import { getTermsAndPrivacyPaths } from '../util/ui'
 
 // The validation schema for the ApiUser fields.
@@ -83,7 +81,7 @@ function createBlankApiUser() {
 class ApiUserForm extends Component<{
   auth0: Auth0ContextInterface
   createApiUser?: (user: ApiUser) => Promise<void>
-  apiUser: ApiUser
+  apiUser?: ApiUser
 }> {
   handleCreateAccount = async (apiUserData: ApiUser) => {
     const { auth0, createApiUser } = this.props
@@ -148,8 +146,10 @@ class ApiUserForm extends Component<{
                                   // onBlur, onChange, and value are passed automatically.
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                  {/* @ts-ignore the form keys are matched to the ApiUser type */}
-                                  {errors[fieldName]}
+                                  {
+                                    //@ts-ignore
+                                    errors[fieldName]
+                                  }
                                 </Form.Control.Feedback>
                               </Form.Group>
                             )

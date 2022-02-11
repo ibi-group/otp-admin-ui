@@ -86,6 +86,8 @@ class ApiKeyList extends Component<
     const { isAdmin } = this.props
     const { apiUser } = this.state
     const { apiKeys } = apiUser
+    if (!apiKeys) return null
+
     const keyLimitReached = !isAdmin && apiKeys.length >= API_KEY_LIMIT
     return (
       <div className="mb-5">

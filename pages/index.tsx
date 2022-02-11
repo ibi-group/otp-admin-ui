@@ -11,7 +11,7 @@ import type { ApiUser, HandleSignup } from '../types/user'
 export default function Index(props: {
   adminUser: boolean
   apiUser: ApiUser
-  createApiUser: (apiUser: string) => ApiUser
+  createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
 }): JSX.Element {
   const { adminUser, apiUser, createApiUser, handleSignup } = props
@@ -34,7 +34,7 @@ export default function Index(props: {
     <ApiUserDashboard
       apiUser={apiUser}
       clearWelcome={() => push('/')}
-      showWelcome={query && query.newApiAccount} // If an API user has just been created, show welcome message.
+      showWelcome={query && !!query.newApiAccount} // If an API user has just been created, show welcome message.
     />
   )
 }

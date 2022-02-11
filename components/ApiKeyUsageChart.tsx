@@ -150,7 +150,7 @@ class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
     const { id, plan } = this.props
     if (!id || !plan) return
     const userForKey = plan.apiUsers?.[id]
-    const key = userForKey?.apiKeys.find(
+    const key = userForKey?.apiKeys?.find(
       (key: { keyId: string }) => key.keyId === id
     )
 
