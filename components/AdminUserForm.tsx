@@ -2,7 +2,7 @@ import React from 'react'
 import Form from 'react-bootstrap/Form'
 import Select from 'react-select'
 
-import { ApiUser, OnUpdateUser } from '../types/user'
+import { ApiUser, OnUpdateUser, Subscription } from '../types/user'
 
 const subscriptionOptions = [
   {
@@ -23,7 +23,7 @@ const AdminUserForm = ({
   isSelf?: boolean
   onUpdateUser: OnUpdateUser
 }): JSX.Element => {
-  const handleUpdateSubscriptions = (options) => {
+  const handleUpdateSubscriptions = (options: Subscription[]) => {
     const subscriptions = options ? options.map((o) => o.value) : []
     onUpdateUser({
       isSelf,

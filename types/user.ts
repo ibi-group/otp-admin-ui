@@ -6,19 +6,25 @@ export type ApiKey = {
   value: string
 }
 export type ApiUser = {
-  apiKeys: ApiKey[]
+  apiKeys?: ApiKey[]
   appName: string
   appPurpose: string
   appUrl: string
-  auth0UserId: string
+  auth0UserId?: string
   company: string
-  dateCreated: number
-  email: string
+  dateCreated?: number
+  email?: string
   hasConsentedToTerms: boolean
-  id: string
-  isDataToolsUser: boolean
-  lastUpdated: number
+  id?: string
+  isDataToolsUser?: boolean
+  lastUpdated?: number
   name: string
+  subscriptions?: string[]
+}
+
+export type Subscription = {
+  label: string
+  value: string
 }
 
 export type HandleSignup = () => void

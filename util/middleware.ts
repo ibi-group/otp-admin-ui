@@ -1,4 +1,4 @@
-import { Auth0ContextInterface, WithAuth0Props } from '@auth0/auth0-react'
+import { Auth0ContextInterface } from '@auth0/auth0-react'
 
 import { USER_TYPES } from './constants'
 import type { USER_TYPE } from './constants'
