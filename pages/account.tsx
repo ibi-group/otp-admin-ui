@@ -1,12 +1,22 @@
-import { withAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
-import { Component } from 'react'
+import React, { Component } from 'react'
+import {
+  withAuth0,
+  WithAuth0Props,
+  withAuthenticationRequired
+} from '@auth0/auth0-react'
 
 import AdminUserForm from '../components/AdminUserForm'
 import ApiUserForm from '../components/ApiUserForm'
-import { AUTH0_SCOPE } from '../util/constants'
+import { ApiUser, OnUpdateUser } from '../types/user'
 
-class Account extends Component {
-  render () {
+class Account extends Component<
+  {
+    adminUser?: ApiUser
+    apiUser?: ApiUser
+    updateUser: OnUpdateUser
+  } & WithAuth0Props
+> {
+  render() {
     const { adminUser, apiUser, updateUser } = this.props
     if (!adminUser && !apiUser) {
       return <p>Not authorized to view this page.</p>
@@ -15,21 +25,16 @@ class Account extends Component {
       <div>
         <h1>My Account</h1>
         {apiUser && <ApiUserForm apiUser={apiUser} />}
-        {adminUser &&
+        {adminUser && (
           <AdminUserForm
             adminUser={adminUser}
             isSelf
             onUpdateUser={updateUser}
           />
-        }
+        )}
       </div>
     )
   }
 }
 
-export default withAuthenticationRequired(
-  withAuth0(Account, {
-    audience: process.env.AUTH0_AUDIENCE,
-    scope: AUTH0_SCOPE
-  })
-)
+export default withAuthenticationRequired(withAuth0(Account))

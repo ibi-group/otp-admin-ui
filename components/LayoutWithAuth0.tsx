@@ -26,7 +26,7 @@ import NavBar from './NavBar'
 
 type Props = {
   auth0: WithAuth0Props & Auth0ContextInterface
-  children: JSX.Element
+  children: JSX.Element | JSX.Element[]
   router: Router
 }
 type State = {

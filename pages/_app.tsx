@@ -1,23 +1,21 @@
-import { Auth0Provider } from '@auth0/auth0-react'
+import React from 'react'
+import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import App from 'next/app'
 import Router from 'next/router'
 
 import LayoutWithAuth0 from '../components/LayoutWithAuth0'
 import { getAuthRedirectUri } from '../util/auth'
 import { AUTH0_SCOPE } from '../util/constants'
-
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-vis/dist/style.css'
+import { AuthError } from '../types/user'
 
 /**
  * Where to send the user after they have signed in.
  */
-const onRedirectCallback = appState => {
+const onRedirectCallback = (appState: AppState) => {
   if (appState && appState.returnTo) {
-    Router.push({
-      pathname: appState.returnTo.pathname,
-      query: appState.returnTo.query
-    })
+    Router.push(appState.returnTo)
   }
 }
 
@@ -26,7 +24,7 @@ const onRedirectCallback = appState => {
  * @param {Error} err
  * @param {AccessTokenRequestOptions} options
  */
-const onAccessTokenError = (err, options) => {
+const onAccessTokenError = (err: string) => {
   console.error('Failed to retrieve access token: ', err)
 }
 
@@ -34,7 +32,7 @@ const onAccessTokenError = (err, options) => {
  * When signing in fails for some reason, we want to show it here.
  * @param {Error} err
  */
-const onLoginError = (err) => {
+const onLoginError = (err: AuthError) => {
   Router.push({
     pathname: '/oops',
     query: {
@@ -52,8 +50,8 @@ const onRedirecting = () => {
     <div>
       <h1>Signing you in</h1>
       <p>
-        In order to access this page you will need to sign in.
-        Please wait while we redirect you to the login page...
+        In order to access this page you will need to sign in. Please wait while
+        we redirect you to the login page...
       </p>
     </div>
   )
@@ -63,20 +61,36 @@ const onRedirecting = () => {
  * Create a page which wraps the Auth0 provider.
  */
 export default class Root extends App {
-  render () {
+  render(): JSX.Element {
     const { Component, pageProps } = this.props
+
+    if (!process.env.AUTH0_CLIENT_ID) {
+      return (
+        <>
+          Missing important env variable <code>AUTH0_CLIENT_ID</code>!
+        </>
+      )
+    }
+
+    if (!process.env.AUTH0_DOMAIN) {
+      return (
+        <>
+          Missing important env variable <code>AUTH0_DOMAIN</code>!
+        </>
+      )
+    }
 
     return (
       <Auth0Provider
         audience={process.env.AUTH0_AUDIENCE}
-        scope={AUTH0_SCOPE}
-        domain={process.env.AUTH0_DOMAIN}
         clientId={process.env.AUTH0_CLIENT_ID}
-        redirectUri={getAuthRedirectUri()}
-        onLoginError={onLoginError}
+        domain={process.env.AUTH0_DOMAIN}
         onAccessTokenError={onAccessTokenError}
-        onRedirecting={onRedirecting}
+        onLoginError={onLoginError}
         onRedirectCallback={onRedirectCallback}
+        onRedirecting={onRedirecting}
+        redirectUri={getAuthRedirectUri()}
+        scope={AUTH0_SCOPE}
       >
         <LayoutWithAuth0>
           <Component {...pageProps} />

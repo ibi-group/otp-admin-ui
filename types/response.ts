@@ -7,3 +7,5 @@ export type Event = {
   projectName: string
   exceptions?: Exception[]
 }
+
+export type ConvertedMD = { markdown: string }

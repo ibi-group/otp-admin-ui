@@ -1,5 +1,6 @@
 import React from 'react'
 import Form from 'react-bootstrap/Form'
+// @ts-expect-error types invalid
 import Select from 'react-select'
 
 import { ApiUser, OnUpdateUser, Subscription } from '../types/user'

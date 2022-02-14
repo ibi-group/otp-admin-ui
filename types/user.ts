@@ -1,3 +1,5 @@
+import { OAuthError } from '@auth0/auth0-react'
+
 import { USER_TYPE } from '../util/constants'
 
 export type ApiKey = {
@@ -26,6 +28,7 @@ export type Subscription = {
   label: string
   value: string
 }
+export type AuthError = OAuthError
 
 export type HandleSignup = () => void
 
