@@ -28,6 +28,7 @@ const UserDetails = ({
   const hideUser = () => onViewUser(null, type)
   const showUser = () => onViewUser(user, type)
 
+  if (type === 'otp') return <></>
   return (
     <>
       <Button
