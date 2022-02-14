@@ -10,8 +10,10 @@
     "build": "next build",
     "dev": "next",
     "deploy": "vercel",
-    "lint": "tsdx lint components pages util --quiet",
+    "lint": "yarn lint-types && yarn lint-code",
+    "lint-code": "tsdx lint components pages util --quiet",
     "lint-docs": "documentation lint {components,pages,util}/**/*.js",
+    "lint-types": "yarn tsc",
     "predev": "yarn"
   },
   "dependencies": {
