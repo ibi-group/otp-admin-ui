@@ -85,7 +85,7 @@ export default function Footer(): JSX.Element {
           }
           footer {
             font-family: sans-serif;
-            background-color: #555;
+            background-color: ${process.env.SECONDARY_COLOR || '#555'};
             color: #bbb;
             line-height: 1.5;
           }
@@ -133,7 +133,7 @@ export default function Footer(): JSX.Element {
           /* Footer legal */
           .ft-legal {
             padding: 0.9375rem 1.875rem;
-            background-color: #333;
+            background-color: ${process.env.PRIMARY_COLOR || '#333'};
           }
           .ft-legal-list {
             width: 100%;

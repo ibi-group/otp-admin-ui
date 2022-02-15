@@ -63,7 +63,7 @@ export default function NavBar(props: {
           header {
             padding: 0.2rem;
             color: #fff;
-            background-color: #333;
+            background-color: ${process.env.PRIMARY_COLOR || '#333'};
             font-family: sans-serif;
           }
           nav {
@@ -77,7 +77,7 @@ export default function NavBar(props: {
             padding-left: 0;
           }
           li.active {
-            background-color: #444;
+            background-color: ${process.env.SECONDARY_COLOR || '#444'};
           }
           li {
             margin-right: 1rem;

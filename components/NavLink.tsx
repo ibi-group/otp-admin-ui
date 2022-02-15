@@ -45,7 +45,7 @@ const NavLink = ({
             text-decoration: none;
           }
           a.active {
-            background-color: #444;
+            background-color: ${process.env.SECONDARY_COLOR || '#444'};
             border-bottom: 9px solid #fdfdbb;
           }
           button {
