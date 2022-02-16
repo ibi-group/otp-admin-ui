@@ -19,8 +19,8 @@ import { GraphValue, Requests, Plan } from '../types/graph'
 
 export type Props = {
   aggregatedView?: boolean
-  isAdmin?: boolean
   id?: string
+  isAdmin?: boolean
   plan: Plan | null
 } & WithAuth0Props
 /**

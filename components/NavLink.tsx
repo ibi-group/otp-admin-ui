@@ -14,8 +14,8 @@ const NavLink = ({
   external?: boolean
   href?: string
   onClick?: () => void
-  target?: string
   pathname?: string
+  target?: string
 }): JSX.Element => {
   const active = pathname === href
   return (

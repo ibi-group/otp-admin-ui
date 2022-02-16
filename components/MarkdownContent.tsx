@@ -30,8 +30,8 @@ export async function fetchMarkdown(url: string): Promise<string> {
 }
 
 export default function MarkdownContent(props: {
-  title?: string
   markdown: string
+  title?: string
 }): JSX.Element {
   return (
     <div>
