@@ -13,6 +13,8 @@ export default function AdminUserDashboard(): JSX.Element {
     push,
     query: { dashboard }
   } = useRouter()
+  const { API_MANAGER_ENABLED } = process.env
+
   return (
     <div>
       <Tabs
@@ -28,14 +30,16 @@ export default function AdminUserDashboard(): JSX.Element {
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
-          <RequestLogsDashboard isAdmin summaryView />
+          {API_MANAGER_ENABLED && <RequestLogsDashboard isAdmin summaryView />}
         </Tab>
         <Tab eventKey="errors" title="Errors">
           <ErrorEventsDashboard />
         </Tab>
-        <Tab eventKey="requests" title="Request logs">
-          <RequestLogsDashboard isAdmin />
-        </Tab>
+        {API_MANAGER_ENABLED && (
+          <Tab eventKey="requests" title="Request logs">
+            <RequestLogsDashboard isAdmin />
+          </Tab>
+        )}
       </Tabs>
       <style jsx>
         {`
