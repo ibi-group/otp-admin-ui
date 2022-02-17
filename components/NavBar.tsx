@@ -47,7 +47,7 @@ export default function NavBar(props: {
                 <li>
                   <NavLink onClick={handleLogin}>Log in</NavLink>
                 </li>
-                {process.env.SIGNUP_ENABLED && (
+                {process.env.SIGN_UP_ENABLED && (
                   <li>
                     <NavLink onClick={handleSignup}>
                       Sign up for API access

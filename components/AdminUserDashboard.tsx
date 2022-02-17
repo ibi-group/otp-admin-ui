@@ -14,6 +14,10 @@ export default function AdminUserDashboard(): JSX.Element {
     query: { dashboard }
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
+  const activeUserTypes = USER_TYPES.filter((userType) => {
+    if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
+    return true
+  })
 
   return (
     <div>
@@ -26,7 +30,7 @@ export default function AdminUserDashboard(): JSX.Element {
       >
         <Tab eventKey="/" title="Home">
           <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-            {USER_TYPES.map((item) => (
+            {activeUserTypes.map((item) => (
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
