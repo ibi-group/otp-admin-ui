@@ -8,17 +8,21 @@ on:
 
 jobs:
   test-build-release:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: Install npm packages using cache
         uses: bahmutov/npm-install@v1
+        with:
+          # the IBI Group TSDX fork has some dependency issues
+          # that cause yarn install to fail on a ci runner. Disabling
+          # concurrency allows installation to complete successfully
+          install-command: yarn --frozen-lockfile --network-concurrency 1
       - name: Copy example config
         run: cp .env.tmp .env.build
       - name: Lint code
