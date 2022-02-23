@@ -14,8 +14,10 @@ export default function AdminUserDashboard(): JSX.Element {
     query: { dashboard }
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
+  const { CDP_MANAGER_ENABLED } = process.env
   const activeUserTypes = USER_TYPES.filter((userType) => {
     if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
+    if (userType.value === 'cdp' && !CDP_MANAGER_ENABLED) return false
     return true
   })
 
