@@ -6,15 +6,17 @@ import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
-import type { ApiUser, HandleSignup } from '../types/user'
+import type { ApiUser, CDPUser, HandleSignup } from '../types/user'
+import CDPUserDashboard from '../components/CDPUserDashboard'
 
 export default function Index(props: {
   adminUser: boolean
   apiUser: ApiUser
+  cdpUser: CDPUser
   createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
 }): JSX.Element {
-  const { adminUser, apiUser, createApiUser, handleSignup } = props
+  const { adminUser, apiUser, cdpUser, createApiUser, handleSignup } = props
   const { API_MANAGER_ENABLED } = process.env
 
   const { push, query } = useRouter()
@@ -44,6 +46,10 @@ export default function Index(props: {
         showWelcome={query && !!query.newApiAccount} // If an API user has just been created, show welcome message.
       />
     )
+
+  if (cdpUser) {
+    return <CDPUserDashboard cdpUser={cdpUser} />
+  }
 
   return (
     <>

@@ -7,18 +7,20 @@ import {
 
 import AdminUserForm from '../components/AdminUserForm'
 import ApiUserForm from '../components/ApiUserForm'
-import { AbstractUser, AdminUser, ApiUser, OnUpdateUser } from '../types/user'
+import { AdminUser, ApiUser, CDPUser, OnUpdateUser } from '../types/user'
+import CDPUserForm from '../components/CDPUserForm'
 
 class Account extends Component<
   {
     adminUser?: AdminUser
     apiUser?: ApiUser
+    cdpUser?: CDPUser
     updateUser: OnUpdateUser
   } & WithAuth0Props
 > {
   render() {
-    const { adminUser, apiUser, updateUser } = this.props
-    if (!adminUser && !apiUser) {
+    const { adminUser, apiUser, cdpUser, updateUser } = this.props
+    if (!adminUser && !apiUser && !cdpUser) {
       return <p>Not authorized to view this page.</p>
     }
     return (
@@ -31,6 +33,9 @@ class Account extends Component<
             isSelf
             onUpdateUser={updateUser}
           />
+        )}
+        {cdpUser && (
+          <CDPUserForm cdpUser={cdpUser} isSelf onUpdateUser={updateUser} />
         )}
       </div>
     )

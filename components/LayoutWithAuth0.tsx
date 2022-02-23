@@ -12,13 +12,14 @@ import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
   API_USER_URL,
+  CDP_USER_URL,
   AUTH0_SCOPE,
   DEFAULT_REFRESH_MILLIS,
   USER_TYPE
 } from '../util/constants'
 import { getUserUrl, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
-import { AbstractUser, AdminUser, ApiUser } from '../types/user'
+import { AdminUser, ApiUser, CDPUser } from '../types/user'
 
 import VerifyEmailScreen from './verify-email-screen'
 import Footer from './Footer'
@@ -31,6 +32,7 @@ type Props = {
 }
 type State = {
   adminUser?: AdminUser
+  cdpUser?: CDPUser
   isUserFetched?: boolean
   isUserRequested?: boolean
   apiUser?: ApiUser
@@ -49,6 +51,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
     this.state = {
       adminUser: undefined,
       apiUser: undefined,
+      cdpUser: undefined,
       isUserFetched: false,
       isUserRequested: false
     }
@@ -101,9 +104,14 @@ class LayoutWithAuth0 extends Component<Props, State> {
           `${API_USER_URL}/fromtoken`,
           auth0
         )
+        const cdpUserResult = await secureFetch(
+          `${CDP_USER_URL}/fromtoken`,
+          auth0
+        )
         this.setState({
           adminUser: adminUserResult.data,
           apiUser: apiUserResult.data,
+          cdpUser: cdpUserResult.data,
           isUserFetched: true,
           isUserRequested: false
         })
@@ -150,7 +158,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
   render() {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser, apiUser } = this.state
+    const { adminUser, apiUser, cdpUser } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () =>
       loginWithRedirect({ appState: { returnTo: { pathname, query } } })
@@ -172,6 +180,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
         ...this.state,
         adminUser,
         apiUser,
+        cdpUser,
         createApiUser: this.createApiUser,
         handleSignup,
         updateUser: this.updateUser

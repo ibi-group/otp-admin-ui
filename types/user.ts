@@ -22,8 +22,6 @@ export type AdminUser = AbstractUser & {
   subscriptions?: string[]
 }
 
-// FIXME: extract admin-only types to new AdminUser type
-// FIXME: create CDPUser type
 export type ApiUser = AbstractUser & {
   apiKeys?: ApiKey[]
   appName: string
@@ -31,6 +29,10 @@ export type ApiUser = AbstractUser & {
   appUrl: string
   company: string
   hasConsentedToTerms: boolean
+}
+
+export type CDPUser = AbstractUser & {
+  buckets?: string[]
 }
 
 export type Subscription = {
