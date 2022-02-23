@@ -7,11 +7,11 @@ import {
 
 import AdminUserForm from '../components/AdminUserForm'
 import ApiUserForm from '../components/ApiUserForm'
-import { ApiUser, OnUpdateUser } from '../types/user'
+import { AbstractUser, AdminUser, ApiUser, OnUpdateUser } from '../types/user'
 
 class Account extends Component<
   {
-    adminUser?: ApiUser
+    adminUser?: AdminUser
     apiUser?: ApiUser
     updateUser: OnUpdateUser
   } & WithAuth0Props

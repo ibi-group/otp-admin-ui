@@ -7,7 +7,7 @@ import useSWR from 'swr'
 
 import { USER_TYPE, USER_TYPES } from '../util/constants'
 import { getUserUrl, secureFetch } from '../util/middleware'
-import { ApiUser, OnUpdateUser, OnUpdateUserArgs } from '../types/user'
+import { AbstractUser, OnUpdateUser, OnUpdateUserArgs } from '../types/user'
 
 import PageControls from './PageControls'
 import UserRow from './UserRow'
@@ -48,11 +48,11 @@ function UserList({
   const { data } = swrData
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.
-  const onViewUser = (user?: ApiUser | null) => {
+  const onViewUser = (user?: AbstractUser | null) => {
     if (!user || !user.id) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
-  const onDeleteUser = async (user: ApiUser, type: USER_TYPE) => {
+  const onDeleteUser = async (user: AbstractUser, type: USER_TYPE) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {
@@ -142,7 +142,7 @@ function UserList({
           {error && <pre>Error loading users: {error}</pre>}
           <ListGroup>
             {users && users.length ? (
-              users.map((user: ApiUser) => {
+              users.map((user: AbstractUser) => {
                 const activeId = router.query.userId
                 return (
                   <UserRow

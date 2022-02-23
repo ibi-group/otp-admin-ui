@@ -49,8 +49,8 @@ export default function Index(props: {
     <>
       <b>User is of invalid type!</b>
       <p>
-        This is likely because the API module is disabled although the user is
-        an API user.
+        This is likely because the user was created before the module was
+        disabled.
       </p>
     </>
   )

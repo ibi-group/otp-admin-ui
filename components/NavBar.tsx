@@ -2,10 +2,12 @@ import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
 
+import { AbstractUser } from '../types/user'
+
 import NavLink from './NavLink'
 
 export default function NavBar(props: {
-  adminUser: boolean
+  adminUser: AbstractUser | boolean
   handleLogin: () => void
   handleLogout: () => void
   handleSignup: () => void

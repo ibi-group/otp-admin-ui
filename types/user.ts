@@ -7,21 +7,30 @@ export type ApiKey = {
   name: string
   value: string
 }
-export type ApiUser = {
-  apiKeys?: ApiKey[]
-  appName: string
-  appPurpose: string
-  appUrl: string
+
+export type AbstractUser = {
   auth0UserId?: string
-  company: string
   dateCreated?: number
   email?: string
-  hasConsentedToTerms: boolean
   id?: string
   isDataToolsUser?: boolean
   lastUpdated?: number
   name: string
+}
+
+export type AdminUser = AbstractUser & {
   subscriptions?: string[]
+}
+
+// FIXME: extract admin-only types to new AdminUser type
+// FIXME: create CDPUser type
+export type ApiUser = AbstractUser & {
+  apiKeys?: ApiKey[]
+  appName: string
+  appPurpose: string
+  appUrl: string
+  company: string
+  hasConsentedToTerms: boolean
 }
 
 export type Subscription = {
@@ -32,11 +41,11 @@ export type AuthError = OAuthError
 
 export type HandleSignup = () => void
 
-export type OnDeleteUser = (user: ApiUser, type: USER_TYPE) => void
+export type OnDeleteUser = (user: AbstractUser, type: USER_TYPE) => void
 export type OnUpdateUserArgs = {
   isSelf?: boolean
   type: USER_TYPE
-  user: ApiUser
+  user: ApiUser | AdminUser
 }
 export type OnUpdateUser = (args: OnUpdateUserArgs) => Promise<void>
-export type OnViewUser = (user?: ApiUser | null, type?: USER_TYPE) => void
+export type OnViewUser = (user?: AbstractUser | null, type?: USER_TYPE) => void

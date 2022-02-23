@@ -18,7 +18,7 @@ import {
 } from '../util/constants'
 import { getUserUrl, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
-import { ApiUser } from '../types/user'
+import { AbstractUser, AdminUser, ApiUser } from '../types/user'
 
 import VerifyEmailScreen from './verify-email-screen'
 import Footer from './Footer'
@@ -30,7 +30,7 @@ type Props = {
   router: Router
 }
 type State = {
-  adminUser: boolean
+  adminUser?: AdminUser
   isUserFetched?: boolean
   isUserRequested?: boolean
   apiUser?: ApiUser
@@ -47,7 +47,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
     super(props)
 
     this.state = {
-      adminUser: false,
+      adminUser: undefined,
       apiUser: undefined,
       isUserFetched: false,
       isUserRequested: false
@@ -204,7 +204,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
             <title>{process.env.SITE_TITLE}</title>
           </Head>
           <NavBar
-            adminUser={adminUser}
+            adminUser={adminUser || false}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
             handleSignup={handleSignup}
