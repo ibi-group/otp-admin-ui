@@ -4,12 +4,14 @@ import { useRouter } from 'next/router'
 
 import NavLink from './NavLink'
 
-export default function NavBar(props: {
+type Props = {
   adminUser: boolean
   handleLogin: () => void
   handleLogout: () => void
   handleSignup: () => void
-}): JSX.Element {
+}
+
+export default function NavBar(props: Props): JSX.Element {
   const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth0()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props

@@ -2,6 +2,15 @@ import React from 'react'
 import Link from 'next/link'
 import { ExternalLinkAlt } from '@styled-icons/fa-solid/ExternalLinkAlt'
 
+type Props = {
+  children: JSX.Element | string
+  external?: boolean
+  href?: string
+  onClick?: () => void
+  pathname?: string
+  target?: string
+}
+
 const NavLink = ({
   children,
   external,
@@ -9,14 +18,7 @@ const NavLink = ({
   onClick,
   pathname,
   target
-}: {
-  children: JSX.Element | string
-  external?: boolean
-  href?: string
-  onClick?: () => void
-  pathname?: string
-  target?: string
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const active = pathname === href
   return (
     <>

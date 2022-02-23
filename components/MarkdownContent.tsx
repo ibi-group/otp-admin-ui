@@ -29,10 +29,12 @@ export async function fetchMarkdown(url: string): Promise<string> {
   return markdown
 }
 
-export default function MarkdownContent(props: {
+type Props = {
   markdown: string
   title?: string
-}): JSX.Element {
+}
+
+export default function MarkdownContent(props: Props): JSX.Element {
   return (
     <div>
       <h1>{props.title || 'Page Title'}</h1>

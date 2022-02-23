@@ -12,6 +12,12 @@ import { ApiUser, OnUpdateUser, OnUpdateUserArgs } from '../types/user'
 import PageControls from './PageControls'
 import UserRow from './UserRow'
 
+type Props = {
+  summaryView?: boolean
+  type: USER_TYPE
+  updateUser?: OnUpdateUser
+}
+
 /**
  * This component renders a list of users (can be any subtype of otp-middleware's
  * AbstractUser).
@@ -20,11 +26,7 @@ function UserList({
   summaryView,
   type,
   updateUser
-}: {
-  summaryView?: boolean
-  type: USER_TYPE
-  updateUser?: OnUpdateUser
-}): JSX.Element | null {
+}: Props): JSX.Element | null {
   // Set up hooks, state.
   const auth0 = useAuth0()
   const { isAuthenticated } = auth0

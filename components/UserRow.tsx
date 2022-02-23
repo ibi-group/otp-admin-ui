@@ -7,6 +7,15 @@ import { USER_TYPE } from '../util/constants'
 
 import UserDetails from './UserDetails'
 
+type Props = {
+  activeId?: string
+  onDeleteUser: OnDeleteUser
+  onUpdateUser: OnUpdateUser
+  onViewUser: OnViewUser
+  type: USER_TYPE
+  user: ApiUser
+}
+
 /**
  * Renders a row in UserList for a specific user.
  */
@@ -17,14 +26,7 @@ const UserRow = ({
   onViewUser,
   type,
   user
-}: {
-  activeId?: string
-  onDeleteUser: OnDeleteUser
-  onUpdateUser: OnUpdateUser
-  onViewUser: OnViewUser
-  type: USER_TYPE
-  user: ApiUser
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const handleDeleteUser = () => onDeleteUser(user, type)
   return (
     <ListGroup.Item as="li">

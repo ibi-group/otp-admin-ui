@@ -8,12 +8,14 @@ import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
 import type { ApiUser, HandleSignup } from '../types/user'
 
-export default function Index(props: {
+type Props = {
   adminUser: boolean
   apiUser: ApiUser
   createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
-}): JSX.Element {
+}
+
+export default function Index(props: Props): JSX.Element {
   const { adminUser, apiUser, createApiUser, handleSignup } = props
   const { API_MANAGER_ENABLED } = process.env
 
