@@ -3,12 +3,19 @@ import React from 'react'
 import { User } from '@styled-icons/fa-solid/User'
 import { Button, Modal } from 'react-bootstrap'
 
-import { ApiUser, AdminUser, OnUpdateUser, OnViewUser } from '../types/user'
+import {
+  ApiUser,
+  AdminUser,
+  OnUpdateUser,
+  OnViewUser,
+  CDPUser
+} from '../types/user'
 import { USER_TYPE } from '../util/constants'
 
 import AdminUserForm from './AdminUserForm'
 import ApiKeyList from './ApiKeyList'
 import ApiUserForm from './ApiUserForm'
+import CDPUserForm from './CDPUserForm'
 
 /**
  * Modal showing user details for various user types (OTP, Admin, API).
@@ -24,7 +31,7 @@ const UserDetails = ({
   onViewUser: OnViewUser
   show?: boolean
   type: USER_TYPE
-  user: ApiUser | AdminUser
+  user: ApiUser | AdminUser | CDPUser
 }): JSX.Element => {
   const hideUser = () => onViewUser(null, type)
   const showUser = () => onViewUser(user, type)
@@ -57,6 +64,9 @@ const UserDetails = ({
           )}
           {type === 'admin' && (
             <AdminUserForm adminUser={user} onUpdateUser={onUpdateUser} />
+          )}
+          {type === 'cdp' && (
+            <CDPUserForm cdpUser={user} onUpdateUser={onUpdateUser} />
           )}
         </Modal.Body>
         <Modal.Footer>
