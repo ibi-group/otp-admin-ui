@@ -13,15 +13,17 @@ const ButtonWithRel = (props: ButtonProps & { rel: string }) => (
   <Button {...props} />
 )
 
+type Props = {
+  apiUser: ApiUser
+  clearWelcome: () => void
+  showWelcome: boolean
+}
+
 /**
  * The high-level component visible to an ApiUser when they log in. This
  * describes the user's API keys, points to some docs, and shows API key usage.
  */
-const ApiUserDashboard = (props: {
-  apiUser: ApiUser
-  clearWelcome: () => void
-  showWelcome: boolean
-}): JSX.Element => {
+const ApiUserDashboard = (props: Props): JSX.Element => {
   const { apiUser, clearWelcome, showWelcome } = props
   // Sample OTP URL to show in sample CURL command
   // TODO: Make configurable (for deployments in other areas).

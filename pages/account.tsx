@@ -10,14 +10,14 @@ import ApiUserForm from '../components/ApiUserForm'
 import { AdminUser, ApiUser, CDPUser, OnUpdateUser } from '../types/user'
 import CDPUserForm from '../components/CDPUserForm'
 
-class Account extends Component<
-  {
-    adminUser?: AdminUser
-    apiUser?: ApiUser
-    cdpUser?: CDPUser
-    updateUser: OnUpdateUser
-  } & WithAuth0Props
-> {
+type Props = {
+  adminUser?: AdminUser
+  apiUser?: ApiUser
+  cdpUser?: CDPUser
+  updateUser: OnUpdateUser
+}
+
+class Account extends Component<Props & WithAuth0Props> {
   render() {
     const { adminUser, apiUser, cdpUser, updateUser } = this.props
     if (!adminUser && !apiUser && !cdpUser) {

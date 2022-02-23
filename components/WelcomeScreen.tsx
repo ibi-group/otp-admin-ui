@@ -3,11 +3,11 @@ import { Button, Jumbotron } from 'react-bootstrap'
 
 import { HandleSignup } from '../types/user'
 
-const WelcomeScreen = ({
-  handleSignup
-}: {
+type Props = {
   handleSignup: HandleSignup
-}): JSX.Element => (
+}
+
+const WelcomeScreen = ({ handleSignup }: Props): JSX.Element => (
   <>
     <Jumbotron>
       <h1>Welcome to the {process.env.SITE_TITLE}!</h1>

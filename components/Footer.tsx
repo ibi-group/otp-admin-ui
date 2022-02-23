@@ -21,11 +21,13 @@ export default function Footer(): JSX.Element {
             <li>
               <NavLink href="/faq">FAQ</NavLink>
             </li>
-            <li>
-              <NavLink external href={process.env.STATUS_PAGE_URL}>
-                Status
-              </NavLink>
-            </li>
+            {process.env.STATUS_PAGE_URL && (
+              <li>
+                <NavLink external href={process.env.STATUS_PAGE_URL}>
+                  Status
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
         <div className="ft-main-item">
@@ -36,16 +38,20 @@ export default function Footer(): JSX.Element {
                 View Trip Planner
               </NavLink>
             </li>
-            <li>
-              <NavLink external href={process.env.API_DOCUMENTATION_URL}>
-                API documentation
-              </NavLink>
-            </li>
-            <li>
-              <NavLink external href={process.env.OTP_FORUM_URL}>
-                OTP Developers Forum
-              </NavLink>
-            </li>
+            {process.env.API_DOCUMENTATION_URL && (
+              <li>
+                <NavLink external href={process.env.API_DOCUMENTATION_URL}>
+                  API documentation
+                </NavLink>
+              </li>
+            )}
+            {process.env.OTP_FORUM_URL && (
+              <li>
+                <NavLink external href={process.env.OTP_FORUM_URL}>
+                  OTP Developers Forum
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
         <div className="ft-main-item">

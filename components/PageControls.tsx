@@ -2,11 +2,11 @@ import React from 'react'
 import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button, Pagination } from 'react-bootstrap'
 
-function CurrentPage({
-  responseList
-}: {
+type CurrentPageProps = {
   responseList: { data: unknown[]; offset: number; total: number }
-}): JSX.Element {
+}
+
+function CurrentPage({ responseList }: CurrentPageProps): JSX.Element {
   const { data, offset, total } = responseList
   return (
     <span>
@@ -15,12 +15,7 @@ function CurrentPage({
   )
 }
 
-function PageControls({
-  limit,
-  offset,
-  result,
-  setOffset
-}: {
+type PageControlsProps = {
   limit: number
   offset: number
   // TODO: Extract type?
@@ -31,7 +26,14 @@ function PageControls({
     mutate: () => void
   }
   setOffset: (offset: number) => void
-}): JSX.Element {
+}
+
+function PageControls({
+  limit,
+  offset,
+  result,
+  setOffset
+}: PageControlsProps): JSX.Element {
   const { data: swrData = {}, error, isValidating, mutate } = result
   const { data: responseList } = swrData
   const hasRecords = responseList?.data?.length > 0

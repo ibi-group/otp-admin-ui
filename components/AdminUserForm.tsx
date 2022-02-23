@@ -12,6 +12,12 @@ const subscriptionOptions = [
   }
 ]
 
+type Props = {
+  adminUser: AdminUser
+  isSelf?: boolean
+  onUpdateUser: OnUpdateUser
+}
+
 /**
  * Form showing details for a specific Admin User.
  */
@@ -19,11 +25,7 @@ const AdminUserForm = ({
   adminUser,
   isSelf,
   onUpdateUser
-}: {
-  adminUser: AdminUser
-  isSelf?: boolean
-  onUpdateUser: OnUpdateUser
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const handleUpdateSubscriptions = (options: Subscription[]) => {
     const subscriptions = options ? options.map((o) => o.value) : []
     onUpdateUser({

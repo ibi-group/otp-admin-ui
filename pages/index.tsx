@@ -9,13 +9,15 @@ import WelcomeScreen from '../components/WelcomeScreen'
 import type { ApiUser, CDPUser, HandleSignup } from '../types/user'
 import CDPUserDashboard from '../components/CDPUserDashboard'
 
-export default function Index(props: {
+type Props = {
   adminUser: boolean
   apiUser: ApiUser
   cdpUser: CDPUser
   createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
-}): JSX.Element {
+}
+
+export default function Index(props: Props): JSX.Element {
   const { adminUser, apiUser, cdpUser, createApiUser, handleSignup } = props
   const { API_MANAGER_ENABLED } = process.env
 

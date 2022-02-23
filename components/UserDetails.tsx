@@ -17,6 +17,14 @@ import ApiKeyList from './ApiKeyList'
 import ApiUserForm from './ApiUserForm'
 import CDPUserForm from './CDPUserForm'
 
+type Props = {
+  onUpdateUser: OnUpdateUser
+  onViewUser: OnViewUser
+  show?: boolean
+  type: USER_TYPE
+  user: ApiUser | AdminUser | CDPUser
+}
+
 /**
  * Modal showing user details for various user types (OTP, Admin, API).
  */
@@ -26,13 +34,7 @@ const UserDetails = ({
   show,
   type,
   user
-}: {
-  onUpdateUser: OnUpdateUser
-  onViewUser: OnViewUser
-  show?: boolean
-  type: USER_TYPE
-  user: ApiUser | AdminUser | CDPUser
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const hideUser = () => onViewUser(null, type)
   const showUser = () => onViewUser(user, type)
 

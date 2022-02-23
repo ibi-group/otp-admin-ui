@@ -10,13 +10,15 @@ import FetchMessage from './FetchMessage'
 
 const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
 
+type Props = {
+  isAdmin?: boolean
+  summaryView?: boolean
+}
+
 function RequestLogsDashboard({
   isAdmin,
   summaryView
-}: {
-  isAdmin?: boolean
-  summaryView?: boolean
-}): JSX.Element | null {
+}: Props): JSX.Element | null {
   const auth = useAuth0()
   const result = useSWR(REQUEST_LOGS_URL)
   const { data: swrData = {} } = result
