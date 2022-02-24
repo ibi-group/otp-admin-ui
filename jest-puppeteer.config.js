@@ -7,6 +7,7 @@ module.exports = {
   },
   server: {
     command: `yarn run dev --port ${PORT}`,
+    launchTimeout: 30_000,
     port: PORT
   }
 }
