@@ -15,8 +15,8 @@ describe('A logged out user', () => {
     await expect(page).toClick('button', { text: 'Log in' })
     await page.waitForNavigation({ waitUntil: 'networkidle2' })
     await expect(page).toFillForm('form', {
-      password: 'TODO: pull from env',
-      username: 'TODO: pull from env'
+      password: process.env.E2E_PASSWORD,
+      username: process.env.E2E_USERNAME
     })
     await page.click('button[type="submit"]')
 
