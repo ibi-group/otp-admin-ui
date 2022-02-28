@@ -20,12 +20,14 @@ const WelcomeScreen = ({ handleSignup }: Props): JSX.Element => (
           <Button className="mr-3" onClick={handleSignup} variant="primary">
             Sign up for API access
           </Button>
-          <Button
-            href={process.env.API_DOCUMENTATION_URL}
-            variant="outline-primary"
-          >
-            View API documentation
-          </Button>
+          {process.env.API_DOCUMENTATION_URL && (
+            <Button
+              href={process.env.API_DOCUMENTATION_URL}
+              variant="outline-primary"
+            >
+              View API documentation
+            </Button>
+          )}
         </p>
       )}
     </Jumbotron>

@@ -15,8 +15,7 @@ export default function AdminUserDashboard(): JSX.Element {
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
   const activeUserTypes = USER_TYPES.filter((userType) => {
-    if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
-    return true
+    return userType.value !== 'api' || API_MANAGER_ENABLED
   })
 
   return (

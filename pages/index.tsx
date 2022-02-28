@@ -49,10 +49,10 @@ export default function Index(props: Props): JSX.Element {
 
   return (
     <>
-      <b>User is of invalid type!</b>
+      <h3>User is of invalid type!</h3>
       <p>
-        This is likely because the API module is disabled although the user is
-        an API user.
+        This is likely because the user relies on functionality that is not
+        configured or enabled.
       </p>
     </>
   )

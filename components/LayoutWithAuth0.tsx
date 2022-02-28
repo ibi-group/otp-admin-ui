@@ -31,10 +31,10 @@ type Props = {
 }
 type State = {
   adminUser: boolean
-  isUserFetched?: boolean
-  isUserRequested?: boolean
   apiUser?: ApiUser
   error?: string
+  isUserFetched?: boolean
+  isUserRequested?: boolean
 }
 
 /**
@@ -150,7 +150,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
   render() {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser, apiUser } = this.state
+    const { adminUser, apiUser, error } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () =>
       loginWithRedirect({ appState: { returnTo: { pathname, query } } })
@@ -180,8 +180,8 @@ class LayoutWithAuth0 extends Component<Props, State> {
       if (this.loggedInUserIsUnfetched()) {
         contents = (
           <>
-            <h1>{this.state.error ? 'Error' : 'Loading...'}</h1>
-            {this.state.error && <p>{this.state.error}</p>}
+            <h1>{error ? 'Error' : 'Loading...'}</h1>
+            {error && <p>{error}</p>}
           </>
         )
       } else {
