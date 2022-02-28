@@ -73,9 +73,9 @@ function createBlankApiUser() {
 }
 
 type Props = {
+  apiUser?: ApiUser
   auth0: Auth0ContextInterface
   createApiUser?: (user: ApiUser) => Promise<void>
-  apiUser?: ApiUser
 }
 
 /**
