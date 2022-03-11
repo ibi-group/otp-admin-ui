@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { Tab, Tabs } from 'react-bootstrap'
 
-import { USER_TYPES } from '../util/constants'
+import { getActiveUserTypes } from '../util/ui'
 
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
@@ -14,9 +14,7 @@ export default function AdminUserDashboard(): JSX.Element {
     query: { dashboard }
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
-  const activeUserTypes = USER_TYPES.filter((userType) => {
-    return userType.value !== 'api' || API_MANAGER_ENABLED
-  })
+  const activeUserTypes = getActiveUserTypes()
 
   return (
     <div>
@@ -48,6 +46,8 @@ export default function AdminUserDashboard(): JSX.Element {
         {`
           * {
             font-family: 'Arial';
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
           }
         `}
       </style>
