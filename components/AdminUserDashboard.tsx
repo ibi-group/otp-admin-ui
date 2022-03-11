@@ -42,14 +42,6 @@ export default function AdminUserDashboard(): JSX.Element {
           </Tab>
         )}
       </Tabs>
-      <style jsx>
-        {`
-          * {
-            font-family: 'Arial';
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-        `}
       </style>
     </div>
   )
