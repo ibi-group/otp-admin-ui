@@ -5,6 +5,7 @@ import { WithAuth0Props, withAuth0 } from '@auth0/auth0-react'
 import { secureFetch } from '../util/middleware'
 import type { CDPUser } from '../types/user'
 import type { CDPFile } from '../types/response'
+import { getDateFromCDPFileName } from '../util/ui'
 
 type Props = { cdpUser?: CDPUser } & WithAuth0Props
 type CDPZipProps = {
@@ -26,7 +27,7 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
     title={`Download ${props.file.key}`}
   >
     <div className="ms-2 me-auto">
-      <div>{props.file.key}</div>
+      <div>{getDateFromCDPFileName(props.file.key)}</div>
     </div>
     <Badge pill variant="primary">
       {(props.file.size / 1_000).toFixed(2)} KB
