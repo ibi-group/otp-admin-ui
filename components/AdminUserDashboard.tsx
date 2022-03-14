@@ -6,6 +6,7 @@ import { getActiveUserTypes } from '../util/ui'
 
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
+import CDPUserDashboard from './CDPUserDashboard'
 import UserList from './UserList'
 
 export default function AdminUserDashboard(): JSX.Element {
@@ -14,6 +15,7 @@ export default function AdminUserDashboard(): JSX.Element {
     query: { dashboard }
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
+  const { CDP_MANAGER_ENABLED } = process.env
   const activeUserTypes = getActiveUserTypes()
 
   return (
@@ -41,8 +43,12 @@ export default function AdminUserDashboard(): JSX.Element {
             <RequestLogsDashboard isAdmin />
           </Tab>
         )}
+        {CDP_MANAGER_ENABLED && (
+          <Tab eventKey="cdp" title="Connected Data Platform">
+            <CDPUserDashboard />
+          </Tab>
+        )}
       </Tabs>
-      </style>
     </div>
   )
 }

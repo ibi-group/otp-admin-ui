@@ -8,4 +8,9 @@ export type Event = {
   exceptions?: Exception[]
 }
 
+export type CDPFile = {
+  key: string
+  size: number
+}
+
 export type ConvertedMD = { markdown: string }
