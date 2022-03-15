@@ -4,12 +4,14 @@ import { useRouter } from 'next/router'
 
 import NavLink from './NavLink'
 
-export default function NavBar(props: {
+type Props = {
   adminUser: boolean
   handleLogin: () => void
   handleLogout: () => void
   handleSignup: () => void
-}): JSX.Element {
+}
+
+export default function NavBar(props: Props): JSX.Element {
   const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth0()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
@@ -47,11 +49,13 @@ export default function NavBar(props: {
                 <li>
                   <NavLink onClick={handleLogin}>Log in</NavLink>
                 </li>
-                <li>
-                  <NavLink onClick={handleSignup}>
-                    Sign up for API access
-                  </NavLink>
-                </li>
+                {process.env.SIGN_UP_ENABLED && (
+                  <li>
+                    <NavLink onClick={handleSignup}>
+                      Sign up for API access
+                    </NavLink>
+                  </li>
+                )}
               </>
             ))}
         </ul>
@@ -61,7 +65,7 @@ export default function NavBar(props: {
           header {
             padding: 0.2rem;
             color: #fff;
-            background-color: #333;
+            background-color: ${process.env.PRIMARY_COLOR || '#333'};
             font-family: sans-serif;
           }
           nav {
@@ -75,7 +79,7 @@ export default function NavBar(props: {
             padding-left: 0;
           }
           li.active {
-            background-color: #444;
+            background-color: ${process.env.SECONDARY_COLOR || '#444'};
           }
           li {
             margin-right: 1rem;

@@ -72,17 +72,19 @@ function createBlankApiUser() {
   }
 }
 
+type Props = {
+  apiUser?: ApiUser
+  auth0: Auth0ContextInterface
+  createApiUser?: (user: ApiUser) => Promise<void>
+}
+
 /**
  * The basic form for creating an ApiUser, including input validation.
  * This can also be used to show a disabled view of the form (for viewing user details).
  *
  * TODO: Add the ability to update a user?
  */
-class ApiUserForm extends Component<{
-  auth0: Auth0ContextInterface
-  createApiUser?: (user: ApiUser) => Promise<void>
-  apiUser?: ApiUser
-}> {
+class ApiUserForm extends Component<Props> {
   handleCreateAccount = async (apiUserData: ApiUser) => {
     const { auth0, createApiUser } = this.props
     const { user: auth0User } = auth0

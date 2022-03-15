@@ -8,13 +8,16 @@ import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
 import type { ApiUser, HandleSignup } from '../types/user'
 
-export default function Index(props: {
+type Props = {
   adminUser: boolean
   apiUser: ApiUser
   createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
-}): JSX.Element {
+}
+
+export default function Index(props: Props): JSX.Element {
   const { adminUser, apiUser, createApiUser, handleSignup } = props
+  const { API_MANAGER_ENABLED } = process.env
 
   const { push, query } = useRouter()
   const { isAuthenticated } = useAuth0()
@@ -23,18 +26,34 @@ export default function Index(props: {
     return <WelcomeScreen handleSignup={handleSignup} />
   }
 
-  if (!adminUser && (!apiUser || !apiUser.hasConsentedToTerms)) {
+  if (
+    API_MANAGER_ENABLED &&
+    !adminUser &&
+    (!apiUser || !apiUser.hasConsentedToTerms)
+  ) {
     // New API user sign up will have both adminUser and apiUser to null,
     // or apiUser will have the terms not accepted.
     // For these users, display the API setup component.
     return <ApiUserForm createApiUser={createApiUser} />
   }
   if (adminUser) return <AdminUserDashboard />
+
+  if (API_MANAGER_ENABLED && apiUser)
+    return (
+      <ApiUserDashboard
+        apiUser={apiUser}
+        clearWelcome={() => push('/')}
+        showWelcome={query && !!query.newApiAccount} // If an API user has just been created, show welcome message.
+      />
+    )
+
   return (
-    <ApiUserDashboard
-      apiUser={apiUser}
-      clearWelcome={() => push('/')}
-      showWelcome={query && !!query.newApiAccount} // If an API user has just been created, show welcome message.
-    />
+    <>
+      <h3>User is of invalid type!</h3>
+      <p>
+        This is likely because the user relies on functionality that is not
+        configured or enabled.
+      </p>
+    </>
   )
 }

@@ -4,15 +4,17 @@ import { Button, ListGroup } from 'react-bootstrap'
 
 import { ApiKey } from '../types/user'
 
+type Props = {
+  isAdmin?: boolean
+  apiKey: ApiKey
+  deleteKey: (apiKey: ApiKey) => void
+}
+
 /**
  * Shows an individual API key with management features (create, delete). Delete
  * is only permitted for admin users.
  */
-export default class ApiKeyRow extends Component<{
-  isAdmin?: boolean
-  apiKey: ApiKey
-  deleteKey: (apiKey: ApiKey) => void
-}> {
+export default class ApiKeyRow extends Component<Props> {
   handleDeleteKey = (): void => {
     const { apiKey, deleteKey } = this.props
     const message = `Are you sure you want to delete API key ${apiKey.keyId}?`

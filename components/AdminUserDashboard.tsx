@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { Tab, Tabs } from 'react-bootstrap'
 
-import { USER_TYPES } from '../util/constants'
+import { getActiveUserTypes } from '../util/ui'
 
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
@@ -13,6 +13,9 @@ export default function AdminUserDashboard(): JSX.Element {
     push,
     query: { dashboard }
   } = useRouter()
+  const { API_MANAGER_ENABLED } = process.env
+  const activeUserTypes = getActiveUserTypes()
+
   return (
     <div>
       <Tabs
@@ -24,26 +27,21 @@ export default function AdminUserDashboard(): JSX.Element {
       >
         <Tab eventKey="/" title="Home">
           <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-            {USER_TYPES.map((item) => (
+            {activeUserTypes.map((item) => (
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
-          <RequestLogsDashboard isAdmin summaryView />
+          {API_MANAGER_ENABLED && <RequestLogsDashboard isAdmin summaryView />}
         </Tab>
         <Tab eventKey="errors" title="Errors">
           <ErrorEventsDashboard />
         </Tab>
-        <Tab eventKey="requests" title="Request logs">
-          <RequestLogsDashboard isAdmin />
-        </Tab>
+        {API_MANAGER_ENABLED && (
+          <Tab eventKey="requests" title="Request logs">
+            <RequestLogsDashboard isAdmin />
+          </Tab>
+        )}
       </Tabs>
-      <style jsx>
-        {`
-          * {
-            font-family: 'Arial';
-          }
-        `}
-      </style>
     </div>
   )
 }

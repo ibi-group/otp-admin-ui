@@ -3,11 +3,11 @@ import moment from 'moment'
 import { Spinner } from 'react-bootstrap'
 import { responseInterface } from 'swr'
 
-function FetchMessage({
-  result
-}: {
+type Props = {
   result: responseInterface<{ timestamp: number }, string>
-}): JSX.Element {
+}
+
+function FetchMessage({ result }: Props): JSX.Element {
   const timestamp = result.data && result.data.timestamp
   const spinner = (
     <Spinner animation="border" role="status" size="sm">

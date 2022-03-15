@@ -21,11 +21,13 @@ export default function Footer(): JSX.Element {
             <li>
               <NavLink href="/faq">FAQ</NavLink>
             </li>
-            <li>
-              <NavLink external href={process.env.STATUS_PAGE_URL}>
-                Status
-              </NavLink>
-            </li>
+            {process.env.STATUS_PAGE_URL && (
+              <li>
+                <NavLink external href={process.env.STATUS_PAGE_URL}>
+                  Status
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
         <div className="ft-main-item">
@@ -36,16 +38,21 @@ export default function Footer(): JSX.Element {
                 View Trip Planner
               </NavLink>
             </li>
-            <li>
-              <NavLink external href={process.env.API_DOCUMENTATION_URL}>
-                API documentation
-              </NavLink>
-            </li>
-            <li>
-              <NavLink external href={process.env.OTP_FORUM_URL}>
-                OTP Developers Forum
-              </NavLink>
-            </li>
+            {process.env.API_MANAGER_ENABLED &&
+              process.env.API_DOCUMENTATION_URL && (
+                <li>
+                  <NavLink external href={process.env.API_DOCUMENTATION_URL}>
+                    API documentation
+                  </NavLink>
+                </li>
+              )}
+            {process.env.OTP_FORUM_URL && (
+              <li>
+                <NavLink external href={process.env.OTP_FORUM_URL}>
+                  OTP Developers Forum
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
         <div className="ft-main-item">
@@ -85,7 +92,7 @@ export default function Footer(): JSX.Element {
           }
           footer {
             font-family: sans-serif;
-            background-color: #555;
+            background-color: ${process.env.SECONDARY_COLOR || '#555'};
             color: #bbb;
             line-height: 1.5;
           }
@@ -133,7 +140,7 @@ export default function Footer(): JSX.Element {
           /* Footer legal */
           .ft-legal {
             padding: 0.9375rem 1.875rem;
-            background-color: #333;
+            background-color: ${process.env.PRIMARY_COLOR || '#333'};
           }
           .ft-legal-list {
             width: 100%;

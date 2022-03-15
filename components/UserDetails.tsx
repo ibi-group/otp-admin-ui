@@ -9,6 +9,14 @@ import AdminUserForm from './AdminUserForm'
 import ApiKeyList from './ApiKeyList'
 import ApiUserForm from './ApiUserForm'
 
+type Props = {
+  onUpdateUser: OnUpdateUser
+  onViewUser: OnViewUser
+  show?: boolean
+  type: USER_TYPE
+  user: ApiUser
+}
+
 /**
  * Modal showing user details for various user types (OTP, Admin, API).
  */
@@ -18,13 +26,7 @@ const UserDetails = ({
   show,
   type,
   user
-}: {
-  onUpdateUser: OnUpdateUser
-  onViewUser: OnViewUser
-  show?: boolean
-  type: USER_TYPE
-  user: ApiUser
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const hideUser = () => onViewUser(null, type)
   const showUser = () => onViewUser(user, type)
 

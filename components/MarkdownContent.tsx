@@ -29,10 +29,12 @@ export async function fetchMarkdown(url: string): Promise<string> {
   return markdown
 }
 
-export default function MarkdownContent(props: {
-  title?: string
+type Props = {
   markdown: string
-}): JSX.Element {
+  title?: string
+}
+
+export default function MarkdownContent(props: Props): JSX.Element {
   return (
     <div>
       <h1>{props.title || 'Page Title'}</h1>
@@ -43,6 +45,8 @@ export default function MarkdownContent(props: {
         {`
           * {
             font-family: 'Arial';
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
           }
 
           .markdown a {
