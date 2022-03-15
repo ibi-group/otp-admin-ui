@@ -39,7 +39,7 @@ export default function Manage(props: Props): JSX.Element {
   return (
     <div>
       <Tabs
-        activeKey={type || 'api'}
+        activeKey={type || activeUserTypes[0].value}
         className="mb-4"
         id="admin-dashboard-tabs"
         onSelect={(key) => {
@@ -53,7 +53,7 @@ export default function Manage(props: Props): JSX.Element {
               disabledUsersShown &&
               inactiveUserTypes.find((ut) => ut.value === type)
             ) {
-              push(`${path}?type=${activeUserTypes[0].value}`)
+              push(path)
             }
             // Don't push to an invalid key!
             return
