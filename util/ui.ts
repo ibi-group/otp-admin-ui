@@ -1,5 +1,9 @@
 import { Children, isValidElement, cloneElement } from 'react'
 
+import { USER_TYPES } from '../util/constants'
+
+import type { USER_TYPE } from './constants'
+
 /**
  * Renders children with additional props.
  * Modified from
@@ -46,4 +50,35 @@ export function getTermsAndPrivacyPaths(): {
     privacyPath,
     termsPath
   }
+}
+
+/**
+ * Returns a filtered version of the USER_TYPES constant based on the
+ * user modules currently enabled
+ */
+export const getActiveUserTypes = (): {
+  label: string
+  url: string
+  value: USER_TYPE
+}[] => {
+  const { API_MANAGER_ENABLED, CDP_MANAGER_ENABLED } = process.env
+  return USER_TYPES.filter((userType) => {
+    if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
+    if (userType.value === 'cdp' && !CDP_MANAGER_ENABLED) return false
+    return true
+  })
+}
+
+/** Converts a CDP file name to a human-readable date. A bit fickle and
+ *  not universally browser supported. Attempts to fail as gracefully as possible
+ */
+export const getDateFromCDPFileName = (filename: string) => {
+  const date = filename.split('-anon-trip-data')?.[0].split('/')?.[1]
+  if (!date) return filename
+
+  const parsedDate = Date.parse(date)
+  if (!parsedDate) return filename
+
+  if (!Date.prototype.toDateString) return date
+  return new Date(parsedDate).toDateString()
 }

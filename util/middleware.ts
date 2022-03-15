@@ -56,8 +56,8 @@ export async function secureFetch(
   if ((res.status && res.status >= 400) || (res.code && res.code >= 400)) {
     const result: JSON & { message?: string; detail?: string } =
       await res.json()
-    let message = `Error: ${result.message}`
-    if (result.detail) message += `  (${result.detail})`
+    let message = `Error: ${result?.message}`
+    if (result?.detail) message += `  (${result.detail})`
 
     return {
       message,

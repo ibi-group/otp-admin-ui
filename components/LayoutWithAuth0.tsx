@@ -32,11 +32,11 @@ type Props = {
 }
 type State = {
   adminUser?: AdminUser
+  apiUser?: ApiUser
   cdpUser?: CDPUser
+  error?: string
   isUserFetched?: boolean
   isUserRequested?: boolean
-  apiUser?: ApiUser
-  error?: string
 }
 
 /**
@@ -158,7 +158,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
   render() {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser, apiUser, cdpUser } = this.state
+    const { adminUser, apiUser, cdpUser, error } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () =>
       loginWithRedirect({ appState: { returnTo: { pathname, query } } })
@@ -189,8 +189,8 @@ class LayoutWithAuth0 extends Component<Props, State> {
       if (this.loggedInUserIsUnfetched()) {
         contents = (
           <>
-            <h1>{this.state.error ? 'Error' : 'Loading...'}</h1>
-            {this.state.error && <p>{this.state.error}</p>}
+            <h1>{error ? 'Error' : 'Loading...'}</h1>
+            {error && <p>{error}</p>}
           </>
         )
       } else {
@@ -225,7 +225,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
           <style jsx>
             {`
               .container {
-                max-width: 42rem;
+                max-width: 44rem;
                 min-height: 500px;
                 margin: 1.5rem auto;
               }

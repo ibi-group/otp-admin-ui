@@ -43,10 +43,6 @@ export default function MarkdownContent(props: Props): JSX.Element {
       </div>
       <style global jsx>
         {`
-          * {
-            font-family: 'Arial';
-          }
-
           .markdown a {
             text-decoration: none;
             color: blue;
