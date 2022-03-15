@@ -225,7 +225,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
           <style jsx>
             {`
               .container {
-                max-width: 42rem;
+                max-width: 44rem;
                 min-height: 500px;
                 margin: 1.5rem auto;
               }
