@@ -94,15 +94,6 @@ export default function Manage(props: Props): JSX.Element {
           }
         `}
       </style>
-      <style jsx>
-        {`
-          * {
-            font-family: 'Arial';
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-        `}
-      </style>
     </div>
   )
 }
