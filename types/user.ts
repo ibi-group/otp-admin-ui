@@ -33,6 +33,7 @@ export type ApiUser = AbstractUser & {
 
 export type CDPUser = AbstractUser & {
   buckets?: string[]
+  S3DownloadTimes: Record<string, number>
 }
 
 export type Subscription = {

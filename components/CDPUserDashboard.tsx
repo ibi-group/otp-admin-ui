@@ -9,7 +9,7 @@ import { getDateFromCDPFileName } from '../util/ui'
 
 type Props = { cdpUser?: CDPUser } & WithAuth0Props
 type CDPZipProps = {
-  downloading: boolean // TODO: currently unused, but could provide useful feedback
+  downloadedAt?: number
   file: CDPFile
   onClick: (key: string) => void
 }
@@ -29,9 +29,16 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
     <div className="ms-2 me-auto">
       <div>{getDateFromCDPFileName(props.file.key)}</div>
     </div>
-    <Badge pill variant="primary">
-      {(props.file.size / 1_000).toFixed(2)} KB
-    </Badge>
+    <div>
+      {props.downloadedAt && (
+        <Badge className="mr-1" pill variant="success">
+          You last downloaded {new Date(props.downloadedAt).toDateString()}
+        </Badge>
+      )}
+      <Badge pill variant="primary">
+        {(props.file.size / 1_000).toFixed(2)} KB
+      </Badge>
+    </div>
   </ListGroupItem>
 )
 
@@ -51,10 +58,15 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
     error?: string
   }>({})
   const [currentlyDownloadingFile, setCurrentlyDownloadingFile] = useState('')
+  // To avoid grabbing user object after every file download, we duplicate the S3Download times
+  // These fake entries are kept until the user data is re-downloaded
+  const [downloadedFiles, setDownloadedFiles] = useState<string[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
       setServerResponse(await secureFetch(url, auth0, 'GET'))
+      // Remove local duplicate now that we have "fresh" data
+      setDownloadedFiles([])
     }
     fetchData()
   }, [url, auth0])
@@ -87,6 +99,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
       // Cleanup
       document.body.removeChild(fakeDownloadLink)
       setCurrentlyDownloadingFile('')
+      setDownloadedFiles((d) => [...d, currentlyDownloadingFile])
     }
 
     fetchData()
@@ -101,20 +114,31 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
   return (
     <>
       <h3>Raw Request Data Download</h3>
+      <p>
+        These zip files contain anonymized OTP requests for the date(s)
+        indicated.
+      </p>
+
       {files?.length === 0 && (
         <Alert variant="info">
           <Alert.Heading>Loading...</Alert.Heading>
         </Alert>
       )}
       <ListGroup as="ul">
-        {files?.map((file: CDPFile) => (
-          <CDPZip
-            downloading={file.key === currentlyDownloadingFile}
-            file={file}
-            key={file.key}
-            onClick={setCurrentlyDownloadingFile}
-          />
-        ))}
+        {files?.map((file: CDPFile) => {
+          const fakeDownloadedAt =
+            downloadedFiles.includes(file.key) && Date.now()
+          return (
+            <CDPZip
+              downloadedAt={
+                fakeDownloadedAt || cdpUser?.S3DownloadTimes[file.key]
+              }
+              file={file}
+              key={file.key}
+              onClick={setCurrentlyDownloadingFile}
+            />
+          )
+        })}
       </ListGroup>
     </>
   )
