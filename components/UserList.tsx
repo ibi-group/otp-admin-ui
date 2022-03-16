@@ -81,10 +81,10 @@ function UserList({
     await updateUser(args)
     mutateList()
   }
-  const onCreateAdminUser = async () => {
+  const onCreateAdminUser = async (userType: USER_TYPE) => {
     const email = window.prompt(`Enter an email address for admin user.`)
     // Create user and re-fetch users.
-    const adminUrl = getUserUrl('admin')
+    const adminUrl = getUserUrl(userType)
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
     const createResult = await secureFetch(adminUrl, auth0, 'POST', {
@@ -126,13 +126,13 @@ function UserList({
       />
       <div className="controls">
         {/*
-          Only permit user creation for admin users.
+          Only permit user creation for certain types of users.
           Other users must be created through standard flows.
         */}
-        {type === 'admin' && (
+        {['admin', 'cdp'].find((t) => t === type) && (
           <Button
             className="mr-3"
-            onClick={onCreateAdminUser}
+            onClick={() => onCreateAdminUser(type)}
             variant="outline-primary"
           >
             Create user
