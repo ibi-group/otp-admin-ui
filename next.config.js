@@ -26,6 +26,7 @@ module.exports = (phase, { defaultConfig }) => {
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
     CDP_MANAGER_ENABLED: process.env.CDP_MANAGER_ENABLED,
+    HOMEPAGE_NAME: process.env.HOMEPAGE_NAME,
     OTP_FORUM_URL: process.env.OTP_FORUM_URL,
     OTP_UI_URL: process.env.OTP_UI_URL,
     PRIMARY_COLOR: process.env.PRIMARY_COLOR,

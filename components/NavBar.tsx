@@ -17,6 +17,7 @@ export default function NavBar(props: Props): JSX.Element {
   const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth0()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
+  const { HOMEPAGE_NAME } = process.env
 
   return (
     <header>
@@ -24,7 +25,7 @@ export default function NavBar(props: Props): JSX.Element {
         <ul>
           <li>
             <NavLink href="/" pathname={pathname}>
-              Dashboard
+              {HOMEPAGE_NAME || 'Dashboard'}
             </NavLink>
           </li>
           {adminUser && (

@@ -100,8 +100,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
 
   return (
     <>
-      <h3>CDP Dashboard</h3>
-      {cdpUser && <p>I have your user object. Your name is {cdpUser.name}</p>}
+      <h3>Raw Request Data Download</h3>
       {files?.length === 0 && (
         <Alert variant="info">
           <Alert.Heading>Loading...</Alert.Heading>
