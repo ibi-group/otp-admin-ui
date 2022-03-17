@@ -82,7 +82,7 @@ function UserList({
     mutateList()
   }
   const onCreateAdminUser = async (userType: USER_TYPE) => {
-    const email = window.prompt(`Enter an email address for admin user.`)
+    const email = window.prompt(`Enter an email address for ${userType} user.`)
     // Create user and re-fetch users.
     const adminUrl = getUserUrl(userType)
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
@@ -105,6 +105,7 @@ function UserList({
         <div style={{ fontSize: 'xxx-large' }}>{total}</div>
         <div>{selectedType.label}</div>
         <Button
+          data-id={selectedType.label}
           onClick={() => onViewUser()}
           size="sm"
           variant="outline-primary"
