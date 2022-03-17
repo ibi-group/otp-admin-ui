@@ -72,7 +72,7 @@ export const getActiveUserTypes = (): {
 /** Converts a CDP file name to a human-readable date. A bit fickle and
  *  not universally browser supported. Attempts to fail as gracefully as possible
  */
-export const getDateFromCDPFileName = (filename: string) => {
+export const getDateFromCDPFileName = (filename: string): string => {
   const date = filename.split('-anon-trip-data')?.[0].split('/')?.[1]
   if (!date) return filename
 

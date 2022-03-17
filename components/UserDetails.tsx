@@ -67,7 +67,7 @@ const UserDetails = ({
           {type === 'admin' && (
             <AdminUserForm adminUser={user} onUpdateUser={onUpdateUser} />
           )}
-          {type === 'cdp' && (
+          {type === 'cdp' && 'S3DownloadTimes' in user && (
             <CDPUserForm cdpUser={user} onUpdateUser={onUpdateUser} />
           )}
         </Modal.Body>

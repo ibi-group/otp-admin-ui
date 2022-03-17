@@ -33,6 +33,7 @@ export type ApiUser = AbstractUser & {
 
 export type CDPUser = AbstractUser & {
   buckets?: string[]
+  S3DownloadTimes: Record<string, number>
 }
 
 export type Subscription = {
@@ -47,7 +48,7 @@ export type OnDeleteUser = (user: AbstractUser, type: USER_TYPE) => void
 export type OnUpdateUserArgs = {
   isSelf?: boolean
   type: USER_TYPE
-  user: ApiUser | AdminUser
+  user: AbstractUser
 }
 export type OnUpdateUser = (args: OnUpdateUserArgs) => Promise<void>
 export type OnViewUser = (user?: AbstractUser | null, type?: USER_TYPE) => void
