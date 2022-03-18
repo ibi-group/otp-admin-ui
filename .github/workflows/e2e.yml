@@ -1,0 +1,45 @@
+name: End to End Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 17.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.x
+      - name: Install npm packages using cache
+        uses: bahmutov/npm-install@v1
+        with:
+          # the IBI Group TSDX fork has some dependency issues
+          # that cause yarn install to fail on a ci runner. Disabling
+          # concurrency allows installation to complete successfully
+          install-command: yarn --frozen-lockfile --network-concurrency 1
+
+      - name: Download middleware
+        run: git clone https://github.com/ibi-group/otp-middleware.git
+      - name: [TEMP] checkout docker branch
+        run: cd otp-middleware && git checkout docker
+      - name: Load e2e middleware config
+        run: echo $E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 | base64 -d > otp-middleware/configurations/default/env.docker.yml
+        env:
+         E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64: ${{ secrets.E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 }} 
+      - name: Load e2e middleware mongo seed
+        run: echo $E2E_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/e2euser.json
+        env:
+         E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
+      - name: Start middleware
+        run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" up -d
+      - name: Run e2e tests
+        run: yarn test
+      - name: Stop containers
+        if: always()
+        run: docker compose down
