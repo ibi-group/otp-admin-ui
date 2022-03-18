@@ -49,6 +49,7 @@ describe('end-to-end tests', () => {
       if (!E2E_USERNAME) {
         throw new Error('E2E_USERNAME must be set!')
       }
+      await page.waitForTimeout(2000)
       await expect(page).toMatch(E2E_USERNAME)
     })
     it('should be able to add a CDP user', async () => {
@@ -78,13 +79,14 @@ describe('end-to-end tests', () => {
       } catch (error) {
         console.warn(error)
         console.warn(
-          'You may have forgotten to set E2E_PASSWORD or E2E_USERNAME environment variables'
+          'You may have forgotten to set E2E_PASSWORD or E2E_NEW_USERNAME_1 environment variables'
         )
       }
       await page.click('button[type="submit"]')
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
+      await page.waitForTimeout(1000)
       await expect(page).toMatch('Raw Request Data Download', { timeout: 6000 })
     })
   })
