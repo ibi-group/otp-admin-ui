@@ -39,7 +39,7 @@ jobs:
       - name: Start middleware
         run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" up -d
       - name: debug
-        run: docker ps -a && curl localhost:4567
+        run: sleep 15 && docker ps -a && docker logs -t otp-middleware-otp-middleware-1 && curl localhost:4567
       - name: Run e2e tests
         run: yarn test
         env:
