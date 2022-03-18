@@ -31,15 +31,19 @@ jobs:
       - name: Load e2e middleware config
         run: echo $E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 | base64 -d > otp-middleware/configurations/default/env.docker.yml
         env:
-         E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64: ${{ secrets.E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 }} 
+          E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64: ${{ secrets.E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 }} 
       - name: Load e2e middleware mongo seed
         run: echo $E2E_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/e2euser.json
         env:
-         E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
+          E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
       - name: Start middleware
         run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" up -d
       - name: Run e2e tests
         run: yarn test
+        env:
+          E2E_USERNAME: ${{ E2E_USERNAME }}
+          E2E_NEW_USERNAME_1: ${{ E2E_NEW_USERNAME_1 }}
+          E2E_PASSWORD: ${{ E2E_PASSWORD }}
       - name: Stop containers
         if: always()
-        run: docker compose down
+        run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" down

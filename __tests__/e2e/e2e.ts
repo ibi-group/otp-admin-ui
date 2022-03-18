@@ -34,9 +34,7 @@ describe('end-to-end tests', () => {
     })
   })
   describe('An admin user', () => {
-    // TODO: FIXME: TODO: ENV VARIABLE !!!!!!!!!!!!
-    const NEW_USERNAME =
-      'test-solootpuser-0f53b389-a4aa-49b6-8702-8f0a3041887d@example.com'
+    const NEW_USERNAME = process.env.E2E_NEW_USERNAME_1
 
     it('should be able to see the list of admin users', async () => {
       await expect(page).toClick('[data-id="Admin Users"]')
