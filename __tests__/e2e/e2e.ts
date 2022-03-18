@@ -1,5 +1,7 @@
 import 'expect-puppeteer'
+
 import { server } from '../../jest-puppeteer.config'
+
 jest.setTimeout(50000)
 
 describe('end-to-end tests', () => {
@@ -30,11 +32,14 @@ describe('end-to-end tests', () => {
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
-      await expect(page).toMatch('Admin Users', { timeout: 6000 })
+      await expect(page).toMatch('Admin Users', { timeout: 15000 })
     })
   })
   describe('An admin user', () => {
     const NEW_USERNAME = process.env.E2E_NEW_USERNAME_1
+    if (!NEW_USERNAME) {
+      throw new Error('NEW_USERNAME must be set!')
+    }
 
     it('should be able to see the list of admin users', async () => {
       await expect(page).toClick('[data-id="Admin Users"]')
