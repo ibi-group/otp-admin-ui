@@ -38,8 +38,8 @@ jobs:
           E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
       - name: Start middleware
         run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" up -d
-      - name: debug
-        run: sleep 15 && docker ps -a && docker logs -t otp-middleware-otp-middleware-1 && curl localhost:4567
+      - name: debug mongo seed
+        run: sleep 10 && docker ps -a && docker logs -t otp-middleware-otp-middleware-1
       - name: Run e2e tests
         run: yarn test
         env:
@@ -48,4 +48,4 @@ jobs:
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       - name: Stop containers
         if: always()
-        run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" down
+        run: docker logs -t otp-middleware-otp-middleware-1 && docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" down
