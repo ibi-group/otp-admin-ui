@@ -48,7 +48,7 @@ export type OnDeleteUser = (user: AbstractUser, type: USER_TYPE) => void
 export type OnUpdateUserArgs = {
   isSelf?: boolean
   type: USER_TYPE
-  user: AbstractUser
+  user: AdminUser | CDPUser | ApiUser
 }
 export type OnUpdateUser = (args: OnUpdateUserArgs) => Promise<void>
 export type OnViewUser = (user?: AbstractUser | null, type?: USER_TYPE) => void
