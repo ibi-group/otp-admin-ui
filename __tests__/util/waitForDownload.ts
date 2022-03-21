@@ -1,30 +1,29 @@
 import fs from 'fs'
 
 /**
- * Method which waits for a download to complete by monitoring the presence of
- * .crdownload files
+ * Method which waits for a download to complete by waiting for a given filename
  */
 export function waitForDownload(downloadedFileName: string): Promise<void> {
-  let crdownloadFilesSeen = false
   let waitAttempts = 0
 
   return new Promise((resolve, reject) => {
-    setInterval(() => {
+    const check = setInterval(() => {
       const downloadingFiles = fs.readdirSync('/tmp')
-      const crdownloadFilesPresent = !!downloadingFiles.find((file) => {
+      const downloadedFileFound = !!downloadingFiles.find((file) => {
         // In some cases the file downloads before this is fired.
         // In this case, check for the completed download
-        return file.includes('.crdownload') || file === downloadedFileName
+        return (
+          file.includes(downloadedFileName) && !file.includes('.crdownload')
+        )
       })
 
-      if (crdownloadFilesPresent && !crdownloadFilesSeen) {
-        crdownloadFilesSeen = true
-      }
-      if (!crdownloadFilesPresent && crdownloadFilesSeen) {
+      if (downloadedFileFound) {
+        clearInterval(check)
         resolve()
       }
 
-      if (waitAttempts++ > 30) {
+      if (waitAttempts++ > 75) {
+        clearInterval(check)
         reject(new Error('failed to find crdownload file!'))
       }
     }, 100)

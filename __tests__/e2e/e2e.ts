@@ -112,14 +112,8 @@ describe('end-to-end tests', () => {
       })
 
       await expect(page).toClick('div', { text: todaysUploadString })
-      const [clickedElement] = await page.$x(
-        `//div[contains(text(), "${todaysUploadString}")]`
-      )
-      const clickedElementTitle = await page.evaluate(
-        (el) => el.getAttribute('title'),
-        clickedElement
-      )
-      await waitForDownload(clickedElementTitle)
+
+      await waitForDownload('anon-trip-data')
       await expect(page).toMatch('You last downloaded', { timeout: 6000 })
     })
   })
