@@ -36,6 +36,10 @@ jobs:
         run: echo $E2E_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/e2euser.json
         env:
           E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
+      - name: Load e2e aws credentials
+        run: echo $E2E_AWS_CREDS_BASE64 | base64 -d > otp-middleware/configurations/default/aws-credentials
+        env:
+          E2E_AWS_CREDS_BASE64: ${{ secrets.E2E_AWS_CREDS_BASE64 }} 
       - name: Start middleware
         run: docker compose -f "otp-middleware/docker-compose.yml" -f "otp-middleware/docker-compose.e2e.yml" up -d
       - name: Wait for middleware to start
