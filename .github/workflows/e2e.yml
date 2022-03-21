@@ -32,10 +32,14 @@ jobs:
         run: echo $E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 | base64 -d > otp-middleware/configurations/default/env.docker.yml
         env:
           E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64: ${{ secrets.E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 }} 
-      - name: Load e2e middleware mongo seed
-        run: echo $E2E_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/e2euser.json
+      - name: Load e2e middleware admin user mongo seed
+        run: echo $E2E_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/admin-e2euser.json
         env:
           E2E_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_USER_MONGO_JSON_DUMP_BASE64 }} 
+      - name: Load e2e middleware api user mongo seed
+        run: echo $E2E_API_USER_MONGO_JSON_DUMP_BASE64 | base64 -d > otp-middleware/configurations/e2e-mongo-seed/api-e2euser.json
+        env:
+          E2E_API_USER_MONGO_JSON_DUMP_BASE64: ${{ secrets.E2E_API_USER_MONGO_JSON_DUMP_BASE64 }} 
       - name: Load e2e aws credentials
         run: echo $E2E_AWS_CREDS_BASE64 | base64 -d > otp-middleware/configurations/default/aws-credentials
         env:
@@ -48,6 +52,7 @@ jobs:
         run: yarn test
         env:
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_USERNAME_API: ${{ secrets.E2E_USERNAME_API }}
           E2E_NEW_USERNAME_1: ${{ secrets.E2E_NEW_USERNAME_1 }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       - name: Stop containers
