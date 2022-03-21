@@ -79,6 +79,11 @@ export const getDateFromCDPFileName = (filename: string): string => {
   const parsedDate = Date.parse(date)
   if (!parsedDate) return filename
 
-  if (!Date.prototype.toDateString) return date
-  return new Date(parsedDate).toDateString()
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+    year: 'numeric'
+  })
+  return dateFormatter.format(new Date(parsedDate))
 }
