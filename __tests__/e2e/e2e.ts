@@ -16,7 +16,8 @@ describe('end-to-end tests', () => {
     it('should see the main screen', async () => {
       await expect(page).toMatch('E2E') // "E2E" is in the title set in the e2e config
     })
-
+  })
+  describe('An admin user', () => {
     it('should be able to log in', async () => {
       await expect(page).toClick('button', { text: 'Log in' })
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
@@ -38,8 +39,7 @@ describe('end-to-end tests', () => {
       await expect(page).toMatch('Admin Users', { timeout: 15000 })
       await expect(page).toMatch('Connected Data Platform', { timeout: 15000 })
     })
-  })
-  describe('An admin user', () => {
+
     if (!NEW_USERNAME) {
       throw new Error('NEW_USERNAME must be set!')
     }
@@ -105,8 +105,21 @@ describe('end-to-end tests', () => {
       await expect(page).toMatch(todaysUploadString)
     })
     it('should be able to download a CDP zip file', async () => {
+      const cdpsession = await page.target().createCDPSession()
+      await cdpsession.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath: '/tmp'
+      })
+
       await expect(page).toClick('div', { text: todaysUploadString })
-      await waitForDownload(browser)
+      const [clickedElement] = await page.$x(
+        `//div[contains(text(), "${todaysUploadString}")]`
+      )
+      const clickedElementTitle = await page.evaluate(
+        (el) => el.getAttribute('title'),
+        clickedElement
+      )
+      await waitForDownload(clickedElementTitle)
       await expect(page).toMatch('You last downloaded', { timeout: 6000 })
     })
   })

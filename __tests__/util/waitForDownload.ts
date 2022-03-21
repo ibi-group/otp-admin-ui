@@ -1,25 +1,32 @@
-import type { Browser } from 'puppeteer'
-// Waiting for download to complete via chrome download page courtesy of https://stackoverflow.com/a/71193897
-export async function waitForDownload(browser: Browser): Promise<boolean> {
-  const dmPage = await browser.newPage()
-  await dmPage.goto('chrome://downloads/')
+import fs from 'fs'
 
-  await dmPage.bringToFront()
-  await dmPage.waitForFunction(
-    () => {
-      try {
-        const donePath = document
-          ?.querySelector('downloads-manager')
-          ?.shadowRoot?.querySelector('#frb0')
-          ?.shadowRoot?.querySelector('#pauseOrResume')
-        if ((donePath as HTMLButtonElement).innerText !== 'Pause') {
-          return true
-        }
-      } catch {
-        return false
+/**
+ * Method which waits for a download to complete by monitoring the presence of
+ * .crdownload files
+ */
+export function waitForDownload(downloadedFileName: string): Promise<void> {
+  let crdownloadFilesSeen = false
+  let waitAttempts = 0
+
+  return new Promise((resolve, reject) => {
+    setInterval(() => {
+      const downloadingFiles = fs.readdirSync('/tmp')
+      const crdownloadFilesPresent = !!downloadingFiles.find((file) => {
+        // In some cases the file downloads before this is fired.
+        // In this case, check for the completed download
+        return file.includes('.crdownload') || file === downloadedFileName
+      })
+
+      if (crdownloadFilesPresent && !crdownloadFilesSeen) {
+        crdownloadFilesSeen = true
       }
-    },
-    { timeout: 0 }
-  )
-  return false
+      if (!crdownloadFilesPresent && crdownloadFilesSeen) {
+        resolve()
+      }
+
+      if (waitAttempts++ > 30) {
+        reject(new Error('failed to find crdownload file!'))
+      }
+    }, 100)
+  })
 }
