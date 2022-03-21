@@ -1,8 +1,11 @@
 import 'expect-puppeteer'
 
 import { server } from '../../jest-puppeteer.config'
+import { dateFormatterOptions } from '../../util/constants'
+import { waitForDownload } from '../util/waitForDownload'
 
 jest.setTimeout(50000)
+const NEW_USERNAME = process.env.E2E_NEW_USERNAME_1
 
 describe('end-to-end tests', () => {
   beforeAll(async () => {
@@ -33,10 +36,10 @@ describe('end-to-end tests', () => {
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
       await expect(page).toMatch('Admin Users', { timeout: 15000 })
+      await expect(page).toMatch('Connected Data Platform', { timeout: 15000 })
     })
   })
   describe('An admin user', () => {
-    const NEW_USERNAME = process.env.E2E_NEW_USERNAME_1
     if (!NEW_USERNAME) {
       throw new Error('NEW_USERNAME must be set!')
     }
@@ -67,7 +70,10 @@ describe('end-to-end tests', () => {
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
       await expect(page).toMatch('E2E') // "E2E" is in the title set in the e2e config
     })
-    it('should be able to log in as a CDP user', async () => {
+  })
+
+  describe('A CDP user', () => {
+    it('should be able to log in', async () => {
       // TODO: methodize
       await expect(page).toClick('button', { text: 'Log in' })
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
@@ -88,6 +94,20 @@ describe('end-to-end tests', () => {
 
       await page.waitForTimeout(1000)
       await expect(page).toMatch('Raw Request Data Download', { timeout: 6000 })
+    })
+
+    const dateFormatter = new Intl.DateTimeFormat('en-US', dateFormatterOptions)
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const todaysUploadString = dateFormatter.format(yesterday)
+
+    it('should see the file that the middleware uploaded', async () => {
+      await expect(page).toMatch(todaysUploadString)
+    })
+    it('should be able to download a CDP zip file', async () => {
+      await expect(page).toClick('div', { text: todaysUploadString })
+      await waitForDownload(browser)
+      await expect(page).toMatch('You last downloaded', { timeout: 6000 })
     })
   })
 })

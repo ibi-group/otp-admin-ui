@@ -17,3 +17,10 @@ export const USER_TYPES: { label: string; url: string; value: USER_TYPE }[] = [
   { label: 'Admin Users', url: ADMIN_USER_URL, value: 'admin' },
   { label: 'OTP Users', url: OTP_USER_URL, value: 'otp' }
 ]
+
+export const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+  year: 'numeric'
+}
