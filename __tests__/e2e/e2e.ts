@@ -49,6 +49,7 @@ describe('end-to-end tests', () => {
     })
 
     it('should be able to *attempt* to create a new API key', async () => {
+      await page.waitForTimeout(750)
       await expect(page).toClick('button', { text: 'Create new key' })
       await page.waitForTimeout(750)
       expect(dialogHandler).toHaveBeenCalled()
@@ -140,9 +141,10 @@ describe('end-to-end tests', () => {
     it('should be able to add a CDP user', async () => {
       await expect(page).toClick('a', { text: 'CDP Users' })
       await page.waitForXPath("//*[h2 and contains(., 'List of CDP Users')]")
+      await page.waitForTimeout(500)
       await expect(page).toClick('button', { text: 'Create user' })
-      await page.waitForSelector('li.list-group-item', { timeout: 6000 })
-      await expect(page).toMatch(NEW_CDP_USERNAME, { timeout: 6000 })
+      await page.waitForSelector('li.list-group-item', { timeout: 9000 })
+      await expect(page).toMatch(NEW_CDP_USERNAME, { timeout: 9000 })
     })
 
     it('should be able to their see their own account details', async () => {
