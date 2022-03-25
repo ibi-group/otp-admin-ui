@@ -7,6 +7,8 @@ import { AbstractUser } from '../types/user'
 import NavLink from './NavLink'
 
 type Props = {
+  // The adminUser object we expect here is missing some information, which is why
+  // the AbstractUser type is sufficient
   adminUser: AbstractUser | boolean
   handleLogin: () => void
   handleLogout: () => void

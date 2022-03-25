@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Badge, ListGroup, ListGroupItem } from 'react-bootstrap'
 import { WithAuth0Props, withAuth0 } from '@auth0/auth0-react'
 
@@ -26,9 +26,7 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
     onClick={() => props.onClick(props.file.key)}
     title={`Download ${props.file.key}`}
   >
-    <div className="ms-2 me-auto">
-      <div>{getDateFromCDPFileName(props.file.key)}</div>
-    </div>
+    <div className="ms-2 me-auto">{getDateFromCDPFileName(props.file.key)}</div>
     <div>
       {props.downloadedAt && (
         <Badge className="mr-1" pill variant="success">
@@ -53,9 +51,9 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
   const [swrData, setServerResponse] = useState<{
     // TODO: Shared type
     data?: any
+    error?: string
     message?: string
     status?: string
-    error?: string
   }>({})
   const [currentlyDownloadingFile, setCurrentlyDownloadingFile] = useState('')
   // To avoid grabbing user object after every file download, we duplicate the S3Download times

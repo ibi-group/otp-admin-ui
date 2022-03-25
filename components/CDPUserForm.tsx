@@ -1,20 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Alert, Form } from 'react-bootstrap'
 
 import { CDPUser, OnUpdateUser } from '../types/user'
 
-/**
- * Form showing details for a specific CDP User.
- */
-const CDPUserForm = ({
-  cdpUser,
-  isSelf,
-  onUpdateUser
-}: {
+type Props = {
   cdpUser: CDPUser
   isSelf?: boolean
   onUpdateUser: OnUpdateUser
-}): JSX.Element => {
+}
+/**
+ * Form showing details for a specific CDP User.
+ */
+const CDPUserForm = ({ cdpUser, isSelf, onUpdateUser }: Props): JSX.Element => {
   const updateUser = (update: { [field: string]: any }) => {
     onUpdateUser({
       isSelf,

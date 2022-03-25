@@ -4,11 +4,11 @@ import { User } from '@styled-icons/fa-solid/User'
 import { Button, Modal } from 'react-bootstrap'
 
 import {
-  ApiUser,
   AdminUser,
+  ApiUser,
+  CDPUser,
   OnUpdateUser,
-  OnViewUser,
-  CDPUser
+  OnViewUser
 } from '../types/user'
 import { USER_TYPE } from '../util/constants'
 
