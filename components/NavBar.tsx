@@ -71,7 +71,6 @@ export default function NavBar(props: Props): JSX.Element {
             padding: 0.2rem;
             color: #fff;
             background-color: ${process.env.PRIMARY_COLOR || '#333'};
-            font-family: sans-serif;
           }
           nav {
             max-width: 42rem;
