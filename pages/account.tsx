@@ -34,9 +34,7 @@ class Account extends Component<Props & WithAuth0Props> {
             onUpdateUser={updateUser}
           />
         )}
-        {cdpUser && (
-          <CDPUserForm cdpUser={cdpUser} isSelf onUpdateUser={updateUser} />
-        )}
+        {cdpUser && <CDPUserForm cdpUser={cdpUser} isSelf />}
       </div>
     )
   }
