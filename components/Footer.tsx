@@ -82,7 +82,6 @@ export default function Footer(): JSX.Element {
           /* Generic styling */
           * {
             box-sizing: border-box;
-            font-family: sans-serif;
             margin: 0;
             padding: 0;
           }
@@ -91,7 +90,6 @@ export default function Footer(): JSX.Element {
             padding-left: 0;
           }
           footer {
-            font-family: sans-serif;
             background-color: ${process.env.SECONDARY_COLOR || '#555'};
             color: #bbb;
             line-height: 1.5;

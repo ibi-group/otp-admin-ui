@@ -4,9 +4,9 @@ import { Tab, Tabs } from 'react-bootstrap'
 
 import { getActiveUserTypes } from '../util/ui'
 
+import CDPUserDashboard from './CDPUserDashboard'
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
-import CDPUserDashboard from './CDPUserDashboard'
 import UserList from './UserList'
 
 export default function AdminUserDashboard(): JSX.Element {

@@ -130,7 +130,7 @@ function UserList({
           Only permit user creation for certain types of users.
           Other users must be created through standard flows.
         */}
-        {['admin', 'cdp'].find((t) => t === type) && (
+        {['admin', 'cdp'].includes(type) && (
           <Button
             className="mr-3"
             onClick={() => onCreateUser(type)}

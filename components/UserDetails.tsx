@@ -4,11 +4,11 @@ import { User } from '@styled-icons/fa-solid/User'
 import { Button, Modal } from 'react-bootstrap'
 
 import {
-  ApiUser,
   AdminUser,
+  ApiUser,
+  CDPUser,
   OnUpdateUser,
-  OnViewUser,
-  CDPUser
+  OnViewUser
 } from '../types/user'
 import { USER_TYPE } from '../util/constants'
 
@@ -54,7 +54,7 @@ const UserDetails = ({
         <Modal.Header closeButton>
           <Modal.Title>
             <User size={30} style={{ marginRight: 10 }} />
-            {user?.email || user.name}
+            {user?.email || user?.name}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -68,7 +68,7 @@ const UserDetails = ({
             <AdminUserForm adminUser={user} onUpdateUser={onUpdateUser} />
           )}
           {type === 'cdp' && 'S3DownloadTimes' in user && (
-            <CDPUserForm cdpUser={user} onUpdateUser={onUpdateUser} />
+            <CDPUserForm cdpUser={user} />
           )}
         </Modal.Body>
         <Modal.Footer>

@@ -7,6 +7,8 @@ import { AbstractUser } from '../types/user'
 import NavLink from './NavLink'
 
 type Props = {
+  // The adminUser object we expect here is missing some information, which is why
+  // the AbstractUser type is sufficient
   adminUser: AbstractUser | boolean
   handleLogin: () => void
   handleLogout: () => void
@@ -69,7 +71,6 @@ export default function NavBar(props: Props): JSX.Element {
             padding: 0.2rem;
             color: #fff;
             background-color: ${process.env.PRIMARY_COLOR || '#333'};
-            font-family: sans-serif;
           }
           nav {
             max-width: 42rem;

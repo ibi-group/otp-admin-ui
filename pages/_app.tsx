@@ -94,17 +94,6 @@ export default class Root extends App {
       >
         <LayoutWithAuth0>
           <Component {...pageProps} />
-          <style global jsx>
-            {`
-              * {
-                font-family: -apple-system, BlinkMacSystemFont, avenir next,
-                  avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto,
-                  noto, arial, sans-serif;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-              }
-            `}
-          </style>
         </LayoutWithAuth0>
       </Auth0Provider>
     )

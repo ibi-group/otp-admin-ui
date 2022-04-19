@@ -12,8 +12,8 @@ import { getAuthRedirectUri } from '../util/auth'
 import {
   ADMIN_USER_URL,
   API_USER_URL,
-  CDP_USER_URL,
   AUTH0_SCOPE,
+  CDP_USER_URL,
   DEFAULT_REFRESH_MILLIS,
   USER_TYPE
 } from '../util/constants'
