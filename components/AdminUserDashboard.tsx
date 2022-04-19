@@ -4,6 +4,7 @@ import { Tab, Tabs } from 'react-bootstrap'
 
 import { getActiveUserTypes } from '../util/ui'
 
+import CDPUserDashboard from './CDPUserDashboard'
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
 import UserList from './UserList'
@@ -14,6 +15,7 @@ export default function AdminUserDashboard(): JSX.Element {
     query: { dashboard }
   } = useRouter()
   const { API_MANAGER_ENABLED } = process.env
+  const { CDP_MANAGER_ENABLED } = process.env
   const activeUserTypes = getActiveUserTypes()
 
   return (
@@ -39,6 +41,11 @@ export default function AdminUserDashboard(): JSX.Element {
         {API_MANAGER_ENABLED && (
           <Tab eventKey="requests" title="Request logs">
             <RequestLogsDashboard isAdmin />
+          </Tab>
+        )}
+        {CDP_MANAGER_ENABLED && (
+          <Tab eventKey="cdp" title="Connected Data Platform">
+            <CDPUserDashboard />
           </Tab>
         )}
       </Tabs>

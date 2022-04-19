@@ -6,17 +6,19 @@ import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
 import WelcomeScreen from '../components/WelcomeScreen'
-import type { ApiUser, HandleSignup } from '../types/user'
+import type { ApiUser, CDPUser, HandleSignup } from '../types/user'
+import CDPUserDashboard from '../components/CDPUserDashboard'
 
 type Props = {
   adminUser: boolean
   apiUser: ApiUser
+  cdpUser: CDPUser
   createApiUser: (apiUser: ApiUser) => Promise<void>
   handleSignup: HandleSignup
 }
 
 export default function Index(props: Props): JSX.Element {
-  const { adminUser, apiUser, createApiUser, handleSignup } = props
+  const { adminUser, apiUser, cdpUser, createApiUser, handleSignup } = props
   const { API_MANAGER_ENABLED } = process.env
 
   const { push, query } = useRouter()
@@ -47,12 +49,16 @@ export default function Index(props: Props): JSX.Element {
       />
     )
 
+  if (cdpUser) {
+    return <CDPUserDashboard cdpUser={cdpUser} />
+  }
+
   return (
     <>
       <h3>User is of invalid type!</h3>
       <p>
-        This is likely because the user relies on functionality that is not
-        configured or enabled.
+        This is likely because the user was created with functionality that is
+        no longer configured or enabled.
       </p>
     </>
   )

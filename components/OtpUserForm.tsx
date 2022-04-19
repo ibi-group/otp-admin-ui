@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { ApiUser } from '../types/user'
+import { AbstractUser } from '../types/user'
 
-type Props = { user: ApiUser }
+type Props = { user: AbstractUser }
 
 /**
  * Form showing details for a specific OTP User.

@@ -13,12 +13,13 @@ import {
   ADMIN_USER_URL,
   API_USER_URL,
   AUTH0_SCOPE,
+  CDP_USER_URL,
   DEFAULT_REFRESH_MILLIS,
   USER_TYPE
 } from '../util/constants'
 import { getUserUrl, secureFetch } from '../util/middleware'
 import { renderChildrenWithProps } from '../util/ui'
-import { ApiUser } from '../types/user'
+import { AdminUser, ApiUser, CDPUser } from '../types/user'
 
 import VerifyEmailScreen from './verify-email-screen'
 import Footer from './Footer'
@@ -30,8 +31,9 @@ type Props = {
   router: Router
 }
 type State = {
-  adminUser: boolean
+  adminUser?: AdminUser
   apiUser?: ApiUser
+  cdpUser?: CDPUser
   error?: string
   isUserFetched?: boolean
   isUserRequested?: boolean
@@ -47,8 +49,9 @@ class LayoutWithAuth0 extends Component<Props, State> {
     super(props)
 
     this.state = {
-      adminUser: false,
+      adminUser: undefined,
       apiUser: undefined,
+      cdpUser: undefined,
       isUserFetched: false,
       isUserRequested: false
     }
@@ -101,9 +104,14 @@ class LayoutWithAuth0 extends Component<Props, State> {
           `${API_USER_URL}/fromtoken`,
           auth0
         )
+        const cdpUserResult = await secureFetch(
+          `${CDP_USER_URL}/fromtoken`,
+          auth0
+        )
         this.setState({
           adminUser: adminUserResult.data,
           apiUser: apiUserResult.data,
+          cdpUser: cdpUserResult.data,
           isUserFetched: true,
           isUserRequested: false
         })
@@ -150,7 +158,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
   render() {
     const { auth0, children, router } = this.props
     const { pathname, query } = router
-    const { adminUser, apiUser, error } = this.state
+    const { adminUser, apiUser, cdpUser, error } = this.state
     const { loginWithRedirect, logout, user } = auth0
     const handleLogin = () =>
       loginWithRedirect({ appState: { returnTo: { pathname, query } } })
@@ -172,6 +180,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
         ...this.state,
         adminUser,
         apiUser,
+        cdpUser,
         createApiUser: this.createApiUser,
         handleSignup,
         updateUser: this.updateUser
@@ -204,7 +213,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
             <title>{process.env.SITE_TITLE}</title>
           </Head>
           <NavBar
-            adminUser={adminUser}
+            adminUser={adminUser || false}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
             handleSignup={handleSignup}
@@ -216,7 +225,7 @@ class LayoutWithAuth0 extends Component<Props, State> {
           <style jsx>
             {`
               .container {
-                max-width: 42rem;
+                max-width: 44rem;
                 min-height: 500px;
                 margin: 1.5rem auto;
               }

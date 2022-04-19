@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form'
 // @ts-expect-error types invalid
 import Select from 'react-select'
 
-import { ApiUser, OnUpdateUser, Subscription } from '../types/user'
+import { AdminUser, OnUpdateUser, Subscription } from '../types/user'
 
 const subscriptionOptions = [
   {
@@ -13,7 +13,7 @@ const subscriptionOptions = [
 ]
 
 type Props = {
-  adminUser: ApiUser
+  adminUser: AdminUser
   isSelf?: boolean
   onUpdateUser: OnUpdateUser
 }
