@@ -1,6 +1,6 @@
 import { Children, isValidElement, cloneElement } from 'react'
 
-import { USER_TYPES } from '../util/constants'
+import { dateFormatterOptions, USER_TYPES } from '../util/constants'
 
 import type { USER_TYPE } from './constants'
 
@@ -80,6 +80,6 @@ export const getDateFromCDPFileName = (filename: string): string => {
   const parsedDate = Date.parse(date)
   if (!parsedDate) return filename
 
-  if (!Date.prototype.toDateString) return date
-  return new Date(parsedDate).toDateString()
+  const dateFormatter = new Intl.DateTimeFormat('en-US', dateFormatterOptions)
+  return dateFormatter.format(new Date(parsedDate))
 }

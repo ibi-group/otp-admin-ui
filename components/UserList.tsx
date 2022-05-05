@@ -81,13 +81,13 @@ function UserList({
     await updateUser(args)
     mutateList()
   }
-  const onCreateAdminUser = async (userType: USER_TYPE) => {
-    const email = window.prompt(`Enter an email address for admin user.`)
+  const onCreateUser = async (userType: USER_TYPE) => {
+    const email = window.prompt(`Enter an email address for ${userType} user.`)
     // Create user and re-fetch users.
-    const adminUrl = getUserUrl(userType)
+    const userUrl = getUserUrl(userType)
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const createResult = await secureFetch(adminUrl, auth0, 'POST', {
+    const createResult = await secureFetch(userUrl, auth0, 'POST', {
       body: JSON.stringify({ email })
     })
     mutateList()
@@ -105,6 +105,7 @@ function UserList({
         <div style={{ fontSize: 'xxx-large' }}>{total}</div>
         <div>{selectedType.label}</div>
         <Button
+          data-id={selectedType.label}
           onClick={() => onViewUser()}
           size="sm"
           variant="outline-primary"
@@ -132,7 +133,7 @@ function UserList({
         {['admin', 'cdp'].includes(type) && (
           <Button
             className="mr-3"
-            onClick={() => onCreateAdminUser(type)}
+            onClick={() => onCreateUser(type)}
             variant="outline-primary"
           >
             Create user

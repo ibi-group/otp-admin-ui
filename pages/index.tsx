@@ -28,16 +28,6 @@ export default function Index(props: Props): JSX.Element {
     return <WelcomeScreen handleSignup={handleSignup} />
   }
 
-  if (
-    API_MANAGER_ENABLED &&
-    !adminUser &&
-    (!apiUser || !apiUser.hasConsentedToTerms)
-  ) {
-    // New API user sign up will have both adminUser and apiUser to null,
-    // or apiUser will have the terms not accepted.
-    // For these users, display the API setup component.
-    return <ApiUserForm createApiUser={createApiUser} />
-  }
   if (adminUser) return <AdminUserDashboard />
 
   if (API_MANAGER_ENABLED && apiUser)
@@ -51,6 +41,17 @@ export default function Index(props: Props): JSX.Element {
 
   if (cdpUser) {
     return <CDPUserDashboard cdpUser={cdpUser} />
+  }
+
+  if (
+    API_MANAGER_ENABLED &&
+    !adminUser &&
+    (!apiUser || !apiUser.hasConsentedToTerms)
+  ) {
+    // New API user sign up will have both adminUser and apiUser to null,
+    // or apiUser will have the terms not accepted.
+    // For these users, display the API setup component.
+    return <ApiUserForm createApiUser={createApiUser} />
   }
 
   return (
