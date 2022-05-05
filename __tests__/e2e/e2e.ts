@@ -100,7 +100,7 @@ describe('end-to-end tests', () => {
     })
 
     if (!NEW_CDP_USERNAME) {
-      throw new Error('NEW_USERNAME must be set!')
+      throw new Error('E2E_NEW_USERNAME_1 must be set!')
     }
 
     it('should be able to see the list of admin users', async () => {
