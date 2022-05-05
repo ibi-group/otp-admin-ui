@@ -2,7 +2,12 @@ import React from 'react'
 import { User } from '@styled-icons/fa-solid/User'
 import { Button, ListGroup } from 'react-bootstrap'
 
-import { ApiUser, OnDeleteUser, OnUpdateUser, OnViewUser } from '../types/user'
+import {
+  AbstractUser,
+  OnDeleteUser,
+  OnUpdateUser,
+  OnViewUser
+} from '../types/user'
 import { USER_TYPE } from '../util/constants'
 
 import UserDetails from './UserDetails'
@@ -13,7 +18,7 @@ type Props = {
   onUpdateUser: OnUpdateUser
   onViewUser: OnViewUser
   type: USER_TYPE
-  user: ApiUser
+  user: AbstractUser
 }
 
 /**

@@ -2,10 +2,14 @@ import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useRouter } from 'next/router'
 
+import { AbstractUser } from '../types/user'
+
 import NavLink from './NavLink'
 
 type Props = {
-  adminUser: boolean
+  // The adminUser object we expect here is missing some information, which is why
+  // the AbstractUser type is sufficient
+  adminUser: AbstractUser | boolean
   handleLogin: () => void
   handleLogout: () => void
   handleSignup: () => void
@@ -15,6 +19,7 @@ export default function NavBar(props: Props): JSX.Element {
   const { pathname } = useRouter()
   const { isAuthenticated, isLoading } = useAuth0()
   const { adminUser, handleLogin, handleLogout, handleSignup } = props
+  const { HOMEPAGE_NAME } = process.env
 
   return (
     <header>
@@ -22,7 +27,7 @@ export default function NavBar(props: Props): JSX.Element {
         <ul>
           <li>
             <NavLink href="/" pathname={pathname}>
-              Dashboard
+              {HOMEPAGE_NAME || 'Dashboard'}
             </NavLink>
           </li>
           {adminUser && (
@@ -66,7 +71,6 @@ export default function NavBar(props: Props): JSX.Element {
             padding: 0.2rem;
             color: #fff;
             background-color: ${process.env.PRIMARY_COLOR || '#333'};
-            font-family: sans-serif;
           }
           nav {
             max-width: 42rem;

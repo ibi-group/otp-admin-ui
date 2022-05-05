@@ -7,7 +7,7 @@ import useSWR from 'swr'
 
 import { USER_TYPE, USER_TYPES } from '../util/constants'
 import { getUserUrl, secureFetch } from '../util/middleware'
-import { ApiUser, OnUpdateUser, OnUpdateUserArgs } from '../types/user'
+import { AbstractUser, OnUpdateUser, OnUpdateUserArgs } from '../types/user'
 
 import PageControls from './PageControls'
 import UserRow from './UserRow'
@@ -50,11 +50,11 @@ function UserList({
   const { data } = swrData
   const users = data && data.data
   // Set up on click handlers with mutates to trigger refresh on updates.
-  const onViewUser = (user?: ApiUser | null) => {
+  const onViewUser = (user?: AbstractUser | null) => {
     if (!user || !user.id) router.push(`/manage?type=${type}`)
     else router.push(`/manage?type=${type}&userId=${user.id}`)
   }
-  const onDeleteUser = async (user: ApiUser, type: USER_TYPE) => {
+  const onDeleteUser = async (user: AbstractUser, type: USER_TYPE) => {
     let message = `Are you sure you want to delete user ${user.email}?`
     // TODO: Remove Data Tools user prop?
     if (user.isDataToolsUser) {
@@ -81,13 +81,13 @@ function UserList({
     await updateUser(args)
     mutateList()
   }
-  const onCreateAdminUser = async () => {
-    const email = window.prompt(`Enter an email address for admin user.`)
+  const onCreateUser = async (userType: USER_TYPE) => {
+    const email = window.prompt(`Enter an email address for ${userType} user.`)
     // Create user and re-fetch users.
-    const adminUrl = getUserUrl('admin')
+    const userUrl = getUserUrl(userType)
     // Note: should not useSWR because SWR caches requests and polls at regular intervals.
     // (If we must use useSWR, we can probably still pass appropriate params explicitly.)
-    const createResult = await secureFetch(adminUrl, auth0, 'POST', {
+    const createResult = await secureFetch(userUrl, auth0, 'POST', {
       body: JSON.stringify({ email })
     })
     mutateList()
@@ -105,6 +105,7 @@ function UserList({
         <div style={{ fontSize: 'xxx-large' }}>{total}</div>
         <div>{selectedType.label}</div>
         <Button
+          data-id={selectedType.label}
           onClick={() => onViewUser()}
           size="sm"
           variant="outline-primary"
@@ -126,13 +127,13 @@ function UserList({
       />
       <div className="controls">
         {/*
-          Only permit user creation for admin users.
+          Only permit user creation for certain types of users.
           Other users must be created through standard flows.
         */}
-        {type === 'admin' && (
+        {['admin', 'cdp'].includes(type) && (
           <Button
             className="mr-3"
-            onClick={onCreateAdminUser}
+            onClick={() => onCreateUser(type)}
             variant="outline-primary"
           >
             Create user
@@ -144,7 +145,7 @@ function UserList({
           {error && <pre>Error loading users: {error}</pre>}
           <ListGroup>
             {users && users.length ? (
-              users.map((user: ApiUser) => {
+              users.map((user: AbstractUser) => {
                 const activeId = router.query.userId
                 return (
                   <UserRow

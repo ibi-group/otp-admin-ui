@@ -1,6 +1,6 @@
 import { Children, isValidElement, cloneElement } from 'react'
 
-import { USER_TYPES } from '../util/constants'
+import { dateFormatterOptions, USER_TYPES } from '../util/constants'
 
 import type { USER_TYPE } from './constants'
 
@@ -61,8 +61,25 @@ export const getActiveUserTypes = (): {
   url: string
   value: USER_TYPE
 }[] => {
-  const { API_MANAGER_ENABLED } = process.env
+  const { API_MANAGER_ENABLED, CDP_MANAGER_ENABLED } = process.env
   return USER_TYPES.filter((userType) => {
-    return userType.value !== 'api' || API_MANAGER_ENABLED
+    if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
+    if (userType.value === 'cdp' && !CDP_MANAGER_ENABLED) return false
+    return true
   })
+}
+
+/**
+ * Converts a CDP file name to a human-readable date. A bit fickle and
+ * not universally browser supported. Attempts to fail as gracefully as possible
+ */
+export const getDateFromCDPFileName = (filename: string): string => {
+  const date = filename.split('-anon-trip-data')?.[0].split('/')?.[1]
+  if (!date) return filename
+
+  const parsedDate = Date.parse(date)
+  if (!parsedDate) return filename
+
+  const dateFormatter = new Intl.DateTimeFormat('en-US', dateFormatterOptions)
+  return dateFormatter.format(new Date(parsedDate))
 }

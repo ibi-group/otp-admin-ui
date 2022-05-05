@@ -1,20 +1,28 @@
+/* eslint-disable react/jsx-curly-spacing */
 import React from 'react'
 import { User } from '@styled-icons/fa-solid/User'
 import { Button, Modal } from 'react-bootstrap'
 
-import { ApiUser, OnUpdateUser, OnViewUser } from '../types/user'
+import {
+  AdminUser,
+  ApiUser,
+  CDPUser,
+  OnUpdateUser,
+  OnViewUser
+} from '../types/user'
 import { USER_TYPE } from '../util/constants'
 
 import AdminUserForm from './AdminUserForm'
 import ApiKeyList from './ApiKeyList'
 import ApiUserForm from './ApiUserForm'
+import CDPUserForm from './CDPUserForm'
 
 type Props = {
   onUpdateUser: OnUpdateUser
   onViewUser: OnViewUser
   show?: boolean
   type: USER_TYPE
-  user: ApiUser
+  user: ApiUser | AdminUser | CDPUser
 }
 
 /**
@@ -46,11 +54,11 @@ const UserDetails = ({
         <Modal.Header closeButton>
           <Modal.Title>
             <User size={30} style={{ marginRight: 10 }} />
-            {user.email}
+            {user?.email || user?.name}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {type === 'api' && (
+          {type === 'api' && 'apiKeys' in user && (
             <>
               <ApiUserForm apiUser={user} />
               <ApiKeyList apiUser={user} isAdmin />
@@ -58,6 +66,9 @@ const UserDetails = ({
           )}
           {type === 'admin' && (
             <AdminUserForm adminUser={user} onUpdateUser={onUpdateUser} />
+          )}
+          {type === 'cdp' && 'S3DownloadTimes' in user && (
+            <CDPUserForm cdpUser={user} />
           )}
         </Modal.Body>
         <Modal.Footer>
