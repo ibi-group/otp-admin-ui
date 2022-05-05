@@ -1,5 +1,7 @@
 import fs from 'fs'
 
+const WAIT_ATTEMPTS = 75
+
 /**
  * Method which waits for a download to complete by waiting for a given filename
  */
@@ -22,7 +24,7 @@ export function waitForDownload(downloadedFileName: string): Promise<void> {
         resolve()
       }
 
-      if (waitAttempts++ > 75) {
+      if (waitAttempts++ > WAIT_ATTEMPTS) {
         clearInterval(check)
         reject(new Error('failed to find crdownload file!'))
       }

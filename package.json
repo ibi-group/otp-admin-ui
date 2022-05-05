@@ -15,7 +15,7 @@
     "lint-docs": "documentation lint {components,pages,util}/**/*.js",
     "lint-types": "yarn tsc",
     "predev": "yarn",
-    "test": "cp -r __tests__/e2e/env.test .env.build && yarn jest __tests__/e2e/"
+    "e2e-test": "cp -r __tests__/e2e/env.test .env.build && yarn jest __tests__/e2e/"
   },
   "dependencies": {
     "@auth0/auth0-react": "^1.0.0",
