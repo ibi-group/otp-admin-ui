@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { getTermsAndPrivacyPaths } from '../util/ui'
+import { getTermsAndPrivacyPaths, isApiManagerEnabled } from '../util/ui'
 
 import NavLink from './NavLink'
 
@@ -38,7 +38,7 @@ export default function Footer(): JSX.Element {
                 View Trip Planner
               </NavLink>
             </li>
-            {process.env.API_MANAGER_ENABLED &&
+            {isApiManagerEnabled() &&
               process.env.API_DOCUMENTATION_URL && (
                 <li>
                   <NavLink external href={process.env.API_DOCUMENTATION_URL}>

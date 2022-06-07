@@ -5,9 +5,10 @@ import { useRouter } from 'next/router'
 import AdminUserDashboard from '../components/AdminUserDashboard'
 import ApiUserDashboard from '../components/ApiUserDashboard'
 import ApiUserForm from '../components/ApiUserForm'
+import CDPUserDashboard from '../components/CDPUserDashboard'
 import WelcomeScreen from '../components/WelcomeScreen'
 import type { ApiUser, CDPUser, HandleSignup } from '../types/user'
-import CDPUserDashboard from '../components/CDPUserDashboard'
+import { isApiManagerEnabled } from '../util/ui'
 
 type Props = {
   adminUser: boolean
@@ -19,7 +20,7 @@ type Props = {
 
 export default function Index(props: Props): JSX.Element {
   const { adminUser, apiUser, cdpUser, createApiUser, handleSignup } = props
-  const { API_MANAGER_ENABLED } = process.env
+  const hasApiManager = isApiManagerEnabled()
 
   const { push, query } = useRouter()
   const { isAuthenticated } = useAuth0()
@@ -30,7 +31,7 @@ export default function Index(props: Props): JSX.Element {
 
   if (adminUser) return <AdminUserDashboard />
 
-  if (API_MANAGER_ENABLED && apiUser)
+  if (hasApiManager && apiUser)
     return (
       <ApiUserDashboard
         apiUser={apiUser}
@@ -44,7 +45,7 @@ export default function Index(props: Props): JSX.Element {
   }
 
   if (
-    API_MANAGER_ENABLED &&
+    hasApiManager &&
     !adminUser &&
     (!apiUser || !apiUser.hasConsentedToTerms)
   ) {

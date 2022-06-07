@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { Tab, Tabs } from 'react-bootstrap'
 
-import { getActiveUserTypes } from '../util/ui'
+import { getActiveUserTypes, isApiManagerEnabled, isCdpManagerEnabled } from '../util/ui'
 
 import CDPUserDashboard from './CDPUserDashboard'
 import ErrorEventsDashboard from './ErrorEventsDashboard'
@@ -14,8 +14,8 @@ export default function AdminUserDashboard(): JSX.Element {
     push,
     query: { dashboard }
   } = useRouter()
-  const { API_MANAGER_ENABLED } = process.env
-  const { CDP_MANAGER_ENABLED } = process.env
+  const hasApiManager = isApiManagerEnabled()
+  const hasCdpManager = isCdpManagerEnabled()
   const activeUserTypes = getActiveUserTypes()
 
   return (
@@ -33,17 +33,17 @@ export default function AdminUserDashboard(): JSX.Element {
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
-          {API_MANAGER_ENABLED && <RequestLogsDashboard isAdmin summaryView />}
+          {hasApiManager && <RequestLogsDashboard isAdmin summaryView />}
         </Tab>
         <Tab eventKey="errors" title="Errors">
           <ErrorEventsDashboard />
         </Tab>
-        {API_MANAGER_ENABLED && (
+        {hasApiManager && (
           <Tab eventKey="requests" title="Request logs">
             <RequestLogsDashboard isAdmin />
           </Tab>
         )}
-        {CDP_MANAGER_ENABLED && (
+        {hasCdpManager && (
           <Tab eventKey="cdp" title="Connected Data Platform">
             <CDPUserDashboard />
           </Tab>
