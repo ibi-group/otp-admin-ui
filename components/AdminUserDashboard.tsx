@@ -2,7 +2,11 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { Tab, Tabs } from 'react-bootstrap'
 
-import { getActiveUserTypes, isApiManagerEnabled, isCdpManagerEnabled } from '../util/ui'
+import {
+  getActiveUserTypes,
+  isApiManagerEnabled,
+  isCdpManagerEnabled
+} from '../util/ui'
 
 import CDPUserDashboard from './CDPUserDashboard'
 import ErrorEventsDashboard from './ErrorEventsDashboard'

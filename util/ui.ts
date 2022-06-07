@@ -56,16 +56,16 @@ export function getTermsAndPrivacyPaths(): {
  * Determines if the API manager is enabled.
  */
 export function isApiManagerEnabled(): boolean {
-  // process.env.API_MANAGER_ENABLED is of type string (should be "true" or "false").
-  return process.env.API_MANAGER_ENABLED === "true"
+  // process.env.API_MANAGER_ENABLED is of type string (should be 'true' or 'false').
+  return process.env.API_MANAGER_ENABLED === 'true'
 }
 
 /**
  * Determines if the CDP manager is enabled.
  */
 export function isCdpManagerEnabled(): boolean {
-  // process.env.CDP_MANAGER_ENABLED is of type string (should be "true" or "false").
-  return process.env.CDP_MANAGER_ENABLED === "true"
+  // process.env.CDP_MANAGER_ENABLED is of type string (should be 'true' or 'false').
+  return process.env.CDP_MANAGER_ENABLED === 'true'
 }
 
 /**

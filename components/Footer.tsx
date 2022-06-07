@@ -38,14 +38,13 @@ export default function Footer(): JSX.Element {
                 View Trip Planner
               </NavLink>
             </li>
-            {isApiManagerEnabled() &&
-              process.env.API_DOCUMENTATION_URL && (
-                <li>
-                  <NavLink external href={process.env.API_DOCUMENTATION_URL}>
-                    API documentation
-                  </NavLink>
-                </li>
-              )}
+            {isApiManagerEnabled() && process.env.API_DOCUMENTATION_URL && (
+              <li>
+                <NavLink external href={process.env.API_DOCUMENTATION_URL}>
+                  API documentation
+                </NavLink>
+              </li>
+            )}
             {process.env.OTP_FORUM_URL && (
               <li>
                 <NavLink external href={process.env.OTP_FORUM_URL}>
