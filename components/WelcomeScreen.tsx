@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Jumbotron } from 'react-bootstrap'
 
 import { HandleSignup } from '../types/user'
+import { isApiManagerEnabled } from '../util/ui'
 
 type Props = {
   handleSignup: HandleSignup
@@ -15,7 +16,7 @@ const WelcomeScreen = ({ handleSignup }: Props): JSX.Element => (
         Here, you can view documentation for and gain access to the{' '}
         {process.env.API_NAME}.
       </p>
-      {process.env.API_MANAGER_ENABLED && (
+      {isApiManagerEnabled() && (
         <p>
           <Button className="mr-3" onClick={handleSignup} variant="primary">
             Sign up for API access

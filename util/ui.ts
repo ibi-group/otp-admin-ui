@@ -53,6 +53,22 @@ export function getTermsAndPrivacyPaths(): {
 }
 
 /**
+ * Determines if the API manager is enabled.
+ */
+export function isApiManagerEnabled(): boolean {
+  // process.env.API_MANAGER_ENABLED is of type string (should be 'true' or 'false').
+  return process.env.API_MANAGER_ENABLED === 'true'
+}
+
+/**
+ * Determines if the CDP manager is enabled.
+ */
+export function isCdpManagerEnabled(): boolean {
+  // process.env.CDP_MANAGER_ENABLED is of type string (should be 'true' or 'false').
+  return process.env.CDP_MANAGER_ENABLED === 'true'
+}
+
+/**
  * Returns a filtered version of the USER_TYPES constant based on the
  * user modules currently enabled
  */
@@ -61,10 +77,11 @@ export const getActiveUserTypes = (): {
   url: string
   value: USER_TYPE
 }[] => {
-  const { API_MANAGER_ENABLED, CDP_MANAGER_ENABLED } = process.env
+  const hasApiManager = isApiManagerEnabled()
+  const hasCdpManager = isCdpManagerEnabled()
   return USER_TYPES.filter((userType) => {
-    if (userType.value === 'api' && !API_MANAGER_ENABLED) return false
-    if (userType.value === 'cdp' && !CDP_MANAGER_ENABLED) return false
+    if (userType.value === 'api' && !hasApiManager) return false
+    if (userType.value === 'cdp' && !hasCdpManager) return false
     return true
   })
 }
