@@ -57,7 +57,7 @@
     "jest-puppeteer": "^6.1.0",
     "puppeteer": "^13.4.0",
     "raw-loader": "^4.0.0",
-    "semantic-release": "^17.4.3",
+    "semantic-release": "^19.0.3",
     "tsdx": "https://github.com/ibi-group/tsdx#v0.15.0",
     "typescript": "^4.5.5"
   },
