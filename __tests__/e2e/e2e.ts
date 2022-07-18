@@ -1,7 +1,7 @@
 import 'expect-puppeteer'
 
 import { server } from '../../jest-puppeteer.config'
-import { dateFormatterOptions } from '../../util/constants'
+import { dateFormatterOptionsForDate } from '../../util/constants'
 import { waitForDownload } from '../util/waitForDownload'
 
 jest.setTimeout(50000)
@@ -185,7 +185,10 @@ describe('end-to-end tests', () => {
       await expect(page).toMatch('Raw Request Data Download', { timeout: 6000 })
     })
 
-    const dateFormatter = new Intl.DateTimeFormat('en-US', dateFormatterOptions)
+    const dateFormatter = new Intl.DateTimeFormat(
+      'en-US',
+      dateFormatterOptionsForDate
+    )
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
     const todaysUploadString = dateFormatter.format(yesterday)
