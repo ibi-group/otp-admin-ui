@@ -191,6 +191,7 @@ describe('end-to-end tests', () => {
     )
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setMinutes(0, 0, 0)
     const todaysUploadString = dateFormatter.format(yesterday)
 
     it('should see the file that the middleware uploaded', async () => {
