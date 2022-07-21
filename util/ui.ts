@@ -129,8 +129,7 @@ const getDateAndTimeFromCDPFileName = (
   date: string
 ): FileNameParserResponse => {
   const datePortion = date.split('-')
-  if (!datePortion || datePortion.find((dp) => Number.isNaN(parseInt(dp))))
-    return null
+  if (datePortion?.find((dp) => Number.isNaN(parseInt(dp)))) return null
 
   // The last number after the last dash is the hour
   const timePortion = datePortion.pop()
