@@ -1,7 +1,6 @@
 import 'expect-puppeteer'
 
 import { server } from '../../jest-puppeteer.config'
-import { dateFormatterOptions } from '../../util/constants'
 import { waitForDownload } from '../util/waitForDownload'
 
 jest.setTimeout(50000)
@@ -185,13 +184,13 @@ describe('end-to-end tests', () => {
       await expect(page).toMatch('Raw Request Data Download', { timeout: 6000 })
     })
 
-    const dateFormatter = new Intl.DateTimeFormat('en-US', dateFormatterOptions)
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    const todaysUploadString = dateFormatter.format(yesterday)
+    // Ideally this would be a file that the middleware uploads at e2e test launch,
+    // however the CDP refactor opt-middleware#170 changed the behavior so that this
+    // no longer happens. Therefore, we use a string known to exist
+    const uploadString = 'May 20, 2022'
 
-    it('should see the file that the middleware uploaded', async () => {
-      await expect(page).toMatch(todaysUploadString)
+    it('should see a file that a previous middleware uploaded', async () => {
+      await expect(page).toMatch(uploadString)
     })
     it('should be able to download a CDP zip file', async () => {
       const cdpsession = await page.target().createCDPSession()
@@ -200,7 +199,7 @@ describe('end-to-end tests', () => {
         downloadPath: '/tmp'
       })
 
-      await expect(page).toClick('div', { text: todaysUploadString })
+      await expect(page).toClick('div', { text: uploadString })
 
       await waitForDownload('anon-trip-data')
       await expect(page).toMatch('You last downloaded', { timeout: 6000 })

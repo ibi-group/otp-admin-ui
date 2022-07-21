@@ -14,3 +14,8 @@ export type CDPFile = {
 }
 
 export type ConvertedMD = { markdown: string }
+
+export type FileNameParserResponse = {
+  dateFormatterOptions: Intl.DateTimeFormatOptions
+  timestamp: number
+} | null

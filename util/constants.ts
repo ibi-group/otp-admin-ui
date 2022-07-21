@@ -18,9 +18,14 @@ export const USER_TYPES: { label: string; url: string; value: USER_TYPE }[] = [
   { label: 'OTP Users', url: OTP_USER_URL, value: 'otp' }
 ]
 
-export const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+export const dateFormatterOptionsForDate: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   month: 'long',
   timeZone: 'UTC',
   year: 'numeric'
+}
+
+export const dateFormatterOptionsForTime: Intl.DateTimeFormatOptions = {
+  dateStyle: 'long',
+  timeStyle: 'short'
 }
