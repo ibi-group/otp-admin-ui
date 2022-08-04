@@ -26,6 +26,8 @@ jobs:
 
       - name: Download middleware
         run: "git clone https://github.com/ibi-group/otp-middleware.git"
+      - name: [TEMP] checkout correct branch for docker images to work
+        run: "git checkout move-from-docker-hub" 
       - name: Load e2e middleware config
         run: echo $E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 | base64 -d > otp-middleware/configurations/default/env.docker.yml
         env:
