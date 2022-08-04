@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Badge, ListGroup, ListGroupItem } from 'react-bootstrap'
+import {
+  Alert,
+  Badge,
+  ListGroup,
+  ListGroupItem,
+  Tab,
+  Tabs
+} from 'react-bootstrap'
 import { WithAuth0Props, withAuth0 } from '@auth0/auth0-react'
 
 import { secureFetch } from '../util/middleware'
@@ -38,6 +45,43 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
       </Badge>
     </div>
   </ListGroupItem>
+)
+
+/** Component which renders a a list of CDP files */
+const FileListing = ({
+  cdpUser,
+  downloadedFiles,
+  files,
+  setCurrentlyDownloadingFile
+}: {
+  cdpUser?: CDPUser
+  downloadedFiles: string[]
+  files: CDPFile[]
+  setCurrentlyDownloadingFile: (file: string) => void
+}): JSX.Element => (
+  <>
+    {files?.length === 0 && (
+      <Alert variant="info">
+        <Alert.Heading>Loading...</Alert.Heading>
+      </Alert>
+    )}
+    <ListGroup as="ul">
+      {files?.map((file: CDPFile) => {
+        const fakeDownloadedAt =
+          downloadedFiles.includes(file.key) && Date.now()
+        return (
+          <CDPZip
+            downloadedAt={
+              fakeDownloadedAt || cdpUser?.S3DownloadTimes[file.key]
+            }
+            file={file}
+            key={file.key}
+            onClick={setCurrentlyDownloadingFile}
+          />
+        )
+      })}
+    </ListGroup>
+  </>
 )
 
 /**
@@ -109,36 +153,45 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
     // Negative sorts "reverse alphabetically" which allows newest files to appear first
     .sort((a: CDPFile, b: CDPFile) => -a.key.localeCompare(b.key))
 
-  return (
-    <>
-      <h3>Raw Request Data Download</h3>
-      <p>
-        These zip files contain anonymized OTP requests for the date(s)
-        indicated.
-      </p>
+  const isSurveyResponse = (wanted: boolean) => (file: CDPFile) =>
+    file.key.includes('survey-response') === wanted
+  const surveyResponses = files.filter(isSurveyResponse(true))
 
-      {files?.length === 0 && (
-        <Alert variant="info">
-          <Alert.Heading>Loading...</Alert.Heading>
-        </Alert>
+  return (
+    <Tabs defaultActiveKey="raw-data" fill>
+      <Tab eventKey="raw-data" title="Raw Request Data Download">
+        <p className="mt-3">
+          These zip files contain anonymized OTP requests for the date and time
+          indicated.
+        </p>
+        <FileListing
+          cdpUser={cdpUser}
+          downloadedFiles={downloadedFiles}
+          files={files.filter(isSurveyResponse(false))}
+          setCurrentlyDownloadingFile={setCurrentlyDownloadingFile}
+        />
+      </Tab>
+      {surveyResponses.length > 0 && (
+        <Tab eventKey="survey-data" title="Survey Response Download">
+          <p className="mt-3">
+            Select a date to download all survey responses from that date.
+            Indivdual csv files are individual user responses.
+          </p>
+          <FileListing
+            cdpUser={cdpUser}
+            downloadedFiles={downloadedFiles}
+            files={surveyResponses.sort(
+              (a: CDPFile, b: CDPFile) =>
+                // Sort by the number of slashes in the key name so that merged responses (not in subfolders)
+                // appear first.
+                (a.key.match(/\//g) || []).length >
+                (b.key.match(/\//g) || []).length
+            )}
+            setCurrentlyDownloadingFile={setCurrentlyDownloadingFile}
+          />
+        </Tab>
       )}
-      <ListGroup as="ul">
-        {files?.map((file: CDPFile) => {
-          const fakeDownloadedAt =
-            downloadedFiles.includes(file.key) && Date.now()
-          return (
-            <CDPZip
-              downloadedAt={
-                fakeDownloadedAt || cdpUser?.S3DownloadTimes[file.key]
-              }
-              file={file}
-              key={file.key}
-              onClick={setCurrentlyDownloadingFile}
-            />
-          )
-        })}
-      </ListGroup>
-    </>
+    </Tabs>
   )
 }
 
