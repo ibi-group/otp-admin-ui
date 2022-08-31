@@ -175,7 +175,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
         <Tab eventKey="survey-data" title="Survey Response Download">
           <p className="mt-3">
             Select a date to download all survey responses from that date.
-            Indivdual csv files are individual user responses.
+            Individual csv files are individual user responses.
           </p>
           <FileListing
             cdpUser={cdpUser}
