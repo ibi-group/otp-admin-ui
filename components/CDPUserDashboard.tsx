@@ -153,6 +153,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
     // Negative sorts "reverse alphabetically" which allows newest files to appear first
     .sort((a: CDPFile, b: CDPFile) => -a.key.localeCompare(b.key))
 
+  // wanted either filters out or only includes survey responses
   const isSurveyResponse = (wanted: boolean) => (file: CDPFile) =>
     file.key.includes('survey-response') === wanted
   const surveyResponses = files.filter(isSurveyResponse(true))
@@ -184,7 +185,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
               (a: CDPFile, b: CDPFile) =>
                 // Sort by the number of slashes in the key name so that merged responses (not in subfolders)
                 // appear first.
-                (a.key.match(/\//g) || []).length >
+                (a.key.match(/\//g) || []).length -
                 (b.key.match(/\//g) || []).length
             )}
             setCurrentlyDownloadingFile={setCurrentlyDownloadingFile}
