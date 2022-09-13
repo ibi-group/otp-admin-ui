@@ -47,7 +47,7 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
   </ListGroupItem>
 )
 
-/** Component which renders a a list of CDP files */
+/** Component which renders a list of CDP files */
 const FileListing = ({
   cdpUser,
   downloadedFiles,
@@ -58,13 +58,12 @@ const FileListing = ({
   downloadedFiles: string[]
   files: CDPFile[]
   setCurrentlyDownloadingFile: (file: string) => void
-}): JSX.Element => (
-  <>
-    {files?.length === 0 && (
-      <Alert variant="info">
-        <Alert.Heading>Loading...</Alert.Heading>
-      </Alert>
-    )}
+}): JSX.Element =>
+  files?.length === 0 ? (
+    <Alert variant="info">
+      <Alert.Heading>Loading...</Alert.Heading>
+    </Alert>
+  ) : (
     <ListGroup as="ul">
       {files?.map((file: CDPFile) => {
         const fakeDownloadedAt =
@@ -81,8 +80,7 @@ const FileListing = ({
         )
       })}
     </ListGroup>
-  </>
-)
+  )
 
 /**
  * The high-level component visible to a CDPUser when they log in. This
