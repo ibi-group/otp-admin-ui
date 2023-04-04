@@ -19,6 +19,7 @@ type CDPZipProps = {
   downloadedAt?: number
   file: CDPFile
   onClick: (key: string) => void
+  tripDataSuffix: string
 }
 
 const CDP_FILES_URL = `${process.env.API_BASE_URL}/api/secure/connected-data`
@@ -33,7 +34,9 @@ const CDPZip = (props: CDPZipProps): JSX.Element => (
     onClick={() => props.onClick(props.file.key)}
     title={`Download ${props.file.key}`}
   >
-    <div className="ms-2 me-auto">{getDateFromCDPFileName(props.file.key)}</div>
+    <div className="ms-2 me-auto">
+      {getDateFromCDPFileName(props.file.key, props.tripDataSuffix)}
+    </div>
     <div>
       {props.downloadedAt && (
         <Badge className="mr-1" pill variant="success">
@@ -52,12 +55,14 @@ const FileListing = ({
   cdpUser,
   downloadedFiles,
   files,
-  setCurrentlyDownloadingFile
+  setCurrentlyDownloadingFile,
+  tripDataSuffix
 }: {
   cdpUser?: CDPUser
   downloadedFiles: string[]
   files: CDPFile[]
   setCurrentlyDownloadingFile: (file: string) => void
+  tripDataSuffix: string
 }): JSX.Element =>
   files?.length === 0 ? (
     <Alert variant="info">
@@ -76,6 +81,7 @@ const FileListing = ({
             file={file}
             key={file.key}
             onClick={setCurrentlyDownloadingFile}
+            tripDataSuffix={tripDataSuffix}
           />
         )
       })}
@@ -168,6 +174,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
           downloadedFiles={downloadedFiles}
           files={files.filter(isSurveyResponse(false))}
           setCurrentlyDownloadingFile={setCurrentlyDownloadingFile}
+          tripDataSuffix="-anon-trip-data"
         />
       </Tab>
       {surveyResponses.length > 0 && (
@@ -187,6 +194,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
                 (b.key.match(/\//g) || []).length
             )}
             setCurrentlyDownloadingFile={setCurrentlyDownloadingFile}
+            tripDataSuffix="-merged"
           />
         </Tab>
       )}
