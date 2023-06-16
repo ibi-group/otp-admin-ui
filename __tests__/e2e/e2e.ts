@@ -32,13 +32,13 @@ describe('end-to-end tests', () => {
           password: process.env.E2E_PASSWORD,
           username: process.env.E2E_USERNAME_API
         })
+        await page.keyboard.press('Enter')
       } catch (error) {
         console.warn(error)
         console.warn(
           'You may have forgotten to set E2E_PASSWORD or E2E_USERNAME_API environment variables'
         )
       }
-      await page.click('button[type="submit"]')
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
@@ -84,13 +84,13 @@ describe('end-to-end tests', () => {
           password: process.env.E2E_PASSWORD,
           username: E2E_USERNAME
         })
+        await page.keyboard.press('Enter')
       } catch (error) {
         console.warn(error)
         console.warn(
           'You may have forgotten to set E2E_PASSWORD or E2E_USERNAME environment variables'
         )
       }
-      await page.click('button[type="submit"]')
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
@@ -170,13 +170,13 @@ describe('end-to-end tests', () => {
           password: process.env.E2E_PASSWORD,
           username: NEW_CDP_USERNAME
         })
+        await page.keyboard.press('Enter')
       } catch (error) {
         console.warn(error)
         console.warn(
           'You may have forgotten to set E2E_PASSWORD or E2E_NEW_USERNAME_1 environment variables'
         )
       }
-      await page.click('button[type="submit"]')
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' })
 
