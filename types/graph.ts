@@ -1,6 +1,10 @@
 import { ApiUser } from './user'
 
-export type ApiKey = { startDate: number; items: { [key: string]: Requests } }
+export type ApiKey = {
+  items: { [key: string]: Requests }
+  startDate: number
+  usagePlanId: string
+}
 export type Plan = {
   apiUsers?: { [key: string]: ApiUser }
   result: ApiKey

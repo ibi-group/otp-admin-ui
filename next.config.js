@@ -37,7 +37,8 @@ module.exports = (phase, { defaultConfig }) => {
     SITE_TITLE: process.env.SITE_TITLE,
     STATUS_PAGE_URL: process.env.STATUS_PAGE_URL,
     SUPPORT_EMAIL: process.env.SUPPORT_EMAIL,
-    TERMS_CONDITIONS_URL: process.env.TERMS_CONDITIONS_URL
+    TERMS_CONDITIONS_URL: process.env.TERMS_CONDITIONS_URL,
+    USAGE_ID: process.env.USAGE_ID
   }
   // Return config with environment variables and webpack configuration.
   return {
