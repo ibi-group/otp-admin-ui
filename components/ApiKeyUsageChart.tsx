@@ -194,6 +194,7 @@ class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
         {this._renderKeyInfo()}
         <XYPlot
           height={300}
+          style={{ overflow: 'initial' }}
           width={600} // Round up max y value to the nearest 10
           xDomain={[
             timestamp - 2 * ONE_DAY_MILLIS,

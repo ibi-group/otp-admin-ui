@@ -5,10 +5,13 @@ import { Sync } from '@styled-icons/fa-solid/Sync'
 import { Button } from 'react-bootstrap'
 import useSWR, { mutate } from 'swr'
 
+import { Plan } from '../types/graph'
+
 import ApiKeyUsage from './ApiKeyUsage'
 import FetchMessage from './FetchMessage'
 
 const REQUEST_LOGS_URL = `${process.env.API_BASE_URL}/api/secure/logs`
+const USAGE_ID = process.env.USAGE_ID || null
 
 type Props = {
   isAdmin?: boolean
@@ -56,7 +59,9 @@ function RequestLogsDashboard({
       )}
       <ApiKeyUsage
         isAdmin={isAdmin}
-        logs={result.data?.data}
+        logs={result.data?.data?.filter(
+          (l: Plan) => USAGE_ID === null || l.result.usagePlanId === USAGE_ID
+        )}
         logsError={result.error}
         summaryView={summaryView}
       />
