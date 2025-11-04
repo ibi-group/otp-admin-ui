@@ -30,7 +30,11 @@ function DailyStatsDashboard(): JSX.Element | null {
       </div>
 
       {(!isValidating && (
-        <DailyStatsChart records={data?.data || []} />
+        <>
+          <DailyStatsChart entityType="OTP Users" records={data?.data || []} series="otpUsers" />
+          <DailyStatsChart entityType="OTP Users With Trip Requests" records={data?.data || []} series="otpUsersWithTripRequests" />
+          <DailyStatsChart entityType="Trip Requests" records={data?.data || []} series="tripRequests" />
+        </>
       ))}
       <style jsx>
         {`

@@ -22,7 +22,9 @@ export type StatsRecord = {
 }
 
 export type Props = WithAuth0Props & {
+  entityType: string
   records: StatsRecord[]
+  series: keyof StatsRecord
 }
 /**
  * Renders a chart showing API Key usage (requests over time) for a particular
@@ -40,8 +42,28 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
     this.setState({ value: null })
   }
 
+  /**
+   * Format series data for chart component.
+   */
   _getSeries = (series: keyof StatsRecord) => {
-    return this.props.records.map(r => r[series])
+    let rangeMax = 0
+    const startDate = moment(this.props.records[0].date)
+    const ONE_DAY_MILLIS = 86400000
+    // Format request data for chart component.
+    const chartData: RectSeriesPoint[] =
+      this.props.records.map((value, i) => {
+        if (i > 0) startDate.add(1, 'days')
+        const begin = startDate.valueOf()
+        const y = value[series] || 0
+        const end = begin + ONE_DAY_MILLIS
+        if (y > rangeMax) rangeMax = y
+        return { x: end, x0: begin, y, y0: 0 }
+      }) || []
+
+      return {
+        chartData,
+        rangeMax,
+      }
   }
 
   handleSetValue: RVValueEventHandler<RectSeriesPoint> = (
@@ -51,6 +73,8 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
   }
 
   render() {
+    if (this.props.records.length === 0) return null
+
     const days = 30
     const { value } = this.state
     const ONE_DAY_MILLIS = 86400000
@@ -58,25 +82,13 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
 
     // Render the # of requests per API key on each day beginning
     // with the start date.
-    const dates = this._getSeries('date')
-    const otpUsers = this._getSeries('otpUsers')
+    const otpUsersSeries = this._getSeries(this.props.series)
     const timestamp = startDate.valueOf()
-    let rangeMax = 0
-    // Format request data for chart component.
-    const CHART_DATA: RectSeriesPoint[] =
-      this.props.records.map((value, i) => {
-        if (i > 0) startDate.add(1, 'days')
-        const begin = startDate.valueOf()
-        // @ts-ignore TYPESCRIPT TODO: what is going on here?
-        const y = value.otpUsers || 0
-        const end = begin + ONE_DAY_MILLIS
-        if (y > rangeMax) rangeMax = y
-        return { x: end, x0: begin, y, y0: 0 }
-      }) || []
+    let rangeMax = otpUsersSeries.rangeMax
     const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
       <div className="usage-list" style={{ display: 'inline-block' }}>
-        <h3>Daily Stats</h3>
+        <h3>{this.props.entityType}</h3>
         <XYPlot
           height={300}
           style={{ overflow: 'initial' }}
@@ -92,7 +104,7 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
           <XAxis tickFormat={(d) => moment(d).format('MMM DD')} />
           <YAxis />
           <VerticalRectSeries
-            data={CHART_DATA}
+            data={otpUsersSeries.chartData}
             onValueMouseOut={this.handleClearValue} // Update value on mouse over/out.
             onValueMouseOver={this.handleSetValue}
             style={{ stroke: '#fff' }}
@@ -101,7 +113,7 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
         <p style={{ textAlign: 'center' }}>
           {value ? (
             <>
-              {moment(value.x).format('MMM DD')}: {value.y} users
+              {moment(value.x).format('MMM DD')}: {value.y} {this.props.entityType}
             </>
           ) : (
             <>[Hover over bars to see values.]</>
