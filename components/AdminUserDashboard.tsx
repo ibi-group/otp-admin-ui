@@ -38,8 +38,10 @@ export default function AdminUserDashboard(): JSX.Element {
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
-          <DailyStatsDashboard />
           {hasApiManager && <RequestLogsDashboard isAdmin summaryView />}
+        </Tab>
+        <Tab eventKey="daiystats" title="Daily Stats">
+          <DailyStatsDashboard />
         </Tab>
         <Tab eventKey="errors" title="Errors">
           <ErrorEventsDashboard />
