@@ -12,6 +12,7 @@ import CDPUserDashboard from './CDPUserDashboard'
 import ErrorEventsDashboard from './ErrorEventsDashboard'
 import RequestLogsDashboard from './RequestLogsDashboard'
 import UserList from './UserList'
+import DailyStatsDashboard from './DailyStatsDashboard'
 
 export default function AdminUserDashboard(): JSX.Element {
   const {
@@ -37,6 +38,7 @@ export default function AdminUserDashboard(): JSX.Element {
               <UserList key={item.value} summaryView type={item.value} />
             ))}
           </div>
+          <DailyStatsDashboard />
           {hasApiManager && <RequestLogsDashboard isAdmin summaryView />}
         </Tab>
         <Tab eventKey="errors" title="Errors">
