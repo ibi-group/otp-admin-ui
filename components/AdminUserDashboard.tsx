@@ -40,7 +40,7 @@ export default function AdminUserDashboard(): JSX.Element {
           </div>
           {hasApiManager && <RequestLogsDashboard isAdmin summaryView />}
         </Tab>
-        <Tab eventKey="daiystats" title="Daily Stats">
+        <Tab eventKey="dailystats" title="Daily Stats">
           <DailyStatsDashboard />
         </Tab>
         <Tab eventKey="errors" title="Errors">
