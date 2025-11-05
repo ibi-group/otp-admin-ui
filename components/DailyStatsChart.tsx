@@ -47,13 +47,11 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
    */
   _getSeries = (series: keyof StatsRecord) => {
     let rangeMax = 0
-    const startDate = moment(this.props.records[0].date)
     const ONE_DAY_MILLIS = 86400000
     // Format request data for chart component.
     const chartData: RectSeriesPoint[] =
       this.props.records.map((value, i) => {
-        if (i > 0) startDate.add(1, 'days')
-        const begin = startDate.valueOf()
+        const begin = value.date.valueOf()
         const y = value[series] || 0
         const end = begin + ONE_DAY_MILLIS
         if (y > rangeMax) rangeMax = y
