@@ -89,6 +89,8 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
     // with the start date.
     const seriesData = this._getSeries(this.props.series)
     const { chartData, endDateMillis, rangeMax, startDateMillis } = seriesData
+    
+    // Round up max y value to the nearest 10
     const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
       <div className="usage-list" style={{ display: 'inline-block' }}>
@@ -96,10 +98,10 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
         <XYPlot
           height={300}
           style={{ overflow: 'initial' }}
-          width={600} // Round up max y value to the nearest 10
+          width={600}
           xDomain={[
             startDateMillis - 2 * ONE_DAY_MILLIS,
-            // Display at least 30 days if a short time window was provided.
+            // Display at least 30 days if data spans over less than 30 days.
             Math.min(startDateMillis + days * ONE_DAY_MILLIS, endDateMillis + 2 * ONE_DAY_MILLIS)
           ]}
           yDomain={[0, maxY]}
