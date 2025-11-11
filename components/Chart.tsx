@@ -1,5 +1,4 @@
 import React, { Component, ReactNode } from 'react'
-import { withAuth0, WithAuth0Props } from '@auth0/auth0-react'
 import moment from 'moment'
 import {
   XYPlot,
@@ -14,7 +13,7 @@ import {
 
 import { GraphNumberValue, GraphValue } from '../types/graph'
 
-export type Props = WithAuth0Props & {
+export type Props = {
   data: GraphNumberValue[]
   entityType: string
   title: ReactNode
@@ -121,4 +120,4 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
   }
 }
 
-export default withAuth0(Chart)
+export default Chart

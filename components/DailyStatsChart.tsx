@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { withAuth0, WithAuth0Props } from '@auth0/auth0-react'
 
 import Chart from './Chart'
 
@@ -10,7 +9,7 @@ export type StatsRecord = {
   tripRequests?: number
 }
 
-export type Props = WithAuth0Props & {
+export type Props = {
   entityType: string
   records: StatsRecord[]
   series: keyof StatsRecord
@@ -36,4 +35,4 @@ class DailyStatsChart extends Component<Props> {
   }
 }
 
-export default withAuth0(DailyStatsChart)
+export default DailyStatsChart
