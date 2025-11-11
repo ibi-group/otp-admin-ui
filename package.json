@@ -2,7 +2,7 @@
   "name": "otp-admin-ui",
   "version": "1.0.0",
   "main": "index.js",
-  "engines": { "node": "18.x" },
+  "engines": { "node": "22.x" },
   "license": "MIT",
   "scripts": {
     "build": "next build",
