@@ -76,13 +76,15 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
     const ONE_DAY_MILLIS = 86400000
     const dateMargin = 2 * ONE_DAY_MILLIS
 
-    const { chartData, endDateMillis, rangeMax, startDateMillis } = this._getBounds()    
-    
+    const { chartData, endDateMillis, rangeMax, startDateMillis } = this._getBounds()
+
+    const renderedTitle = typeof title === 'string' ? <h3>{title}</h3> : title
+
     // Round up max y value to the nearest 10
     const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
       <div className="usage-list" style={{ display: 'inline-block' }}>
-        <h3>{title}</h3>
+        {renderedTitle}
         <XYPlot
           height={300}
           style={{ overflow: 'initial' }}
