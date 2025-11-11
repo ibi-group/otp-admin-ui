@@ -7,7 +7,7 @@ import useSWR, { mutate } from 'swr'
 import DailyStatsChart from './DailyStatsChart'
 import FetchMessage from './FetchMessage'
 
-const DAILY_STATS_URL = `${process.env.API_BASE_URL}/api/secure/dailystats`
+const DAILY_STATS_URL = `${process.env.API_BASE_URL}/api/secure/dailystats?fromDate=2025-01-01`
 
 function DailyStatsDashboard(): JSX.Element | null {
   const auth = useAuth0()
@@ -15,6 +15,7 @@ function DailyStatsDashboard(): JSX.Element | null {
   if (!auth.isAuthenticated) return null
   const { data: swrData = {}, isValidating } = result
   const { data } = swrData
+  const records = data?.data || []
   return (
     <div>
       <h2>Daily Stats</h2>
@@ -30,11 +31,11 @@ function DailyStatsDashboard(): JSX.Element | null {
       </div>
 
       {(!isValidating && (
-        <>
-          <DailyStatsChart entityType="OTP Users" records={data?.data || []} series="otpUsers" />
-          <DailyStatsChart entityType="OTP Users With Trip Requests" records={data?.data || []} series="otpUsersWithTripRequests" />
-          <DailyStatsChart entityType="Trip Requests" records={data?.data || []} series="tripRequests" />
-        </>
+        <div>
+          <DailyStatsChart entityType="OTP Users" records={records} series="otpUsers" />
+          <DailyStatsChart entityType="OTP Users With Trip Requests" records={records} series="otpUsersWithTripRequests" />
+          <DailyStatsChart entityType="Trip Requests" records={records} series="tripRequests" />
+        </div>
       ))}
       <style jsx>
         {`
