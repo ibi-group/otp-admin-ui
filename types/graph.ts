@@ -14,4 +14,9 @@ export type GraphValue = {
   y: string | number | Date
 }
 
+export type GraphNumberValue = {
+  x: number
+  y: number
+}
+
 export type Requests = [number, number]
