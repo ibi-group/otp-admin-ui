@@ -7,7 +7,9 @@ import useSWR, { mutate } from 'swr'
 import DailyStatsChart from './DailyStatsChart'
 import FetchMessage from './FetchMessage'
 
-const DAILY_STATS_URL = `${process.env.API_BASE_URL}/api/secure/dailystats?fromDate=2025-01-01`
+// Set a default start date for query (if omitted, OTP-middleware limits to the past 30 days).
+const defaultStartDate = '2025-09-01'
+const DAILY_STATS_URL = `${process.env.API_BASE_URL}/api/secure/dailystats?fromDate=${defaultStartDate}`
 
 function DailyStatsDashboard(): JSX.Element | null {
   const auth = useAuth0()
