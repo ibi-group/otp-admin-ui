@@ -26,9 +26,15 @@ jobs:
 
       - name: Download middleware
         run: "git clone https://github.com/ibi-group/otp-middleware.git"
+      - name: Change directory
+        # TODO: remove before merging!!
+        run: "cd otp-middleware"
       - name: Checkout daily stats branch
         # TODO: remove before merging!!
-        run: "git checkout origin/daily-stats"
+        run: "git checkout daily-stats"
+      - name: Revert directory
+        # TODO: remove before merging!!
+        run: "cd .."
       - name: Load e2e middleware config
         run: echo $E2E_OTP_MIDDLEWARE_DOCKER_CONFIG_BASE64 | base64 -d > otp-middleware/configurations/default/env.docker.yml
         env:
