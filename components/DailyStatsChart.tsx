@@ -84,6 +84,7 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
     const days = 30
     const { value } = this.state
     const ONE_DAY_MILLIS = 86400000
+    const dateMargin = 2 * ONE_DAY_MILLIS
 
     // Render the # of requests per API key on each day beginning
     // with the start date.
@@ -100,9 +101,9 @@ class DailyStatsChart extends Component<Props, { value: GraphValue | null }> {
           style={{ overflow: 'initial' }}
           width={600}
           xDomain={[
-            startDateMillis - 2 * ONE_DAY_MILLIS,
+            startDateMillis - dateMargin,
             // Display at least 30 days if data spans over less than 30 days.
-            Math.min(startDateMillis + days * ONE_DAY_MILLIS, endDateMillis + 2 * ONE_DAY_MILLIS)
+            Math.max(startDateMillis + days * ONE_DAY_MILLIS, endDateMillis) + dateMargin
           ]}
           yDomain={[0, maxY]}
         >
