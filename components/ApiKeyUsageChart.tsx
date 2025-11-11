@@ -6,6 +6,7 @@ import moment from 'moment'
 import { Button } from 'react-bootstrap'
 
 import { Requests, Plan, GraphNumberValue } from '../types/graph'
+
 import Chart from './Chart'
 
 export type Props = {
@@ -157,12 +158,12 @@ class ApiKeyUsageChart extends Component<Props> {
       <Chart
         data={CHART_DATA}
         entityType="requests"
-        title={(
+        title={
           <>
             {this._renderChartTitle()}
             {this._renderKeyInfo()}
           </>
-        )}
+        }
       />
     )
   }

@@ -75,7 +75,8 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
     const { value } = this.state
     const ONE_DAY_MILLIS = 86400000
 
-    const { chartData, endDateMillis, rangeMax, startDateMillis } = this._getBounds()
+    const { chartData, endDateMillis, rangeMax, startDateMillis } =
+      this._getBounds()
 
     const renderedTitle = typeof title === 'string' ? <h3>{title}</h3> : title
 

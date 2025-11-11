@@ -20,9 +20,11 @@ export type Props = WithAuth0Props & {
  * API key.
  */
 class DailyStatsChart extends Component<Props> {
-  _getSeries = (series: keyof StatsRecord) => (this.props.records || []).map(
-    (value) => ({ x: value.date.valueOf(), y: value[series] || 0 })
-  )
+  _getSeries = (series: keyof StatsRecord) =>
+    (this.props.records || []).map((value) => ({
+      x: value.date.valueOf(),
+      y: value[series] || 0
+    }))
 
   render() {
     const { entityType, records, series } = this.props
@@ -30,13 +32,7 @@ class DailyStatsChart extends Component<Props> {
 
     // Render the given series on each day beginning with the start date.
     const data = this._getSeries(series)
-    return (
-      <Chart
-        data={data}
-        entityType={entityType}
-        title={entityType}
-      />
-    )
+    return <Chart data={data} entityType={entityType} title={entityType} />
   }
 }
 

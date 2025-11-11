@@ -30,13 +30,25 @@ function DailyStatsDashboard(): JSX.Element | null {
         <FetchMessage result={result} />
       </div>
 
-      {(!isValidating && (
+      {!isValidating && (
         <div>
-          <DailyStatsChart entityType="OTP Users" records={records} series="otpUsers" />
-          <DailyStatsChart entityType="OTP Users With Trip Requests" records={records} series="otpUsersWithTripRequests" />
-          <DailyStatsChart entityType="Trip Requests" records={records} series="tripRequests" />
+          <DailyStatsChart
+            entityType="OTP Users"
+            records={records}
+            series="otpUsers"
+          />
+          <DailyStatsChart
+            entityType="OTP Users With Trip Requests"
+            records={records}
+            series="otpUsersWithTripRequests"
+          />
+          <DailyStatsChart
+            entityType="Trip Requests"
+            records={records}
+            series="tripRequests"
+          />
         </div>
-      ))}
+      )}
       <style jsx>
         {`
           .controls {
