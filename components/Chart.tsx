@@ -74,7 +74,6 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
     const days = 30
     const { value } = this.state
     const ONE_DAY_MILLIS = 86400000
-    const dateMargin = 2 * ONE_DAY_MILLIS
 
     const { chartData, endDateMillis, rangeMax, startDateMillis } = this._getBounds()
 
@@ -90,9 +89,9 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
           style={{ overflow: 'initial' }}
           width={600}
           xDomain={[
-            startDateMillis - dateMargin,
+            startDateMillis,
             // Display at least 30 days if data spans over less than 30 days.
-            Math.max(startDateMillis + days * ONE_DAY_MILLIS, endDateMillis) + dateMargin
+            Math.max(startDateMillis + days * ONE_DAY_MILLIS, endDateMillis)
           ]}
           yDomain={[0, maxY]}
         >
