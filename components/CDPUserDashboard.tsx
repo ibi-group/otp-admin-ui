@@ -144,7 +144,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
       fakeDownloadLink.click()
 
       // Cleanup
-      document.body.removeChild(fakeDownloadLink)
+      //document.body.removeChild(fakeDownloadLink)
       setCurrentlyDownloadingFile('')
       setDownloadedFiles((d) => [...d, currentlyDownloadingFile])
     }
