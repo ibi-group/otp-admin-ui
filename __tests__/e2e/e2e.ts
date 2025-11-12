@@ -205,6 +205,9 @@ describe('end-to-end tests', () => {
       
       await expect(page).toClick('div', { text: uploadString })
 
+      const link = await page.waitForSelector('a.fake-download-link')
+      console.log('Link href', link?.getProperty('href'))
+
       await waitForDownload('anon-trip-data')
       await expect(page).toMatch('You last downloaded', { timeout: 6000 })
     })

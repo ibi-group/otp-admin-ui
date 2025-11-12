@@ -135,6 +135,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
       const fakeDownloadLink = document.createElement('a')
       fakeDownloadLink.download = currentlyDownloadingFile
       fakeDownloadLink.href = downloadLink
+      fakeDownloadLink.className = 'fake-download-link'
 
       // Add fake download anchor to DOM
       document.body.appendChild(fakeDownloadLink)
