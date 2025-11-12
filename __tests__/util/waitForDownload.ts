@@ -25,7 +25,6 @@ export function waitForDownload(downloadedFileName: string): Promise<void> {
       }
 
       if (waitAttempts++ > WAIT_ATTEMPTS) {
-        console.log('Downloaded files:', downloadingFiles.toString())
         clearInterval(check)
         reject(new Error('failed to find crdownload file!'))
       }
