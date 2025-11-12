@@ -203,7 +203,7 @@ describe('end-to-end tests', () => {
       const downloadingFiles = fs.readdirSync('/tmp')
       console.log('Downloaded files before click:', downloadingFiles.toString())
       
-      await expect(page).toClick('div', { text: uploadString })
+      await expect(page).toClick('button', { text: uploadString })
 
       const link = await page.waitForSelector('a.fake-download-link')
       const href = await link?.getProperty('href')
