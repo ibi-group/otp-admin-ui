@@ -1,4 +1,5 @@
 import 'expect-puppeteer'
+import fs from 'fs'
 
 import { server } from '../../jest-puppeteer.config'
 import { waitForDownload } from '../util/waitForDownload'
@@ -199,6 +200,9 @@ describe('end-to-end tests', () => {
         downloadPath: '/tmp'
       })
 
+      const downloadingFiles = fs.readdirSync('/tmp')
+      console.log('Downloaded files before click:', downloadingFiles.toString())
+      
       await expect(page).toClick('div', { text: uploadString })
 
       await waitForDownload('anon-trip-data')

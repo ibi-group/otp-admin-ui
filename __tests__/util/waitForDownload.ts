@@ -11,7 +11,6 @@ export function waitForDownload(downloadedFileName: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const check = setInterval(() => {
       const downloadingFiles = fs.readdirSync('/tmp')
-      console.log('Downloaded files:', downloadingFiles.toString())
       const downloadedFileFound = !!downloadingFiles.find((file) => {
         // In some cases the file downloads before this is fired.
         // In this case, check for the completed download
@@ -26,6 +25,7 @@ export function waitForDownload(downloadedFileName: string): Promise<void> {
       }
 
       if (waitAttempts++ > WAIT_ATTEMPTS) {
+        console.log('Downloaded files:', downloadingFiles.toString())
         clearInterval(check)
         reject(new Error('failed to find crdownload file!'))
       }
