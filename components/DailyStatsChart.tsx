@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import Chart from './Chart'
+import { GraphNumberValue } from '../types/graph'
 
 export type StatsRecord = {
   date: number
@@ -19,15 +20,15 @@ export type Props = {
  * API key.
  */
 class DailyStatsChart extends Component<Props> {
-  _getSeries = (series: keyof StatsRecord) =>
+  _getSeries = (series: keyof StatsRecord): GraphNumberValue[] =>
     (this.props.records || []).map((value) => ({
       x: value.date.valueOf(),
       y: value[series] || 0
     }))
 
-  render() {
+  render(): JSX.Element | null {
     const { entityType, records, series } = this.props
-    if (records.length === 0) return null
+    if (!records.length) return null
 
     // Render the given series on each day beginning with the start date.
     const data = this._getSeries(series)
