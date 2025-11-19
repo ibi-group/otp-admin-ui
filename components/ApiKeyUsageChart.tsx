@@ -4,18 +4,10 @@ import { Key } from '@styled-icons/fa-solid/Key'
 import clone from 'clone'
 import moment from 'moment'
 import { Button } from 'react-bootstrap'
-import {
-  XYPlot,
-  XAxis,
-  YAxis,
-  VerticalGridLines,
-  HorizontalGridLines,
-  VerticalRectSeries,
-  RectSeriesPoint,
-  RVValueEventHandler
-} from 'react-vis'
 
-import { GraphValue, Requests, Plan } from '../types/graph'
+import { Requests, Plan, GraphNumberValue } from '../types/graph'
+
+import Chart from './Chart'
 
 export type Props = {
   aggregatedView?: boolean
@@ -27,18 +19,7 @@ export type Props = {
  * Renders a chart showing API Key usage (requests over time) for a particular
  * API key.
  */
-class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      value: null
-    }
-  }
-
-  handleClearValue = () => {
-    this.setState({ value: null })
-  }
-
+class ApiKeyUsageChart extends Component<Props> {
   _renderChartTitle = () => {
     const { aggregatedView, isAdmin } = this.props
     // Do not show chart title for non-admin users.
@@ -140,12 +121,6 @@ class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
       ? null
       : (this.props.id && this.props?.plan?.apiUsers?.[this.props.id]) || null
 
-  handleSetValue: RVValueEventHandler<RectSeriesPoint> = (
-    data: RectSeriesPoint
-  ) => {
-    this.setState({ value: data })
-  }
-
   handleViewApiKey = () => {
     const { id, plan } = this.props
     if (!id || !plan) return
@@ -164,8 +139,6 @@ class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
 
   render() {
     const { aggregatedView, id, plan } = this.props
-    const { value } = this.state
-    const ONE_DAY_MILLIS = 86400000
     const startDate = moment(plan?.result.startDate)
     if (!aggregatedView && !id) {
       console.warn('Cannot show non-aggregated view if id prop is undefined.')
@@ -174,55 +147,24 @@ class ApiKeyUsageChart extends Component<Props, { value: GraphValue | null }> {
     // Render the # of requests per API key on each day beginning
     // with the start date.
     const requestData = this._getRequestData()
-    const timestamp = startDate.valueOf()
-    let rangeMax = 0
     // Format request data for chart component.
-    const CHART_DATA: RectSeriesPoint[] =
+    const CHART_DATA: GraphNumberValue[] =
       requestData?.map((value, i) => {
         if (i > 0) startDate.add(1, 'days')
-        const begin = startDate.valueOf()
         // @ts-ignore TYPESCRIPT TODO: what is going on here?
-        const y = value[0]
-        const end = begin + ONE_DAY_MILLIS
-        if (y > rangeMax) rangeMax = y
-        return { x: end, x0: begin, y, y0: 0 }
+        return { x: startDate.valueOf(), y: value[0] }
       }) || []
-    const maxY = rangeMax === 0 ? 10 : Math.ceil(rangeMax / 10) * 10
     return (
-      <div className="usage-list" style={{ display: 'inline-block' }}>
-        {this._renderChartTitle()}
-        {this._renderKeyInfo()}
-        <XYPlot
-          height={300}
-          style={{ overflow: 'initial' }}
-          width={600} // Round up max y value to the nearest 10
-          xDomain={[
-            timestamp - 2 * ONE_DAY_MILLIS,
-            timestamp + 30 * ONE_DAY_MILLIS
-          ]}
-          yDomain={[0, maxY]}
-        >
-          <VerticalGridLines />
-          <HorizontalGridLines />
-          <XAxis tickFormat={(d) => moment(d).format('MMM DD')} />
-          <YAxis />
-          <VerticalRectSeries
-            data={CHART_DATA}
-            onValueMouseOut={this.handleClearValue} // Update value on mouse over/out.
-            onValueMouseOver={this.handleSetValue}
-            style={{ stroke: '#fff' }}
-          />
-        </XYPlot>
-        <p style={{ textAlign: 'center' }}>
-          {value ? (
-            <>
-              {moment(value.x).format('MMM DD')}: {value.y} requests
-            </>
-          ) : (
-            <>[Hover over bars to see values.]</>
-          )}
-        </p>
-      </div>
+      <Chart
+        data={CHART_DATA}
+        entityType="requests"
+        title={
+          <>
+            {this._renderChartTitle()}
+            {this._renderKeyInfo()}
+          </>
+        }
+      />
     )
   }
 }

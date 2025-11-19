@@ -199,7 +199,7 @@ describe('end-to-end tests', () => {
         downloadPath: '/tmp'
       })
 
-      await expect(page).toClick('div', { text: uploadString })
+      await expect(page).toClick('button', { text: uploadString })
 
       await waitForDownload('anon-trip-data')
       await expect(page).toMatch('You last downloaded', { timeout: 6000 })
