@@ -16,8 +16,7 @@ function DailyStatsDashboard(): JSX.Element | null {
   const result = useSWR(DAILY_STATS_URL)
   if (!auth.isAuthenticated) return null
   const { data: swrData = {}, isValidating } = result
-  const { data } = swrData
-  const records = data?.data || []
+  const records = swrData.data?.data || []
   return (
     <div>
       <h2>Daily Stats</h2>
