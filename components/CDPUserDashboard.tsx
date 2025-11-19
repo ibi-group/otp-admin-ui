@@ -97,7 +97,6 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
   const url = `${CDP_FILES_URL}`
 
   const [swrData, setServerResponse] = useState<{
-    // TODO: Shared type
     data?: {
       data: CDPFile[]
     }
