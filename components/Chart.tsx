@@ -18,6 +18,14 @@ export type Props = {
   entityType: string
   title: ReactNode
 }
+
+type ChartBounds = {
+  chartData: RectSeriesPoint[]
+  endDateMillis: number
+  rangeMax: number
+  startDateMillis: number
+}
+
 /**
  * Renders a chart with presets and default behaviors (e.g. hover over data to show value).
  */
@@ -29,14 +37,14 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
     }
   }
 
-  handleClearValue = () => {
+  handleClearValue = (): void => {
     this.setState({ value: null })
   }
 
   /**
    * Extract the ranges of the data provided.
    */
-  _getBounds = () => {
+  _getBounds = (): ChartBounds => {
     const ONE_DAY_MILLIS = 86400000
     let rangeMax = 0
     let startDateMillis = Number.MAX_VALUE
@@ -66,9 +74,9 @@ class Chart extends Component<Props, { value: GraphValue | null }> {
     this.setState({ value: data })
   }
 
-  render() {
+  render(): JSX.Element | null {
     const { data, entityType, title } = this.props
-    if (data.length === 0) return null
+    if (!data.length) return null
 
     const days = 30
     const { value } = this.state
