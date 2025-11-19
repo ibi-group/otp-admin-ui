@@ -98,7 +98,9 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
 
   const [swrData, setServerResponse] = useState<{
     // TODO: Shared type
-    data?: any
+    data?: {
+      data: CDPFile[]
+    }
     error?: string
     message?: string
     status?: string
@@ -151,8 +153,7 @@ const CDPUserDashboard = (props: Props): JSX.Element => {
     fetchData()
   }, [auth0, currentlyDownloadingFile])
 
-  let files = Object.keys(swrData).length > 0 ? swrData?.data?.data || [] : []
-  files = files
+  const files = (swrData?.data?.data || [])
     .filter((file: CDPFile) => file?.size > 0)
     // Negative sorts "reverse alphabetically" which allows newest files to appear first
     .sort((a: CDPFile, b: CDPFile) => -a.key.localeCompare(b.key))
