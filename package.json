@@ -6,13 +6,12 @@
   "license": "MIT",
   "scripts": {
     "build": "next build",
-    "dev": "next",
+    "dev": "yarn && next",
     "deploy": "vercel",
     "lint": "yarn lint-types && yarn lint-code",
     "lint-code": "tsdx lint components pages util --quiet",
     "lint-docs": "documentation lint {components,pages,util}/**/*.js",
     "lint-types": "yarn tsc",
-    "predev": "yarn",
     "e2e-test": "cp -r __tests__/e2e/env.test .env.build && yarn jest __tests__/e2e/"
   },
   "dependencies": {
